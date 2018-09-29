@@ -246,8 +246,10 @@ DEPENDENCIES
   jekyll
   jekyll-default-layout
   jekyll-feed
+  jekyll-theme-slate
+  minima
   minitest
   tzinfo-data
 
 BUNDLED WITH
-   1.16.2
+   1.16.5
