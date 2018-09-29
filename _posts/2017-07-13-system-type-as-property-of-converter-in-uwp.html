@@ -1,0 +1,97 @@
+---
+layout: post
+status: publish
+published: true
+title: System.Type as Property of Converter in UWP - unexplainable XamlParseException
+author:
+  display_name: andreas
+  login: andreas
+  email: andreas.willich@gmail.com
+  url: ''
+author_login: andreas
+author_email: andreas.willich@gmail.com
+wordpress_id: 97
+wordpress_url: https://willich.io/?p=97
+date: '2017-07-13 19:50:29 +0200'
+date_gmt: '2017-07-13 17:50:29 +0200'
+categories:
+- Uncategorized
+tags:
+- uwp
+comments: []
+---
+<p><!-- wp:core/text --></p>
+<p>Two weeks ago in a project we had a XamlParseException when a special page was opened. Strange thing was, that we didn&rsquo;t change anything of the XAML- Code, since the last working version. There were only some small changes in the code-behind of the page.</p>
+<p><!-- /wp:core/text --></p>
+<p><!-- wp:core/text --></p>
+<p>The error message was following:<br/>Windows.UI.Xaml.Markup.XamlParseException: &lsquo;The text associated with this error code could not be found. Failed to create a &lsquo;UWPSystemTypeConverterTest.Converter.EnumTypeConverter&rsquo; from the text &lsquo;enums:CustomEnum&rsquo;. [Line: 14 Position: 56]&rsquo;</p>
+<p><!-- /wp:core/text --></p>
+<p><!-- wp:core/text --></p>
+<p>Here is the code that produces this error.<br/>Complete project can be found on&nbsp;<a href="https://github.com/SabotageAndi/UWPSystemTypeConverterTest">https://github.com/SabotageAndi/UWPSystemTypeConverterTest</a><br/><strong><br/>shortened XAML Page:</strong></p>
+<p><!-- /wp:core/text --></p>
+<p><!-- wp:core/preformatted --></p>
+<pre class="EnlighterJSRAW" data-enlighter-language="xml"><Page
+    x:Class="UWPSystemTypeConverterTest.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converter="using:UWPSystemTypeConverterTest.Converter"
+    xmlns:enums="using:UWPSystemTypeConverterTest.Enum"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <converter:EnumTypeConverter x:Key="Converter" TypeToDisplay="enums:CustomEnum" />
+    </Page.Resources>
+
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <TextBlock Text="{Binding Converter={StaticResource Converter}}" />
+    </Grid>
+</Page></pre>
+<p><!-- /wp:core/preformatted --></p>
+<p><!-- wp:core/text --></p>
+<p><strong>Converter:</strong></p>
+<p><!-- /wp:core/text --></p>
+<p><!-- wp:core/freeform --></p>
+<pre class="EnlighterJSRAW" data-enlighter-language="csharp">internal class EnumTypeConverter : IValueConverter
+{
+    public Type TypeToDisplay { get; set; }
+
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        return TypeToDisplay?.FullName;
+    }
+
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}</pre>
+<p><!-- /wp:core/freeform --></p>
+<p><!-- wp:core/text --></p>
+<p>The interesting thing was, when we added a public property of the enum to the code-behind of the XAML page, it worked.</p>
+<p><!-- /wp:core/text --></p>
+<p><!-- wp:core/text --></p>
+<p><strong>Code- Behind:</strong><br/></p>
+<p><!-- /wp:core/text --></p>
+<p><!-- wp:core/preformatted --></p>
+<pre <pre class="EnlighterJSRAW" data-enlighter-language="csharp">public sealed partial class MainPage : Page
+{
+        public CustomEnum WithThisPropertyTheAppWorks { get; set; }
+
+        public MainPage()
+        {
+            InitializeComponent();
+            this.DataContext = this;
+        }
+}</pre>
+<p><!-- /wp:core/preformatted --></p>
+<p><!-- wp:core/heading --></p>
+<h2>Reason why it worked:</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/text --></p>
+<p>After a <a href="https://stackoverflow.com/questions/44932338/system-type-as-property-of-converter-only-works-with-unused-property-in-code-b">StackOverflow post</a> and some mails on a MVP mailing lists, I got an answer for the strange behaviour.<br/>The XAML compiler and the runtime don&#x27;t support System.Type- typed properties. So the needed metadata is not generated and the runtime can not convert the string to the type.<br/><br/>But because of the public properties on the code-behind, the compiler generates the needed metadata now. I am not that happy with the work around, but it is better than other solutions (e.g. a string property with the fullname to the type).</p>
+<p><!-- /wp:core/text --></p>
+<p><!-- wp:core/text --></p>
+<p>I hope that in a future version of the UWP Xaml Compiler and runtime this will be addressed and will be no more issue.<br/>But up to now, you know how to fix the error if you encounter it.</p>
+<p><!-- /wp:core/text --></p>

@@ -1,0 +1,135 @@
+---
+layout: post
+status: publish
+published: true
+title: Multiple projects in the same folder
+author:
+  display_name: andreas
+  login: andreas
+  email: andreas.willich@gmail.com
+  url: ''
+author_login: andreas
+author_email: andreas.willich@gmail.com
+wordpress_id: 152
+wordpress_url: https://willich.io/?p=152
+date: '2017-10-12 18:54:13 +0200'
+date_gmt: '2017-10-12 16:54:13 +0200'
+categories:
+- DotNet
+tags:
+- dotnet
+- msbuild
+- csproj
+comments: []
+---
+<p><!-- wp:core/paragraph --></p>
+<p>In SpecFlow+ we are supporting multiple different versions of SpecFlow (currently 1.9, 2.1 and 2.2) and so we have to test each version with the full set of our test suite.<br/>As we don&#x27;t want to copy a lot of code and then change some references/package version, I was looking if it is without much pain possible, that you have multiple projects/csprojs in one folder and produce so multiple assemblies.<br/>We are already having a solution with the old project system, but it involves a lot of&nbsp; linked files and manual editing of the project files. So with the new project system it was time to look at this again.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>And after some work I had a solution to achieve this with the new csproj format. Here it is:</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --><br />
+<!-- HTML generated using hilite.me --></p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #007700"><Project></span>
+    <span style="color: #007700"><PropertyGroup></span>
+        <span style="color: #007700"><BaseIntermediateOutputPath></span>obj\$(MSBuildProjectName)<span style="color: #007700"></BaseIntermediateOutputPath></span>
+    <span style="color: #007700"></PropertyGroup></span>
+    
+    <span style="color: #007700"><Import</span> <span style="color: #0000CC">Project=</span><span style="background-color: #fff0f0">"Sdk.props"</span> <span style="color: #0000CC">Sdk=</span><span style="background-color: #fff0f0">"Microsoft.NET.Sdk"</span><span style="color: #007700">/></span>
+
+    <span style="color: #007700"><PropertyGroup></span>
+        <span style="color: #007700"><TargetFramework></span>netstandard2.0<span style="color: #007700"></TargetFramework></span>
+        <span style="color: #007700"><OutputPath></span>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)<span style="color: #007700"></OutputPath></span>
+    <span style="color: #007700"></PropertyGroup></span>
+
+    <span style="color: #007700"><Import</span> <span style="color: #0000CC">Project=</span><span style="background-color: #fff0f0">"Sdk.targets"</span> <span style="color: #0000CC">Sdk=</span><span style="background-color: #fff0f0">"Microsoft.NET.Sdk"</span><span style="color: #007700">/></span>
+
+    <span style="color: #007700"><ItemGroup></span>
+        <span style="color: #007700"><Compile</span> <span style="color: #0000CC">Remove=</span><span style="background-color: #fff0f0">"obj\**\*"</span><span style="color: #007700">/></span>
+        <span style="color: #007700"><Compile</span> <span style="color: #0000CC">Include=</span><span style="background-color: #fff0f0">"obj\$(MSBuildProjectName)\**\$(MSBuildProjectName).AssemblyInfo.cs"</span><span style="color: #007700">/></span>
+    <span style="color: #007700"></ItemGroup></span>
+<span style="color: #007700"></Project></span>
+</pre>
+</div>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>So what does it in detail?</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --><br />
+<!-- HTML generated using hilite.me --></p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #007700"><Project></span>
+</pre>
+</div>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Yes, there is no Sdk attribute defined. How does this work?</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --><br />
+<!-- HTML generated using hilite.me --></p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #007700"><PropertyGroup></span>
+    <span style="color: #007700"><BaseIntermediateOutputPath></span>obj\$(MSBuildProjectName)<span style="color: #007700"></BaseIntermediateOutputPath></span>
+<span style="color: #007700"></PropertyGroup></span>
+</pre>
+</div>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>We are adjusting the BaseIntermediateOutputPath, so that each project has it&#x27;s own and don&#x27;t replace each others file. This is also the reason, why we have no Sdk attribute set. This property has to be set before the Sdk.props file is evaluated.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --><br />
+<!-- HTML generated using hilite.me --></p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #007700"><Import</span> <span style="color: #0000CC">Project=</span><span style="background-color: #fff0f0">"Sdk.props"</span> <span style="color: #0000CC">Sdk=</span><span style="background-color: #fff0f0">"Microsoft.NET.Sdk"</span><span style="color: #007700">/></span>
+</pre>
+</div>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>So, finally import the first part of the Sdk.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --><br />
+<!-- HTML generated using hilite.me --></p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #007700"><PropertyGroup></span>
+    <span style="color: #007700"><TargetFramework></span>netstandard2.0<span style="color: #007700"></TargetFramework></span>
+    <span style="color: #007700"><OutputPath></span>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)<span style="color: #007700"></OutputPath></span>
+<span style="color: #007700"></PropertyGroup></span>
+</pre>
+</div>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>The TargetFramework property is well known. Nothing to add about this here.<br/>The OutputPath property is the location where the finished assemblies are copied. As BaseIntermediateOutputPath it has to be adjusted, so that each project has it&#x27;s own folder.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --><br />
+<!-- HTML generated using hilite.me --></p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #007700"><Import</span> <span style="color: #0000CC">Project=</span><span style="background-color: #fff0f0">"Sdk.targets"</span> <span style="color: #0000CC">Sdk=</span><span style="background-color: #fff0f0">"Microsoft.NET.Sdk"</span><span style="color: #007700">/></span>
+</pre>
+</div>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>And now the second and last part of the Sdk is imported.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --><br />
+<!-- HTML generated using hilite.me --></p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #007700"><ItemGroup></span>
+    <span style="color: #007700"><Compile</span> <span style="color: #0000CC">Remove=</span><span style="background-color: #fff0f0">"obj\**\*"</span><span style="color: #007700">/></span>
+    <span style="color: #007700"><Compile</span> <span style="color: #0000CC">Include=</span><span style="background-color: #fff0f0">"obj\$(MSBuildProjectName)\**\$(MSBuildProjectName).AssemblyInfo.cs"</span><span style="color: #007700">/></span>
+<span style="color: #007700"></ItemGroup></span>
+</pre>
+</div>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>This is one of the stranges parts of the file. The reason for this is, that during build the version infos from the csproj are written to an *.AssemblyInfo.cs file in the obj folder. Combined with the globbing in the new format, MSBuild now finds multiple *.AssemblyInfo.cs files (one for each project).<br/>So we have to remove the whole obj subtree from the compiler and readd the AssemblyInfo.cs for our project to get the version infos into the assembly.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Everything clear now? ;-)<br/>And the best, Visual Studio 2017 can handle this files without problems.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>You can find a complete example with two projects here:&nbsp;<a href="https://github.com/SabotageAndi/MultipleProjecsInSameFolder">https://github.com/SabotageAndi/MultipleProjecsInSameFolder</a></p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Conclusion: I have to say, I am very happy with the new project system. Something like this wouldn&#x27;t be possible with the old one (or it would be a lot more painful).<br/>Let&#x27;s see what nice hacks are also possible in the future.</p>
+<p><!-- /wp:core/paragraph --></p>

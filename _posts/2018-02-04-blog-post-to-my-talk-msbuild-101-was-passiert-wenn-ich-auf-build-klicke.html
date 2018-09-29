@@ -1,0 +1,245 @@
+---
+layout: post
+status: publish
+published: true
+title: Blog post to my talk "MSBuild 101 &ndash; Was passiert wenn ich auf &bdquo;Build&ldquo;
+  klicke"
+author:
+  display_name: andreas
+  login: andreas
+  email: andreas.willich@gmail.com
+  url: ''
+author_login: andreas
+author_email: andreas.willich@gmail.com
+wordpress_id: 287
+wordpress_url: https://willich.io/?p=287
+date: '2018-02-04 00:23:07 +0100'
+date_gmt: '2018-02-03 23:23:07 +0100'
+categories:
+- DotNet
+tags:
+- msbuild
+comments: []
+---
+<p><!-- wp:core/paragraph --></p>
+<p>Last Monday (30. January) a colleague and I gave a talk about the basics of MSBuild. So that also others can enjoy my explanations, I wrote this post.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>All examples can be found here:&nbsp;<a href="https://github.com/sabotageandi/msbuild101"></a></p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>Classic Hello World</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/html --><br />
+<!-- HTML generated using hilite.me --></p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #007700"><Project</span> <span style="color: #0000CC">Sdk=</span><span style="background-color: #fff0f0">"Microsoft.NET.Sdk"</span><span style="color: #007700">></span>
+
+    <span style="color: #007700"><Target</span> <span style="color: #0000CC">Name=</span><span style="background-color: #fff0f0">"HelloWorld"</span><span style="color: #007700">></span>
+        <span style="color: #007700"><Message</span> <span style="color: #0000CC">Text=</span><span style="background-color: #fff0f0">"Hello World!"</span> <span style="color: #007700">/></span>
+    <span style="color: #007700"></Target></span>
+
+<span style="color: #007700"></Project></span>
+</pre>
+</div>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Command: msbuild %Filename%.csproj /t:HelloWorld</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>That&#x27;s the classic "Hello World" as for every programming language. And yes, MSBuild looks like XML, but it&#x27;s a programming language. "Target" defines a "method", which can call other targets and tasks. Tasks are functions that are defined in assemblies.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>With the /t parameter, you specific which target is executed. When you don&#x27;t specify it, a default target is executed, but in this case, we want that the "HelloWorld" target is executed and print "Hello World!".</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/image {"id":303} --></p>
+<figure class="wp-block-image"><img src="https://willich.io/wp-content/uploads/2018/02/image.png" alt="" /></figure>
+<p><!-- /wp:core/image --></p>
+<p><!-- wp:core/heading --></p>
+<h2>Variables</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>As functions/methods there are also variables in MSBuild. You define them in PropertyGroups.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --><br />
+<!-- HTML generated using hilite.me --></p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #007700"><Project</span> <span style="color: #0000CC">Sdk=</span><span style="background-color: #fff0f0">"Microsoft.NET.Sdk"</span><span style="color: #007700">></span>
+
+    <span style="color: #007700"><PropertyGroup></span>
+        <span style="color: #007700"><HelloText></span>World<span style="color: #007700"></HelloText></span>
+    <span style="color: #007700"></PropertyGroup></span>
+
+    <span style="color: #007700"><Target</span> <span style="color: #0000CC">Name=</span><span style="background-color: #fff0f0">"HelloWorld"</span><span style="color: #007700">></span>
+        <span style="color: #007700"><Message</span> <span style="color: #0000CC">Text=</span><span style="background-color: #fff0f0">"Hello $(HelloText)!"</span> <span style="color: #007700">/></span>
+    <span style="color: #007700"></Target></span>
+
+<span style="color: #007700"></Project></span>
+</pre>
+</div>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>You can access them with $(%VariableName%).</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>Parameters</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>To get some data from outside into your MSBuild script, you can pass parameters with /p and access them as other variables.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --><br />
+<!-- HTML generated using hilite.me --></p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #007700"><Project</span> <span style="color: #0000CC">Sdk=</span><span style="background-color: #fff0f0">"Microsoft.NET.Sdk"</span><span style="color: #007700">></span>
+
+    <span style="color: #007700"><Target</span> <span style="color: #0000CC">Name=</span><span style="background-color: #fff0f0">"HelloWorld"</span><span style="color: #007700">></span>
+        <span style="color: #007700"><Message</span> <span style="color: #0000CC">Text=</span><span style="background-color: #fff0f0">"Hello $(HelloText)!"</span> <span style="color: #007700">/></span>
+    <span style="color: #007700"></Target></span>
+
+<span style="color: #007700"></Project></span>
+</pre>
+</div>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Command:&nbsp;msbuild HelloParameter.csproj /t:HelloWorld /p:HelloText=Internet</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/image {"id":315} --></p>
+<figure class="wp-block-image"><img src="https://willich.io/wp-content/uploads/2018/02/image-1.png" alt="" /></figure>
+<p><!-- /wp:core/image --></p>
+<p><!-- wp:core/heading --></p>
+<h2>Ifs aka Conditions</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>And as in other languages, there are also Ifs available. Here are they called Conditions and&nbsp;</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --><br />
+<!-- HTML generated using hilite.me --></p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #007700"><Project</span> <span style="color: #0000CC">Sdk=</span><span style="background-color: #fff0f0">"Microsoft.NET.Sdk"</span><span style="color: #007700">></span>
+
+    <span style="color: #007700"><PropertyGroup></span>
+        <span style="color: #007700"><HelloText</span> <span style="color: #0000CC">Condition=</span><span style="background-color: #fff0f0">"$(HelloText)==&#39;&#39;"</span><span style="color: #007700">></span>World<span style="color: #007700"></HelloText></span>
+    <span style="color: #007700"></PropertyGroup></span>
+
+
+    <span style="color: #007700"><Target</span> <span style="color: #0000CC">Name=</span><span style="background-color: #fff0f0">"HelloWorld"</span><span style="color: #007700">></span>
+        <span style="color: #007700"><Message</span> <span style="color: #0000CC">Text=</span><span style="background-color: #fff0f0">"Hello $(HelloText)!"</span> <span style="color: #007700">/></span>
+    <span style="color: #007700"></Target></span>
+
+<span style="color: #007700"></Project></span>
+</pre>
+</div>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>You can add the Condition element on nearly everything. It could be variables, whole property groups, targets or tasks.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>This example uses conditions to set the variable "HelloText" to a default value if it wasn&#x27;t defined via parameter.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>multiple Targets</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Who wants to write everything in a single method? Nobody. But nothing stops you to write more targets.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --><br />
+<!-- HTML generated using hilite.me --></p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #007700"><Project</span> <span style="color: #0000CC">Sdk=</span><span style="background-color: #fff0f0">"Microsoft.NET.Sdk"</span><span style="color: #007700">></span>
+
+    <span style="color: #007700"><Target</span> <span style="color: #0000CC">Name=</span><span style="background-color: #fff0f0">"HelloWorld"</span><span style="color: #007700">></span>
+        <span style="color: #007700"><CallTarget</span> <span style="color: #0000CC">Targets=</span><span style="background-color: #fff0f0">"PrintHello"</span><span style="color: #007700">/></span>
+        <span style="color: #007700"><CallTarget</span> <span style="color: #0000CC">Targets=</span><span style="background-color: #fff0f0">"PrintWorld"</span><span style="color: #007700">/></span>
+        <span style="color: #007700"><CallTarget</span> <span style="color: #0000CC">Targets=</span><span style="background-color: #fff0f0">"PrintExclamationMark"</span><span style="color: #007700">/></span>        
+    <span style="color: #007700"></Target></span>
+
+    <span style="color: #007700"><Target</span> <span style="color: #0000CC">Name=</span><span style="background-color: #fff0f0">"PrintHello"</span><span style="color: #007700">></span>
+        <span style="color: #007700"><Message</span> <span style="color: #0000CC">Text=</span><span style="background-color: #fff0f0">"Hello"</span> <span style="color: #007700">/></span>
+    <span style="color: #007700"></Target></span>
+
+    <span style="color: #007700"><Target</span> <span style="color: #0000CC">Name=</span><span style="background-color: #fff0f0">"PrintWorld"</span><span style="color: #007700">></span>
+        <span style="color: #007700"><Message</span> <span style="color: #0000CC">Text=</span><span style="background-color: #fff0f0">"World"</span> <span style="color: #007700">/></span>
+    <span style="color: #007700"></Target></span>
+
+    <span style="color: #007700"><Target</span> <span style="color: #0000CC">Name=</span><span style="background-color: #fff0f0">"PrintExclamationMark"</span><span style="color: #007700">></span>
+        <span style="color: #007700"><Message</span> <span style="color: #0000CC">Text=</span><span style="background-color: #fff0f0">"!"</span> <span style="color: #007700">/></span>
+    <span style="color: #007700"></Target></span>
+
+<span style="color: #007700"></Project></span>
+</pre>
+</div>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>With the "CallTarget" task you can execute other targets.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>"Events"</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Sometimes you can not add a "CallTarget" to get your own code executed in MSBuild. For that there is a feature, that you can also trigger your targets before or after another target.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --><br />
+<!-- HTML generated using hilite.me --></p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #007700"><Project</span> <span style="color: #0000CC">Sdk=</span><span style="background-color: #fff0f0">"Microsoft.NET.Sdk"</span><span style="color: #007700">></span>
+
+    <span style="color: #007700"><Target</span> <span style="color: #0000CC">Name=</span><span style="background-color: #fff0f0">"HelloWorld"</span><span style="color: #007700">></span>
+        <span style="color: #007700"><Message</span> <span style="color: #0000CC">Text=</span><span style="background-color: #fff0f0">"Hello World!"</span> <span style="color: #007700">/></span>
+    <span style="color: #007700"></Target></span>
+
+
+    <span style="color: #007700"><Target</span> <span style="color: #0000CC">Name=</span><span style="background-color: #fff0f0">"Before"</span> <span style="color: #0000CC">BeforeTargets=</span><span style="background-color: #fff0f0">"HelloWorld"</span><span style="color: #007700">></span>
+        <span style="color: #007700"><Message</span> <span style="color: #0000CC">Text=</span><span style="background-color: #fff0f0">"BeforeHelloWorld"</span> <span style="color: #007700">/></span>        
+    <span style="color: #007700"></Target></span>
+
+    <span style="color: #007700"><Target</span> <span style="color: #0000CC">Name=</span><span style="background-color: #fff0f0">"After"</span> <span style="color: #0000CC">AfterTargets=</span><span style="background-color: #fff0f0">"HelloWorld"</span><span style="color: #007700">></span>
+        <span style="color: #007700"><Message</span> <span style="color: #0000CC">Text=</span><span style="background-color: #fff0f0">"AfterHelloWorld"</span> <span style="color: #007700">/></span>        
+    <span style="color: #007700"></Target></span>
+
+<span style="color: #007700"></Project></span>
+</pre>
+</div>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>With setting the Before/After- Targets elements you register your target to be executed before or after the target. Real nice feature to hang your targets into the existing lifecycle of compiling a project.<br/></p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/heading --></p>
+<h2>Files</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>Sometimes you need to execute a target for a list of files. This is possible with ItemGroups.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/html --><br />
+<!-- HTML generated using hilite.me --></p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%"><span style="color: #007700"><Project</span> <span style="color: #0000CC">Sdk=</span><span style="background-color: #fff0f0">"Microsoft.NET.Sdk"</span><span style="color: #007700">></span>
+
+    <span style="color: #007700"><ItemGroup></span>
+        <span style="color: #007700"><Files</span> <span style="color: #0000CC">Include=</span><span style="background-color: #fff0f0">"*.*"</span> <span style="color: #007700">/></span>
+    <span style="color: #007700"></ItemGroup></span>
+
+    <span style="color: #007700"><Target</span> <span style="color: #0000CC">Name=</span><span style="background-color: #fff0f0">"HelloWorld"</span>
+            <span style="color: #0000CC">Inputs=</span><span style="background-color: #fff0f0">"@(Files)"</span>
+            <span style="color: #0000CC">Outputs=</span><span style="background-color: #fff0f0">"%(Identity).Dummy"</span><span style="color: #007700">></span>
+        <span style="color: #007700"><Message</span> <span style="color: #0000CC">Text=</span><span style="background-color: #fff0f0">"@(Files)"</span> <span style="color: #007700">/></span>
+    <span style="color: #007700"></Target></span>
+   
+<span style="color: #007700"></Project></span>
+</pre>
+</div>
+<p><!-- /wp:core/html --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>With ItemGroups you can define a variable that holds a list of files. You can include and exclude to this variable with additional entries in the ItemGroup.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>To get a target executed per entry in a file variable, you have to use the Inputs and Outputs attributes. In difference to variables, you have to use @(...) and not $(...).<br/>You have to set the Outputs attribute if you set the Inputs attribute. In this case, we can set it to %(Identity).Dummy, because we generate no output files.</p>
+<p><!-- /wp:core/paragraph --></p>
+<p><!-- wp:core/image {"id":362} --></p>
+<figure class="wp-block-image"><img src="https://willich.io/wp-content/uploads/2018/02/image-2.png" alt="" /></figure>
+<p><!-- /wp:core/image --></p>
+<p><!-- wp:core/heading --></p>
+<h2>The end of my part</h2>
+<p><!-- /wp:core/heading --></p>
+<p><!-- wp:core/paragraph --></p>
+<p>So that was my part of the talk. My colleague Raoul Holzer continued with a little bit more advanced stuff. His examples can be found <a href="https://github.com/RaoulHolzer/MSBuild201">here:&nbsp;https://github.com/RaoulHolzer/MSBuild201&nbsp;</a><br/>And as soon he has written his blog post, I will link it here.</p>
+<p><!-- /wp:core/paragraph --></p>

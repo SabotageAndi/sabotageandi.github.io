@@ -1,0 +1,96 @@
+---
+layout: post
+status: publish
+published: true
+title: How SpecFlow works - Overview
+author:
+  display_name: andreas
+  login: andreas
+  email: andreas.willich@gmail.com
+  url: ''
+author_login: andreas
+author_email: andreas.willich@gmail.com
+wordpress_id: 531
+wordpress_url: https://willich.io/?p=531
+date: '2018-03-07 06:14:51 +0100'
+date_gmt: '2018-03-07 05:14:51 +0100'
+categories:
+- DotNet
+- SpecFlow
+tags:
+- dotnet
+- dotnetcore
+- specflow
+comments: []
+---
+<p><!-- wp:paragraph --></p>
+<p>In preparation of continuing the work on .NET Core/Standard support for SpecFlow and recognising in talks at the MVP Summit, that it is not that simple to explain how SpecFlow works, I thought it would be good to start writing it done.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>So as starting ponts, let&#x27;s have a look at the normal workflow, when you write a new Scenario?</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ol>
+<li>The user opens or creates a feature file, writes it Scenario in Gherkin and saves.</li>
+<li>A code-behind file is generated, which contains code for a test class of the configured unit test provider. This could be SpecFlow+Runner, xUnit, NUnit, MsTest or MbUnit.</li>
+<li>The user selects the line and presses F12.</li>
+<li>A dialog opens, which contains a skeleton for a binding method for this sentence.</li>
+<li>The user adds the skeleton binding code to a new or existing binding class</li>
+<li>The user implements the binding. Probably with some helper methods from the TechTalk.SpecFlow.Assists namespace.</li>
+<li>The user compiles its project</li>
+<li>The user runs the tests</li>
+<li>The tests are hopefully green.</li>
+</ol>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>That&#x27;s a lot of steps to get from a scenario to a executed tests.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>And these are the parts that are involved in this:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>Generator
+<ul>
+<li>Code- Behind File generation</li>
+<li>Plugins</li>
+</ul>
+</li>
+<li>&nbsp;Runtime
+<ul>
+<li>Binding lookup</li>
+<li>Assists</li>
+<li>Plugins</li>
+</ul>
+</li>
+<li>Visual Studio Extension
+<ul>
+<li>Syntax Highlighting/IntelliSense</li>
+<li>Navigation</li>
+<li>Code- Behind Generation</li>
+<li>Skeleton Generation</li>
+<li>ItemTemplates</li>
+</ul>
+</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>More than you would think, or?</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Additionally SpecFlow has also a console application (specflow.exe), which also contains crucial functionality:</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:list --></p>
+<ul>
+<li>SpecFlow.exe
+<ul>
+<li>generateAll Command</li>
+<li>MSBuild tasks</li>
+<li>Reports</li>
+</ul>
+</li>
+</ul>
+<p><!-- /wp:list --></p>
+<p><!-- wp:paragraph --></p>
+<p>To make it easier to read for you (and to write for me), every major part will get it&#x27;s own blog posts. So you don&#x27;t have to wait until I am completely finished with everything. I will add links to the individual posts when they are ready.</p>
+<p><!-- /wp:paragraph --></p>
