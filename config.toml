@@ -1,0 +1,9 @@
+baseURL = "https://willich.io/"
+languageCode = "en-us"
+title = "willich.io"
+theme = "hyde-hyde"
+
+
+[params.social]
+  	twitter = "sabotageandi"
+  	github = "sabotageandi"
