@@ -21,5 +21,17 @@
  public class Main { public void main(); { } }  </description>
     </item>
     
+    <item>
+      <title>SpecFlow 2.2 and SpecFlow&#43; 1.6 finally released</title>
+      <link>https://willich.io/posts/2017-06-29-specflow-2.2-and-specflow&#43;-1.6-finally-released/</link>
+      <pubDate>Thu, 29 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://willich.io/posts/2017-06-29-specflow-2.2-and-specflow&#43;-1.6-finally-released/</guid>
+      <description>Finally after 13 months, SpecFlow 2.2 and SpecFlow+ 1.6 (Runner and Excel) were finally released yesterday.
+Here are the official release notes: http://specflow.org/category/release-notes.
+Two changes make me very happy.
+The first is the removal of the MSBuild dependency. This was always a pain, as MSBuild sometimes used a cached version of your current project which was not actual. So if you added files to your project, it could be that the code-behind-file generator does not know about it.</description>
+    </item>
+    
   </channel>
 </rss>
