@@ -1,0 +1,67 @@
+---
+layout: post
+status: publish
+published: true
+title: Xamarin.Forms + F# + Paket
+author:
+  display_name: andreas
+  login: andreas
+  email: andreas.willich@gmail.com
+  url: ''
+author_login: andreas
+author_email: andreas.willich@gmail.com
+wordpress_id: 687
+wordpress_url: https://willich.io/?p=687
+date: '2018-06-03 12:33:35 +0200'
+date_gmt: '2018-06-03 10:33:35 +0200'
+categories:
+- DotNet
+tags:
+- xamarin
+- xamarin.forms
+- paket
+- fsharp
+comments:
+- id: 43
+  author: Kevin Hannen
+  author_email: kev.hannen@gmail.com
+  author_url: ''
+  date: '2018-07-03 22:16:46 +0200'
+  date_gmt: '2018-07-03 20:16:46 +0200'
+  content: "Hi,\r\nThanks for this but can you show what the project and references
+    files look like. Your dependencies got me further than I had got before, in so
+    much as I can complete a paket install, but I cannot build the device projects.
+    Thanks"
+- id: 58
+  author: YJ Park
+  author_email: yjpark@gmail.com
+  author_url: ''
+  date: '2018-07-12 03:49:36 +0200'
+  date_gmt: '2018-07-12 01:49:36 +0200'
+  content: Met exactly same issue, your blog saved my day, thanks!
+---
+<p><!-- wp:paragraph --></p>
+<p>Yesterday I started a new Xamarin.Forms project in F# on my Mac. Because the NuGet experience isn't the best in Visual Studio for Mac, I always use Paket for managing my dependencies.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>Normally I am always following the steps <a href="https://fsprojects.github.io/Paket/paket-and-dotnet-cli.html">here</a> and <a href="https://fsprojects.github.io/Paket/convert-from-nuget-tutorial.html">here</a>. But this time, after I have done everything, the project didn't compile anymore.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>After some time of fiddling with Paket (I am not the expert user of it) I found the solution. You have to add a framework restriction to the Xamarin.Forms and&nbsp;Xamarin.Android.FSharp.ResourceProvider entry.</p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The reason is, that if you not add it, on Android Paket is using MonoAndroid1.0 as target framework and so the dependencies are resolved not correctly. I found this GitHub issue for this behaviour:&nbsp;<a href="https://github.com/fsprojects/Paket/issues/2762">https://github.com/fsprojects/Paket/issues/2762</a></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:paragraph --></p>
+<p>The complete paket.dependencies file looks like this:<br/></p>
+<p><!-- /wp:paragraph --></p>
+<p><!-- wp:html --><br />
+<!-- HTML generated using hilite.me --></p>
+<div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;">
+<pre style="margin: 0; line-height: 125%">source https<span style="color: #333333">://</span>www<span style="color: #333333">.</span>nuget<span style="color: #333333">.</span>org<span style="color: #333333">/</span>api<span style="color: #333333">/</span>v2
+nuget <span style="color: #BB0066; font-weight: bold">FSharp</span><span style="color: #333333">.</span><span style="color: #BB0066; font-weight: bold">Core</span>
+nuget <span style="color: #BB0066; font-weight: bold">Xamarin</span><span style="color: #333333">.</span><span style="color: #BB0066; font-weight: bold">Forms</span> framework<span style="color: #008800; font-weight: bold">:</span> <span style="color: #333399; font-weight: bold">MonoAndroid8.</span><span style="color: #FF0000; background-color: #FFAAAA">1</span><span style="color: #333333">,</span>netstandard2<span style="color: #333333">.</span><span style="color: #0000DD; font-weight: bold">0</span><span style="color: #333333">,</span>xamarinios
+nuget <span style="color: #BB0066; font-weight: bold">Xamarin</span><span style="color: #333333">.</span><span style="color: #BB0066; font-weight: bold">Android</span><span style="color: #333333">.</span><span style="color: #BB0066; font-weight: bold">FSharp</span><span style="color: #333333">.</span><span style="color: #BB0066; font-weight: bold">ResourceProvider</span> framework<span style="color: #008800; font-weight: bold">:</span><span style="color: #333399; font-weight: bold">monoandroid8.</span><span style="color: #FF0000; background-color: #FFAAAA">1</span>
+</pre>
+</div>
+<p><!-- /wp:html --></p>
