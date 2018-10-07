@@ -6,7 +6,8 @@ theme = "hugo-bootstrap"
 # Pagination
 paginate = 3
 paginatePath = "blog"
-pygmentsUseClassic=true
+
+pygmentsUseClasses=true
 
 [taxonomies]
   tag = "tags"
