@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<meta property="og:title" content="System.Type as Property of Converter in UWP – unexplainable XamlParseException" />
+<meta property="og:description" content="Two weeks ago in a project we had a XamlParseException when a special page was opened. Strange thing was, that we didn’t change anything of the XAML- Code, since the last working version. There were only some small changes in the code-behind of the page.
+The error message was following: Windows.UI.Xaml.Markup.XamlParseException: ‘The text associated with this error code could not be found. Failed to create a ‘UWPSystemTypeConverterTest.Converter.EnumTypeConverter’ from the text ‘enums:CustomEnum’." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://willich.io/blog/2017-07-13-system.type-as-property-of-converter-in-uwp--unexplainable-xamlparseexception/" /><meta property="article:published_time" content="2017-07-13T00:00:00&#43;00:00"/>
+<meta property="article:modified_time" content="2017-07-13T00:00:00&#43;00:00"/>
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="System.Type as Property of Converter in UWP – unexplainable XamlParseException"/>
+<meta name="twitter:description" content="Two weeks ago in a project we had a XamlParseException when a special page was opened. Strange thing was, that we didn’t change anything of the XAML- Code, since the last working version. There were only some small changes in the code-behind of the page.
+The error message was following: Windows.UI.Xaml.Markup.XamlParseException: ‘The text associated with this error code could not be found. Failed to create a ‘UWPSystemTypeConverterTest.Converter.EnumTypeConverter’ from the text ‘enums:CustomEnum’."/>
+
+
+
+    <link rel="canonical" href="https://willich.io/blog/2017-07-13-system.type-as-property-of-converter-in-uwp--unexplainable-xamlparseexception/">
+
+    <title>
+      
+        System.Type as Property of Converter in UWP – unexplainable XamlParseException | Hi, I&#39;m Andreas
+      
+    </title>
+
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://willich.io/css/style.css" rel="stylesheet">
+
+    
+
+    
+
+    
+  </head>
+  <body>
+    
+      <header class="blog-header">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="/">
+            Hi, I&#39;m Andreas
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/">Home</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/about/">About</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/blog/">Blog</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/speaking/">Speaking</a>
+                    
+                </li>
+                
+            </ul>
+            
+        </div>
+    </nav>
+</header>
+    
+
+    
+    <div class="container">
+      <div class="row">
+        <div class="col-12 col-lg-8 blog-main">
+
+          
+
+<header>
+    <h2 class="blog-post-title">
+        <a class="text-dark" href="/blog/2017-07-13-system.type-as-property-of-converter-in-uwp--unexplainable-xamlparseexception/">System.Type as Property of Converter in UWP – unexplainable XamlParseException</a>
+    </h2>
+    
+
+
+<div class="blog-post-date text-secondary">
+    
+        Jul 13, 2017
+    
+</div>
+
+    
+    
+    <hr>
+</header>
+<article class="blog-post">
+    <p>Two weeks ago in a project we had a XamlParseException when a special page was opened. Strange thing was, that we didn’t change anything of the XAML- Code, since the last working version. There were only some small changes in the code-behind of the page.</p>
+
+<p>The error message was following:
+Windows.UI.Xaml.Markup.XamlParseException: ‘The text associated with this error code could not be found. Failed to create a ‘UWPSystemTypeConverterTest.Converter.EnumTypeConverter’ from the text ‘enums:CustomEnum’. [Line: 14 Position: 56]’</p>
+
+<p>Here is the code that produces this error.
+Complete project can be found on <a href="https://github.com/SabotageAndi/UWPSystemTypeConverterTest">https://github.com/SabotageAndi/UWPSystemTypeConverterTest</a></p>
+
+<p>shortened XAML Page:</p>
+
+<pre><code class="language-xml">&lt;Page
+    x:Class=&quot;UWPSystemTypeConverterTest.MainPage&quot;
+    xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
+    xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
+    xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot;
+    xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot;
+    xmlns:converter=&quot;using:UWPSystemTypeConverterTest.Converter&quot;
+    xmlns:enums=&quot;using:UWPSystemTypeConverterTest.Enum&quot;
+    mc:Ignorable=&quot;d&quot;&gt;
+    &lt;Page.Resources&gt;
+        &lt;converter:EnumTypeConverter x:Key=&quot;Converter&quot; TypeToDisplay=&quot;enums:CustomEnum&quot; /&gt;
+    &lt;/Page.Resources&gt;
+    &lt;Grid Background=&quot;{ThemeResource ApplicationPageBackgroundThemeBrush}&quot;&gt;
+        &lt;TextBlock Text=&quot;{Binding Converter={StaticResource Converter}}&quot; /&gt;
+    &lt;/Grid&gt;
+&lt;/Page&gt;
+</code></pre>
+
+<p>Converter:</p>
+
+<pre><code class="language-csharp">internal class EnumTypeConverter : IValueConverter
+{
+    public Type TypeToDisplay { get; set; }
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        return TypeToDisplay?.FullName;
+    }
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}
+</code></pre>
+
+<p>The interesting thing was, when we added a public property of the enum to the code-behind of the XAML page, it worked.</p>
+
+<p>Code- Behind:</p>
+
+<pre><code class="language-csharp">public sealed partial class MainPage : Page
+{
+        public CustomEnum WithThisPropertyTheAppWorks { get; set; }
+        public MainPage()
+        {
+            InitializeComponent();
+            this.DataContext = this;
+        }
+}
+</code></pre>
+
+<p>Reason why it worked:
+After a StackOverflow post and some mails on a MVP mailing lists, I got an answer for the strange behaviour.
+The XAML compiler and the runtime don&rsquo;t support System.Type- typed properties. So the needed metadata is not generated and the runtime can not convert the string to the type.</p>
+
+<p>But because of the public properties on the code-behind, the compiler generates the needed metadata now. I am not that happy with the work around, but it is better than other solutions (e.g. a string property with the fullname to the type).</p>
+
+<p>I hope that in a future version of the UWP Xaml Compiler and runtime this will be addressed and will be no more issue.
+But up to now, you know how to fix the error if you encounter it.</p>
+
+
+    
+
+    
+
+
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    &nbsp;
+</article>
+
+
+
+        </div>
+
+        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+    
+    
+        <section>
+    
+        
+    
+        
+    
+        
+    
+</section>
+    
+</aside>
+
+      </div>
+    </div>
+    
+
+    
+      
+
+
+
+
+
+
+<footer class="blog-footer w-100 fixed-bottom">
+    <nav class="navbar navbar-light bg-light">
+        <p class="w-100 text-center">Disclaimer: The opinions expressed herein are my own personal opinions and do not represent my employer’s view in any way.</p>
+        <p class="w-100 text-center">Hugo template made with ❤ by <a href="https://github.com/Xzya">Xzya</a>, inspired by <a href="https://github.com/alanorth/hugo-theme-bootstrap4-blog">hugo-theme-bootstrap4-blog</a></p>
+    </nav>
+</footer>
+
+    
+
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </body>
+</html>
