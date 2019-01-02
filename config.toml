@@ -7,7 +7,7 @@ theme = "hugo-bootstrap"
 paginate = 3
 paginatePath = "blog"
 
-pygmentsUseClasses=true
+#pygmentsUseClasses=true
 
 [taxonomies]
   tag = "tags"
@@ -65,4 +65,4 @@ enableRobotsTXT = true
     # num_recent_posts = 5
 
 [permalinks]
-  post = "/:year/:month/:day/:title/"
+  blog = "/:year/:month/:day/:slug/"
