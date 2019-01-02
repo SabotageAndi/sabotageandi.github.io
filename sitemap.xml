@@ -3,13 +3,58 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://willich.io/posts/my-first-post/</loc>
-    <lastmod>2018-10-04T18:53:27+02:00</lastmod>
+    <loc>https://willich.io/2018/06/03/xamarin.forms-f-paket/</loc>
+    <lastmod>2018-06-03T00:00:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://willich.io/posts/2017-06-29-specflow-2.2-and-specflow&#43;-1.6-finally-released/</loc>
+    <loc>https://willich.io/2018/03/07/how-specflow-works-overview/</loc>
+    <lastmod>2018-03-07T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://willich.io/2018/03/04/net-core-global-tools-with-ui/</loc>
+    <lastmod>2018-03-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://willich.io/2018/02/23/where-is-my-presenter-mode/</loc>
+    <lastmod>2018-02-23T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://willich.io/2018/02/04/blog-post-to-my-talk-msbuild-101-was-passiert-wenn-ich-auf-build-klicke/</loc>
+    <lastmod>2018-02-04T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://willich.io/2018/01/19/1st-year-as-a-microsoft-mvp/</loc>
+    <lastmod>2018-01-19T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://willich.io/2017/10/12/multiple-projects-in-the-same-folder/</loc>
+    <lastmod>2017-10-12T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://willich.io/2017/09/10/uninstall-.net-core-sdks-on-macos/</loc>
+    <lastmod>2017-09-10T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://willich.io/2017/07/13/system-type-as-property-of-converter-in-uwp/</loc>
+    <lastmod>2017-07-13T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://willich.io/2017/06/29/specflow-2-2-and-specflow-1-6-finally-released/</loc>
     <lastmod>2017-06-29T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://willich.io/</loc>
+    <lastmod>2018-06-03T00:00:00+00:00</lastmod>
   </url>
   
   <url>
@@ -17,13 +62,13 @@
   </url>
   
   <url>
-    <loc>https://willich.io/categories/</loc>
+    <loc>https://willich.io/blog/</loc>
+    <lastmod>2018-06-03T00:00:00+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://willich.io/posts/</loc>
-    <lastmod>2018-10-04T18:53:27+02:00</lastmod>
+    <loc>https://willich.io/categories/</loc>
     <priority>0</priority>
   </url>
   
@@ -33,8 +78,7 @@
   </url>
   
   <url>
-    <loc>https://willich.io/</loc>
-    <lastmod>2018-10-04T18:53:27+02:00</lastmod>
+    <loc>https://willich.io/true/</loc>
     <priority>0</priority>
   </url>
   
