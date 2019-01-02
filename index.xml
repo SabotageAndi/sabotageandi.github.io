@@ -6,27 +6,114 @@
     <description>Recent content on Hi, I&#39;m Andreas</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 13 Jul 2017 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Sun, 03 Jun 2018 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="https://willich.io/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Xamarin.Forms &#43; F# &#43; Paket</title>
+      <link>https://willich.io/2018/06/03/xamarin.forms-f-paket/</link>
+      <pubDate>Sun, 03 Jun 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://willich.io/2018/06/03/xamarin.forms-f-paket/</guid>
+      <description>Yesterday I started a new Xamarin.Forms project in F# on my Mac. Because the NuGet experience isn’t the best in Visual Studio for Mac, I always use Paket for managing my dependencies.
+Normally I am always following the steps here and here. But this time, after I have done everything, the project didn’t compile anymore.
+After some time of fiddling with Paket (I am not the expert user of it) I found the solution.</description>
+    </item>
+    
+    <item>
+      <title>How SpecFlow works – Overview</title>
+      <link>https://willich.io/2018/03/07/how-specflow-works-overview/</link>
+      <pubDate>Wed, 07 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://willich.io/2018/03/07/how-specflow-works-overview/</guid>
+      <description>In preparation of continuing the work on .NET Core/Standard support for SpecFlow and recognising in talks at the MVP Summit, that it is not that simple to explain how SpecFlow works, I thought it would be good to start writing it done.
+So as starting ponts, let&amp;rsquo;s have a look at the normal workflow, when you write a new Scenario?
+ The user opens or creates a feature file, writes it Scenario in Gherkin and saves.</description>
+    </item>
+    
+    <item>
+      <title>.NET Core Global Tools with UI</title>
+      <link>https://willich.io/2018/03/04/net-core-global-tools-with-ui/</link>
+      <pubDate>Sun, 04 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://willich.io/2018/03/04/net-core-global-tools-with-ui/</guid>
+      <description>Sometimes after the .NET team announced that they will add global tools to .NET Core, I asked myself if it would be possible to combine them with Avalonia to make a global tool with an UI.
+For those who don&amp;rsquo;t know Avalonia, you should check it out. It&amp;rsquo;s an UI framework that uses XAML like WPF and Xamarin Forms and is implemented for .NET Framework and .NET Core. It runs on Windows, Linux and Mac OS.</description>
+    </item>
+    
+    <item>
+      <title>Where is my presenter mode?</title>
+      <link>https://willich.io/2018/02/23/where-is-my-presenter-mode/</link>
+      <pubDate>Fri, 23 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://willich.io/2018/02/23/where-is-my-presenter-mode/</guid>
+      <description>During my preparation for my latest meetup talk, I noticed that I wasn&amp;rsquo;t able to switch to presenter mode in Visual Studio. The Quick launch tasks were simply not there.
+What now? In the past they were part of the productivity power tools extension. This was installed, but no quick launch tasks for me. 🙁
+After some research together with the audience, we found the reason. The presenter mode quick launch tasks were moved to a separate extension and this was not installed.</description>
+    </item>
+    
+    <item>
+      <title>Blog post to my talk “MSBuild 101 – Was passiert wenn ich auf „Build“ klicke”</title>
+      <link>https://willich.io/2018/02/04/blog-post-to-my-talk-msbuild-101-was-passiert-wenn-ich-auf-build-klicke/</link>
+      <pubDate>Sun, 04 Feb 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://willich.io/2018/02/04/blog-post-to-my-talk-msbuild-101-was-passiert-wenn-ich-auf-build-klicke/</guid>
+      <description>Last Monday (30. January) a colleague and I gave a talk about the basics of MSBuild. So that also others can enjoy my explanations, I wrote this post.
+All examples can be found here:
+Classic Hello World &amp;lt;Project Sdk=&amp;quot;Microsoft.NET.Sdk&amp;quot;&amp;gt; &amp;lt;Target Name=&amp;quot;HelloWorld&amp;quot;&amp;gt; &amp;lt;Message Text=&amp;quot;Hello World!&amp;quot; /&amp;gt; &amp;lt;/Target&amp;gt; &amp;lt;/Project&amp;gt;  Command: msbuild %Filename%.csproj /t:HelloWorld
+That&amp;rsquo;s the classic &amp;ldquo;Hello World&amp;rdquo; as for every programming language. And yes, MSBuild looks like XML, but it&amp;rsquo;s a programming language.</description>
+    </item>
+    
+    <item>
+      <title>1st year as a Microsoft MVP</title>
+      <link>https://willich.io/2018/01/19/1st-year-as-a-microsoft-mvp/</link>
+      <pubDate>Fri, 19 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>https://willich.io/2018/01/19/1st-year-as-a-microsoft-mvp/</guid>
+      <description>A year ago I got out of nowhere following eMail:
+I was awarded as a Microsoft MVP in the &amp;ldquo;Visual Studio and Development Technologies&amp;rdquo; Category. How cool is that? And how did this happen?
+I had filled out a profile and entered my activities on https://mvp.microsoft.com/, but the feedback that I got months before the eMail, was that a little bit is missing and it needed a some more activities to become a MVP.</description>
+    </item>
+    
+    <item>
+      <title>Multiple projects in the same folder</title>
+      <link>https://willich.io/2017/10/12/multiple-projects-in-the-same-folder/</link>
+      <pubDate>Thu, 12 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://willich.io/2017/10/12/multiple-projects-in-the-same-folder/</guid>
+      <description>In SpecFlow+ we are supporting multiple different versions of SpecFlow (currently 1.9, 2.1 and 2.2) and so we have to test each version with the full set of our test suite. As we don&amp;rsquo;t want to copy a lot of code and then change some references/package version, I was looking if it is without much pain possible, that you have multiple projects/csprojs in one folder and produce so multiple assemblies. We are already having a solution with the old project system, but it involves a lot of linked files and manual editing of the project files.</description>
+    </item>
+    
+    <item>
+      <title>Uninstall .NET Core SDKs on macOS</title>
+      <link>https://willich.io/2017/09/10/uninstall-.net-core-sdks-on-macos/</link>
+      <pubDate>Sun, 10 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>https://willich.io/2017/09/10/uninstall-.net-core-sdks-on-macos/</guid>
+      <description>During checking for a build error on Mac OS X of the Gherkin parser, I wanted to uninstall all my installed .NET Core SDKs, to have a clean slate.
+In my search how to do this, I found this script in the .NET Core repo: https://github.com/dotnet/cli/blob/master/scripts/obtain/uninstall/dotnet-uninstall-pkgs.sh
+Steps to use:
+wget https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain/uninstall/dotnet-uninstall-pkgs.sh chmod +x dotnet-uninstall-pkgs.sh sudo ./dotnet-uninstall-pkgs.sh  After that, you have removed all .NET Core SDKs from your Mac and you can start from the beginning to install new ones.</description>
+    </item>
+    
+    <item>
       <title>System.Type as Property of Converter in UWP – unexplainable XamlParseException</title>
-      <link>https://willich.io/blog/2017-07-13-system.type-as-property-of-converter-in-uwp--unexplainable-xamlparseexception/</link>
+      <link>https://willich.io/2017/07/13/system-type-as-property-of-converter-in-uwp/</link>
       <pubDate>Thu, 13 Jul 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://willich.io/blog/2017-07-13-system.type-as-property-of-converter-in-uwp--unexplainable-xamlparseexception/</guid>
+      <guid>https://willich.io/2017/07/13/system-type-as-property-of-converter-in-uwp/</guid>
       <description>Two weeks ago in a project we had a XamlParseException when a special page was opened. Strange thing was, that we didn’t change anything of the XAML- Code, since the last working version. There were only some small changes in the code-behind of the page.
 The error message was following: Windows.UI.Xaml.Markup.XamlParseException: ‘The text associated with this error code could not be found. Failed to create a ‘UWPSystemTypeConverterTest.Converter.EnumTypeConverter’ from the text ‘enums:CustomEnum’.</description>
     </item>
     
     <item>
       <title>SpecFlow 2.2 and SpecFlow&#43; 1.6 finally released</title>
-      <link>https://willich.io/blog/2017-06-29-specflow-2.2-and-specflow&#43;-1.6-finally-released/</link>
+      <link>https://willich.io/2017/06/29/specflow-2-2-and-specflow-1-6-finally-released/</link>
       <pubDate>Thu, 29 Jun 2017 00:00:00 +0000</pubDate>
       
-      <guid>https://willich.io/blog/2017-06-29-specflow-2.2-and-specflow&#43;-1.6-finally-released/</guid>
+      <guid>https://willich.io/2017/06/29/specflow-2-2-and-specflow-1-6-finally-released/</guid>
       <description>Finally after 13 months, SpecFlow 2.2 and SpecFlow+ 1.6 (Runner and Excel) were finally released yesterday.
 Here are the official release notes: http://specflow.org/category/release-notes.
 Two changes make me very happy.
