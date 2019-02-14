@@ -66,3 +66,12 @@
 /* GenericTraceback */ .chroma .gt { color: #0044dd }
 /* GenericUnderline */ .chroma .gl { text-decoration: underline }
 /* TextWhitespace */ .chroma .w { color: #bbbbbb }
+table, th, td {
+    border-width: 1px;
+    border-color: black;
+    border-style: solid;
+}
+
+th, td {
+    padding: 10px;
+}

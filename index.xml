@@ -13,10 +13,10 @@
     
     <item>
       <title>Xamarin.Forms &#43; F# &#43; Paket</title>
-      <link>https://willich.io/2018/06/03/xamarin.forms-f-paket/</link>
+      <link>https://willich.io/2018/06/03/xamarin.forms-f#-paket/</link>
       <pubDate>Sun, 03 Jun 2018 00:00:00 +0000</pubDate>
       
-      <guid>https://willich.io/2018/06/03/xamarin.forms-f-paket/</guid>
+      <guid>https://willich.io/2018/06/03/xamarin.forms-f#-paket/</guid>
       <description>Yesterday I started a new Xamarin.Forms project in F# on my Mac. Because the NuGet experience isn’t the best in Visual Studio for Mac, I always use Paket for managing my dependencies.
 Normally I am always following the steps here and here. But this time, after I have done everything, the project didn’t compile anymore.
 After some time of fiddling with Paket (I am not the expert user of it) I found the solution.</description>
