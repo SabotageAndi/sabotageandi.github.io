@@ -90,7 +90,7 @@
     
     <div class="container">
       <div class="row">
-        <div class="col-12 col-lg-8 blog-main">
+        <div class="col-12 blog-main">
 
           
 
@@ -101,7 +101,870 @@
 
 
 
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2019/02/17/from-need-to-published-nuget-package-in-less-than-8-hours/">From Need to Published NuGet Package in Less Than 8 Hours</a>
+</h2>
 
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Feb 17, 2019
+    
+</div>
+
+        
+        
+    </header>
+    
+
+<p>I was trying to get SpecFlow to build under Mac OS and had some problems with an MSBuild target (<a href="https://github.com/techtalk/SpecFlow/blob/master/Tests/TechTalk.SpecFlow.Specs/.build/build.targets#L32">https://github.com/techtalk/SpecFlow/blob/master/Tests/TechTalk.SpecFlow.Specs/.build/build.targets#L32</a>).<br />
+We need to replace some text in a file with a value which we only can access during build. For that we used the <a href="https://docs.microsoft.com/en-us/visualstudio/msbuild/msbuild-roslyncodetaskfactory?view=vs-2017">RoslynCodeTaskFactory</a>. This has the benefit, of not having to write a whole MSBuild task. But I had problems that <code>msbuild</code> or <code>dotnet build</code> wasn&rsquo;t able to find the <code>Microsoft.Build.Tasks.Core.dll</code>.<br />
+So I decided to write a new MSBuild task anyway.<br />
+But this post is not about writing the n-th MSBuild task, but about that I was able to write it, create a NuGet package for it, have a continues build with automatic deployment to NuGet.org. And I was able to do it in less than 8 hours (and on a Mac).</p>
+
+<p>You can find the whole sources <a href="https://github.com/SabotageAndi/MSBuild.AdditionalTasks">here</a>.</p>
+
+<h2 id="writing-the-msbuild-task">Writing the MSBuild task</h2>
+
+<p>Writing a MSBuild task is not hard. You need to reference <code>Microsoft.Build.Framework</code> and <code>Microsoft.Build.Utilities.Core</code> in your project. In your class you have to implement the <code>Task</code> abstract class <a href="https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/src/MSBuild.AdditionalTasks/Tasks/ReplaceTextInFile/ReplaceTextInFileTask.cs#L8">https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/src/MSBuild.AdditionalTasks/Tasks/ReplaceTextInFile/ReplaceTextInFileTask.cs#L8</a>. In the <code>Execute</code>- method you implement your task.</p>
+
+<p>And done!</p>
+
+<h2 id="creating-a-nuget-package-for-the-msbuild-task-to-redistribute-it">Creating a NuGet package for the MSBuild task to redistribute it</h2>
+
+<p>Thanks to the sdk- style project system, for most of the time when you create a NuGet package, a <code>nuspec</code>- file is not needed anymore. Everything can be specified in the project file.
+Packaging a MSBuild task is a little bit different than normal libraries. You have to put the assembly into the <code>tasks</code> folder and not in the standard <code>lib</code> folder. And then you need additional MSBuild files to register your task into MSBuild (<a href="https://github.com/SabotageAndi/MSBuild.AdditionalTasks/tree/master/src/MSBuild.AdditionalTasks/build">https://github.com/SabotageAndi/MSBuild.AdditionalTasks/tree/master/src/MSBuild.AdditionalTasks/build</a>). Thanks to Nate McMaster who wrote a blog post about packaging MSBuild tasks (<a href="https://natemcmaster.com/blog/2017/07/05/msbuild-task-in-nuget/">https://natemcmaster.com/blog/2017/07/05/msbuild-task-in-nuget/</a>).</p>
+
+<p>What has changed since he published his article, is that NuGet.org now wants a license included in the package. For that you need to specify in which file the license is (<a href="https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/src/MSBuild.AdditionalTasks/MSBuild.AdditionalTasks.csproj#L22">https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/src/MSBuild.AdditionalTasks/MSBuild.AdditionalTasks.csproj#L22</a>) and package the license file into your package (<a href="https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/src/MSBuild.AdditionalTasks/MSBuild.AdditionalTasks.csproj#L35">https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/src/MSBuild.AdditionalTasks/MSBuild.AdditionalTasks.csproj#L35</a>).</p>
+
+<p>To make it easier in the build pipeline to put the generated NuGet package into the build artifacts, I configured the output folder for packages to be outside of the project (<a href="https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/src/MSBuild.AdditionalTasks/MSBuild.AdditionalTasks.csproj#L31">https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/src/MSBuild.AdditionalTasks/MSBuild.AdditionalTasks.csproj#L31</a>).
+This makes it also easier to use the generated package in a test/sample project.</p>
+
+<p>Additionally I enabled <code>GeneratePackageOnBuild</code> so that the NuGet package is generated everytime the project is build (<a href="https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/src/MSBuild.AdditionalTasks/MSBuild.AdditionalTasks.csproj#L30">https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/src/MSBuild.AdditionalTasks/MSBuild.AdditionalTasks.csproj#L30</a>).</p>
+
+<p>To check if everything was correct in the NuGet package, I uploaded it manually to NuGet.org. That&rsquo;s were I got the notice that I have to add the license into the package. ;-)</p>
+
+<h2 id="continue-build">Continue Build</h2>
+
+<p>I love Azure Pipelines. And since they provide 10 free unlimited hosted build agents for Open Source project (<a href="https://azure.microsoft.com/en-us/blog/announcing-azure-pipelines-with-unlimited-ci-cd-minutes-for-open-source/">https://azure.microsoft.com/en-us/blog/announcing-azure-pipelines-with-unlimited-ci-cd-minutes-for-open-source/</a>), it&rsquo;s better than before (limit to 300 min per month). And they have hosted build agents for Windows and Mac OS.</p>
+
+<p>You can use the web UI to define your build pipeline or you can do it per yaml (<a href="https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started-yaml?view=azure-devops">https://docs.microsoft.com/en-us/azure/devops/pipelines/get-started-yaml?view=azure-devops</a>).
+Yaml has the benefit, that you can define the same pipeline and run it as jobs on different agent pools.</p>
+
+<p>Azure Pipeline definition: <a href="https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/azure-pipelines.yml">https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/azure-pipelines.yml</a>
+Job definition: <a href="https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/build.yml">https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/build.yml</a></p>
+
+<p>Build status: <a href="https://sabotageandi.visualstudio.com/MSBuild.AdditionalTasks/_build?definitionId=6">https://sabotageandi.visualstudio.com/MSBuild.AdditionalTasks/_build?definitionId=6</a></p>
+
+<p>The part where I struggled the most was to find the right path for the <code>PublishBuildArtifact</code> task (<a href="https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/build.yml#L58">https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/build.yml#L58</a>). At the end the problem was, that I specified a file pattern. Looks like that doesn&rsquo;t work with the task.</p>
+
+<h2 id="deploy-it-to-nuget-org">Deploy it to NuGet.org</h2>
+
+<p>With now a working build pipeline, I created a new release pipeline that takes the artifact and uploads the nupkgs- files to NuGet.org.
+As of writing this article, only the UI is available to define release pipelines.</p>
+
+<h3 id="release-pipeline">Release pipeline</h3>
+
+<p><img src="/images/2019-02-17 Release Pipeline.png" alt="" /></p>
+
+<h3 id="release-pipeline-detail">Release pipeline detail</h3>
+
+<p><img src="/images/2019-02-17 Release Pipeline details.png" alt="" /></p>
+
+<p>The &ldquo;hardest&rdquo; part was to create the service connection with NuGet.org. For that, you need an API key for your account. The steps for that are documented <a href="https://docs.microsoft.com/en-us/nuget/create-packages/publish-a-package#create-api-keys">here</a>.</p>
+
+<p>When you have it, you can create a NuGet service connection in Azure Pipelines.</p>
+
+<p><img src="/images/2019-02-17 NuGet Service Connections.png" alt="" /></p>
+
+<p>This service reference has to be used in the NuGet task. And after specifing the correct path where the NuGet packages are (yes, again pathes are hard).</p>
+
+<p>And that&rsquo;s it. At the second run of the release pipeline, a new version of NuGet package was uploaded to NuGet.org. Yeah!</p>
+
+<h2 id="problems-on-the-way">Problems on the way</h2>
+
+<h3 id="building-on-different-platforms">Building on different platforms</h3>
+
+<p>I wanted to have one way to build the task on Windows and Mac OS. I choose PowerShell, because it is available on Mac OS and Windows.
+To build I used <code>dotnet build</code> and so I don&rsquo;t have to find <code>msbuild</code> on my system (MacOS: in PATH, Windows: search via vswhere.exe). But because I build the sample/test in the same script, the NuGet- package gets cached in the local package cache. So I need to delete the cached files before the build.</p>
+
+<p>Obvious dependend on the OS, there are different ways to get the folder. In this case, a simple check if an environment variable exists ($HOME for Mac OS)
+<a href="https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/build_and_tests.ps1#L7">https://github.com/SabotageAndi/MSBuild.AdditionalTasks/blob/master/build_and_tests.ps1#L7</a>.</p>
+
+<p>As we got the folder, removing it is easy, if you know PowerShell (I didn&rsquo;t, now I do a little bit more).</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>It&rsquo;s facinating how easy this stuff got in the last years. Some years ago doing this all was work of multiple days. Now I was able to do it in some hours. And the most part of the time I spend on the build PowerShell script.</p>
+
+<p>So I think I should learn PowerShell. :-)</p>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2018/06/03/xamarin.forms-f#-paket/">Xamarin.Forms + F# + Paket</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Jun 3, 2018
+    
+</div>
+
+        
+        
+    </header>
+    <p>Yesterday I started a new Xamarin.Forms project in F# on my Mac. Because the NuGet experience isn’t the best in Visual Studio for Mac, I always use Paket for managing my dependencies.</p>
+
+<p>Normally I am always following the steps <a href="https://fsprojects.github.io/Paket/paket-and-dotnet-cli.html">here</a> and <a href="https://fsprojects.github.io/Paket/convert-from-nuget-tutorial.html">here</a>. But this time, after I have done everything, the project didn’t compile anymore.</p>
+
+<p>After some time of fiddling with Paket (I am not the expert user of it) I found the solution. You have to add a framework restriction to the Xamarin.Forms and Xamarin.Android.FSharp.ResourceProvider entry.</p>
+
+<p>The reason is, that if you not add it, on Android Paket is using MonoAndroid1.0 as target framework and so the dependencies are resolved not correctly. I found this GitHub issue for this behaviour: <a href="https://github.com/fsprojects/Paket/issues/2762">https://github.com/fsprojects/Paket/issues/2762</a></p>
+
+<p>The complete paket.dependencies file looks like this:</p>
+
+<pre><code>source https://www.nuget.org/api/v2
+nuget FSharp.Core
+nuget Xamarin.Forms framework: MonoAndroid8.1,netstandard2.0,xamarinios
+nuget Xamarin.Android.FSharp.ResourceProvider framework:monoandroid8.1
+</code></pre>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2018/03/07/how-specflow-works-overview/">How SpecFlow works – Overview</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Mar 7, 2018
+    
+</div>
+
+        
+        
+    </header>
+    <p>In preparation of continuing the work on .NET Core/Standard support for SpecFlow and recognising in talks at the MVP Summit, that it is not that simple to explain how SpecFlow works, I thought it would be good to start writing it done.</p>
+
+<p>So as starting ponts, let&rsquo;s have a look at the normal workflow, when you write a new Scenario?</p>
+
+<ol>
+<li>The user opens or creates a feature file, writes it Scenario in Gherkin and saves.</li>
+<li>A code-behind file is generated, which contains code for a test class of the configured unit test provider. This could be SpecFlow+Runner, xUnit, NUnit, MsTest or MbUnit.</li>
+<li>The user selects the line and presses F12.</li>
+<li>A dialog opens, which contains a skeleton for a binding method for this sentence.</li>
+<li>The user adds the skeleton binding code to a new or existing binding class</li>
+<li>The user implements the binding. Probably with some helper methods from the TechTalk.SpecFlow.Assists namespace.</li>
+<li>The user compiles its project</li>
+<li>The user runs the tests</li>
+<li>The tests are hopefully green.</li>
+</ol>
+
+<p>That&rsquo;s a lot of steps to get from a scenario to a executed tests.</p>
+
+<p>And these are the parts that are involved in this:</p>
+
+<ul>
+<li>Generator
+
+<ul>
+<li>Code- Behind File generation</li>
+<li>Plugins</li>
+</ul></li>
+<li>Runtime
+
+<ul>
+<li>Binding lookup</li>
+<li>Assists</li>
+<li>Plugins</li>
+</ul></li>
+<li>Visual Studio Extension
+
+<ul>
+<li>Syntax Highlighting/IntelliSense</li>
+<li>Navigation</li>
+<li>Code- Behind Generation</li>
+<li>Skeleton Generation</li>
+<li>ItemTemplates</li>
+</ul></li>
+</ul>
+
+<p>More than you would think, or?</p>
+
+<p>Additionally SpecFlow has also a console application (specflow.exe), which also contains crucial functionality:</p>
+
+<ul>
+<li>SpecFlow.exe
+
+<ul>
+<li>generateAll Command</li>
+<li>MSBuild tasks</li>
+<li>Reports</li>
+</ul></li>
+</ul>
+
+<p>To make it easier to read for you (and to write for me), every major part will get it&rsquo;s own blog posts. So you don&rsquo;t have to wait until I am completely finished with everything. I will add links to the individual posts when they are ready.</p>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2018/03/04/net-core-global-tools-with-ui/">.NET Core Global Tools with UI</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Mar 4, 2018
+    
+</div>
+
+        
+        
+    </header>
+    <p>Sometimes after the .NET team announced that they will add global tools to .NET Core, I asked myself if it would be possible to combine them with <a href="http://avaloniaui.net/">Avalonia</a> to make a global tool with an UI.</p>
+
+<p>For those who don&rsquo;t know Avalonia, you should check it out. It&rsquo;s an UI framework that uses XAML like WPF and Xamarin Forms and is implemented for .NET Framework and .NET Core. It runs on Windows, Linux and Mac OS.</p>
+
+<p>Back to the global tools.</p>
+
+<p>TL;DR: You can use Avalonia together with global tools. Here is a Sample: <a href="https://github.com/SabotageAndi/LicenseActivatorPrototype">https://github.com/SabotageAndi/LicenseActivatorPrototype</a></p>
+
+<p>But what it&rsquo;s needed? Not much.</p>
+
+<p>You have to add the PackAsTool and the ToolCommandName property.
+PackAsTool marks the project as a tool for installing. ToolCommandName specify how the tool is called after installation.</p>
+
+<p>This sets all, that you only have to do a dotnet pack to generate a NuGet package for the global tool.</p>
+
+<p>After that, you can install it with a dotnet install tool -g Your_Tool_Name. If you have packages from additional sources than NuGet.org, you can add them via command line argument or have a NuGet.config. In my prototype I am using nightlies of Avalonia and so I need to configure their feed as an additional source. Additionally I configured a local source, where the generated NuGet package gets published. It is here: <a href="https://github.com/SabotageAndi/LicenseActivatorPrototype/blob/master/NuGet.config">https://github.com/SabotageAndi/LicenseActivatorPrototype/blob/master/NuGet.config</a></p>
+
+<p>I had one small problem, where I got an error during installation, that there would be a downgrade of the System.Net.Primitives packages happen and so the tool can not be installed. The fix was to reference the package in project directly.</p>
+
+<p>So what does this mean, that we could use Avalonia in a global tool?</p>
+
+<p>We are not limited to only command line global tools, but can also write rich UI applications. And we can simply deploy them with a simple command line call.</p>
+
+<p>I would call this cool. Let&rsquo;s see what we will make out of it.</p>
+
+<p>Thanks to Martin Ullrich (<a href="https://dasmulli.blog/2018/01/23/exploring-global-net-core-tools/">https://dasmulli.blog/2018/01/23/exploring-global-net-core-tools/</a>) and Nate McMaster (<a href="https://www.natemcmaster.com/blog/2018/02/02/dotnet-global-tool/">https://www.natemcmaster.com/blog/2018/02/02/dotnet-global-tool/</a>) for their blog posts about global tools.</p>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2018/02/23/where-is-my-presenter-mode/">Where is my presenter mode?</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Feb 23, 2018
+    
+</div>
+
+        
+        
+    </header>
+    <p>During my preparation for my latest meetup talk, I noticed that I wasn&rsquo;t able to switch to presenter mode in Visual Studio. The Quick launch tasks were simply not there.</p>
+
+<p>What now? In the past they were part of the <a href="https://marketplace.visualstudio.com/items?itemName=VisualStudioProductTeam.ProductivityPowerPack2017">productivity power tools</a> extension. This was installed, but no quick launch tasks for me. 🙁</p>
+
+<p>After some research together with the audience, we found the reason. The presenter mode quick launch tasks were moved to a <a href="https://marketplace.visualstudio.com/items?itemName=VisualStudioProductTeam.QuickLaunchTasks">separate extension</a> and this was not installed. The productivity power tools are now a meta extensions, that has dependencies on a lot of other extensions.</p>
+
+<p>So after installing the extension and restarting VS I had the presenter mode back. So if you are searching it sometime in the future, the extension is called <a href="https://marketplace.visualstudio.com/items?itemName=VisualStudioProductTeam.QuickLaunchTasks">Quick Launch Tasks</a>.</p>
+
+<p>PS: I am sure, that the extension was missing is due to my development setup, multiple dev machines (4 machines at 3 locations) and extension roaming. So no bad feeling against the extension developer for this.</p>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2018/02/04/blog-post-to-my-talk-msbuild-101-was-passiert-wenn-ich-auf-build-klicke/">Blog post to my talk “MSBuild 101 – Was passiert wenn ich auf „Build“ klicke”</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Feb 4, 2018
+    
+</div>
+
+        
+        
+    </header>
+    
+
+<p>Last Monday (30. January) a colleague and I gave a talk about the basics of MSBuild. So that also others can enjoy my explanations, I wrote this post.</p>
+
+<p>All examples can be found here:</p>
+
+<h1 id="classic-hello-world">Classic Hello World</h1>
+
+<pre><code class="language-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
+
+    &lt;Target Name=&quot;HelloWorld&quot;&gt;
+        &lt;Message Text=&quot;Hello World!&quot; /&gt;
+    &lt;/Target&gt;
+
+&lt;/Project&gt;
+</code></pre>
+
+<p>Command: msbuild %Filename%.csproj /t:HelloWorld</p>
+
+<p>That&rsquo;s the classic &ldquo;Hello World&rdquo; as for every programming language. And yes, MSBuild looks like XML, but it&rsquo;s a programming language. &ldquo;Target&rdquo; defines a &ldquo;method&rdquo;, which can call other targets and tasks. Tasks are functions that are defined in assemblies.</p>
+
+<p>With the /t parameter, you specific which target is executed. When you don&rsquo;t specify it, a default target is executed, but in this case, we want that the &ldquo;HelloWorld&rdquo; target is executed and print &ldquo;Hello World!&rdquo;.</p>
+
+<h1 id="variables">Variables</h1>
+
+<p>As functions/methods there are also variables in MSBuild. You define them in PropertyGroups.</p>
+
+<pre><code class="language-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
+
+    &lt;PropertyGroup&gt;
+        &lt;HelloText&gt;World&lt;/HelloText&gt;
+    &lt;/PropertyGroup&gt;
+
+    &lt;Target Name=&quot;HelloWorld&quot;&gt;
+        &lt;Message Text=&quot;Hello $(HelloText)!&quot; /&gt;
+    &lt;/Target&gt;
+
+&lt;/Project&gt;
+</code></pre>
+
+<p>You can access them with $(%VariableName%).</p>
+
+<h1 id="parameters">Parameters</h1>
+
+<p>To get some data from outside into your MSBuild script, you can pass parameters with /p and access them as other variables.</p>
+
+<pre><code class="language-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
+
+    &lt;Target Name=&quot;HelloWorld&quot;&gt;
+        &lt;Message Text=&quot;Hello $(HelloText)!&quot; /&gt;
+    &lt;/Target&gt;
+
+&lt;/Project&gt;
+</code></pre>
+
+<p>Command: msbuild HelloParameter.csproj /t:HelloWorld /p:HelloText=Internet</p>
+
+<h1 id="ifs-aka-conditions">Ifs aka Conditions</h1>
+
+<p>And as in other languages, there are also Ifs available. Here are they called Conditions and</p>
+
+<pre><code class="language-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
+
+    &lt;PropertyGroup&gt;
+        &lt;HelloText Condition=&quot;$(HelloText)==''&quot;&gt;World&lt;/HelloText&gt;
+    &lt;/PropertyGroup&gt;
+
+
+    &lt;Target Name=&quot;HelloWorld&quot;&gt;
+        &lt;Message Text=&quot;Hello $(HelloText)!&quot; /&gt;
+    &lt;/Target&gt;
+
+&lt;/Project&gt;
+</code></pre>
+
+<p>You can add the Condition element on nearly everything. It could be variables, whole property groups, targets or tasks.</p>
+
+<p>This example uses conditions to set the variable &ldquo;HelloText&rdquo; to a default value if it wasn&rsquo;t defined via parameter.</p>
+
+<h1 id="multiple-targets">multiple Targets</h1>
+
+<p>Who wants to write everything in a single method? Nobody. But nothing stops you to write more targets.</p>
+
+<pre><code class="language-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
+
+    &lt;Target Name=&quot;HelloWorld&quot;&gt;
+        &lt;CallTarget Targets=&quot;PrintHello&quot;/&gt;
+        &lt;CallTarget Targets=&quot;PrintWorld&quot;/&gt;
+        &lt;CallTarget Targets=&quot;PrintExclamationMark&quot;/&gt;        
+    &lt;/Target&gt;
+
+    &lt;Target Name=&quot;PrintHello&quot;&gt;
+        &lt;Message Text=&quot;Hello&quot; /&gt;
+    &lt;/Target&gt;
+
+    &lt;Target Name=&quot;PrintWorld&quot;&gt;
+        &lt;Message Text=&quot;World&quot; /&gt;
+    &lt;/Target&gt;
+
+    &lt;Target Name=&quot;PrintExclamationMark&quot;&gt;
+        &lt;Message Text=&quot;!&quot; /&gt;
+    &lt;/Target&gt;
+
+&lt;/Project&gt;
+</code></pre>
+
+<p>With the &ldquo;CallTarget&rdquo; task you can execute other targets.</p>
+
+<h1 id="events">&ldquo;Events&rdquo;</h1>
+
+<p>Sometimes you can not add a &ldquo;CallTarget&rdquo; to get your own code executed in MSBuild. For that there is a feature, that you can also trigger your targets before or after another target.</p>
+
+<pre><code class="language-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
+
+    &lt;Target Name=&quot;HelloWorld&quot;&gt;
+        &lt;Message Text=&quot;Hello World!&quot; /&gt;
+    &lt;/Target&gt;
+
+
+    &lt;Target Name=&quot;Before&quot; BeforeTargets=&quot;HelloWorld&quot;&gt;
+        &lt;Message Text=&quot;BeforeHelloWorld&quot; /&gt;        
+    &lt;/Target&gt;
+
+    &lt;Target Name=&quot;After&quot; AfterTargets=&quot;HelloWorld&quot;&gt;
+        &lt;Message Text=&quot;AfterHelloWorld&quot; /&gt;        
+    &lt;/Target&gt;
+
+&lt;/Project&gt;
+</code></pre>
+
+<p>With setting the Before/After- Targets elements you register your target to be executed before or after the target. Real nice feature to hang your targets into the existing lifecycle of compiling a project.</p>
+
+<h1 id="files">Files</h1>
+
+<p>Sometimes you need to execute a target for a list of files. This is possible with ItemGroups.</p>
+
+<pre><code class="language-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
+
+    &lt;ItemGroup&gt;
+        &lt;Files Include=&quot;*.*&quot; /&gt;
+    &lt;/ItemGroup&gt;
+
+    &lt;Target Name=&quot;HelloWorld&quot;
+            Inputs=&quot;@(Files)&quot;
+            Outputs=&quot;%(Identity).Dummy&quot;&gt;
+        &lt;Message Text=&quot;@(Files)&quot; /&gt;
+    &lt;/Target&gt;
+   
+&lt;/Project&gt;
+</code></pre>
+
+<p>With ItemGroups you can define a variable that holds a list of files. You can include and exclude to this variable with additional entries in the ItemGroup.</p>
+
+<p>To get a target executed per entry in a file variable, you have to use the Inputs and Outputs attributes. In difference to variables, you have to use @(…) and not $(…).
+You have to set the Outputs attribute if you set the Inputs attribute. In this case, we can set it to %(Identity).Dummy, because we generate no output files.</p>
+
+<h1 id="the-end-of-my-part">The end of my part</h1>
+
+<p>So that was my part of the talk. My colleague Raoul Holzer continued with a little bit more advanced stuff. His examples can be found here: <a href="https://github.com/RaoulHolzer/MSBuild201">https://github.com/RaoulHolzer/MSBuild201</a>
+And as soon he has written his blog post, I will link it here.</p>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2018/01/19/1st-year-as-a-microsoft-mvp/">1st year as a Microsoft MVP</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Jan 19, 2018
+    
+</div>
+
+        
+        
+    </header>
+    <p>A year ago I got out of nowhere following eMail:</p>
+
+<p><img src="/images/2018-01-19-MVP.png" alt="mvp mail screenshot" /></p>
+
+<p>I was awarded as a Microsoft MVP in the &ldquo;Visual Studio and Development Technologies&rdquo; Category. How cool is that? And how did this happen?</p>
+
+<p>I had filled out a profile and entered my activities on <a href="https://mvp.microsoft.com/,">https://mvp.microsoft.com/,</a> but the feedback that I got months before the eMail, was that a little bit is missing and it needed a some more activities to become a MVP. But as it looks now, it was still enough. 😉</p>
+
+<p>So what did I do now in the last year as a MVP?</p>
+
+<p>First I continued my work on SpecFlow (<a href="http://www.specflow.org">http://www.specflow.org</a>; <a href="https://www.github.com/techtalk/SpecFlow">https://www.github.com/techtalk/SpecFlow</a>) not only in my dayjob, but also in my spare time.</p>
+
+<p>Motivated through the award, I wanted to give more talks and bring the .NET community in Vienna more together. Together with my colleague Raoul Holzer, we did together following talks and events in the last 12 months:</p>
+
+<ul>
+<li>Serverless mit Azure Functions – <a href="https://www.meetup.com/dotnet-austria/events/237518962/">https://www.meetup.com/dotnet-austria/events/237518962/</a></li>
+<li>Neue Funtionen von VS2017 – <a href="https://www.meetup.com/dotnet-austria/events/238491273/">https://www.meetup.com/dotnet-austria/events/238491273/</a></li>
+<li>Xamarin Dev Days 2017 – <a href="https://www.meetup.com/Visual-Studio-User-Group-Wien/events/238287537/">https://www.meetup.com/Visual-Studio-User-Group-Wien/events/238287537/</a></li>
+<li>.NET Conf Public Viewing  – <a href="https://www.meetup.com/preview/dotnet-austria/events/243200845">https://www.meetup.com/preview/dotnet-austria/events/243200845</a></li>
+<li>.NET Standard – Was ist das und wozu brauche ich es? – <a href="https://www.meetup.com/dotnet-austria/events/243847685/">https://www.meetup.com/dotnet-austria/events/243847685/</a>﻿</li>
+</ul>
+
+<p>And we have already planned some for the future:</p>
+
+<ul>
+<li>MSBuild 101 – Was passiert wenn ich auf „Build“ klicke – <a href="https://www.meetup.com/dotnet-austria/events/246014952/">https://www.meetup.com/dotnet-austria/events/246014952/</a>﻿</li>
+<li>Neues Projectsystem – was bringt mir das neue CSProj Format – <a href="https://www.meetup.com/dotnet-austria/events/246015220/">https://www.meetup.com/dotnet-austria/events/246015220/</a>﻿</li>
+<li>Building Bridges: F# for C# Developers – <a href="https://www.meetup.com/FSharp-Vienna/events/245893317/">https://www.meetup.com/FSharp-Vienna/events/245893317/</a></li>
+</ul>
+
+<p>Since the middle of December I am now also Co- Organizer of the .NET Community Austria meetup group and the F# |&gt; Vienna meetup group and help Jörg and Andi with organising the meetups.</p>
+
+<p>I have to thank my company TechTalk for supporting the meetups with a location, drinks and food.</p>
+
+<p>Ok, that was the &ldquo;active&rdquo; stuff, that happened in the last year. But what happened else?</p>
+
+<p>You get some really nice benefits when you are being a MVP and I really enjoy them. Some of them are from Microsoft, some are from other companies.
+So you get an Office 365 subscription and a Visual Studio Subscription. From JetBrains you get a Resharper and Rider license. That makes developing really easy.</p>
+
+<p>At the end of May/begin of June there was the MVP Community Connect in Madrid, which was really fun. There I had the change to meet some other MVPs from Austria, Spain, Portugal and Italy.</p>
+
+<p>But the coolest benefit of being a MVP is the MVP Global Summit in Redmond where all MVPs of the world get together for some days and are able to get in touch with the product groups at Microsoft. As this will be my first Summit, I am really excited to attend it.</p>
+
+<p>So if you are doing community work in the Microsoft technology stack or working on Open Source projects that has anything to do with Microsoft, go and nominate yourself for the MVP.</p>
+
+<p>Hope to see you then at the next MVP Global Summit!</p>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2017/10/12/multiple-projects-in-the-same-folder/">Multiple projects in the same folder</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Oct 12, 2017
+    
+</div>
+
+        
+        
+    </header>
+    <p>In SpecFlow+ we are supporting multiple different versions of SpecFlow (currently 1.9, 2.1 and 2.2) and so we have to test each version with the full set of our test suite.
+As we don&rsquo;t want to copy a lot of code and then change some references/package version, I was looking if it is without much pain possible, that you have multiple projects/csprojs in one folder and produce so multiple assemblies.
+We are already having a solution with the old project system, but it involves a lot of  linked files and manual editing of the project files. So with the new project system it was time to look at this again.</p>
+
+<p>And after some work I had a solution to achieve this with the new csproj format. Here it is:</p>
+
+<pre><code class="language-xml">&lt;Project&gt;
+    &lt;PropertyGroup&gt;
+        &lt;BaseIntermediateOutputPath&gt;obj\$(MSBuildProjectName)&lt;/BaseIntermediateOutputPath&gt;
+    &lt;/PropertyGroup&gt;
+    
+    &lt;Import Project=&quot;Sdk.props&quot; Sdk=&quot;Microsoft.NET.Sdk&quot;/&gt;
+
+    &lt;PropertyGroup&gt;
+        &lt;TargetFramework&gt;netstandard2.0&lt;/TargetFramework&gt;
+        &lt;OutputPath&gt;bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)&lt;/OutputPath&gt;
+    &lt;/PropertyGroup&gt;
+
+    &lt;Import Project=&quot;Sdk.targets&quot; Sdk=&quot;Microsoft.NET.Sdk&quot;/&gt;
+
+    &lt;ItemGroup&gt;
+        &lt;Compile Remove=&quot;obj\\**\*&quot;/&gt;
+        &lt;Compile Include=&quot;obj\$(MSBuildProjectName)\**\$(MSBuildProjectName).AssemblyInfo.cs&quot;/&gt;
+    &lt;/ItemGroup&gt;
+&lt;/Project&gt;
+</code></pre>
+
+<p>So what does it in detail?</p>
+
+<pre><code class="language-xml">&lt;Project&gt;
+</code></pre>
+
+<p>Yes, there is no Sdk attribute defined. How does this work?</p>
+
+<pre><code class="language-xml">&lt;PropertyGroup&gt;
+    &lt;BaseIntermediateOutputPath&gt;obj\$(MSBuildProjectName)&lt;/BaseIntermediateOutputPath&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+
+<p>We are adjusting the BaseIntermediateOutputPath, so that each project has it&rsquo;s own and don&rsquo;t replace each others file. This is also the reason, why we have no Sdk attribute set. This property has to be set before the Sdk.props file is evaluated.</p>
+
+<pre><code class="language-xml">&lt;Import Project=&quot;Sdk.props&quot; Sdk=&quot;Microsoft.NET.Sdk&quot;/&gt;
+</code></pre>
+
+<p>So, finally import the first part of the Sdk.</p>
+
+<pre><code class="language-xml">&lt;PropertyGroup&gt;
+    &lt;TargetFramework&gt;netstandard2.0&lt;/TargetFramework&gt;
+    &lt;OutputPath&gt;bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)&lt;/OutputPath&gt;
+&lt;/PropertyGroup&gt;
+</code></pre>
+
+<p>The TargetFramework property is well known. Nothing to add about this here.
+The OutputPath property is the location where the finished assemblies are copied. As BaseIntermediateOutputPath it has to be adjusted, so that each project has it&rsquo;s own folder.</p>
+
+<pre><code class="language-xml">&lt;Import Project=&quot;Sdk.targets&quot; Sdk=&quot;Microsoft.NET.Sdk&quot;/&gt;
+</code></pre>
+
+<p>And now the second and last part of the Sdk is imported.</p>
+
+<pre><code class="language-xml">&lt;ItemGroup&gt;
+    &lt;Compile Remove=&quot;obj\\**\*&quot;/&gt;
+    &lt;Compile Include=&quot;obj\$(MSBuildProjectName)\**\$(MSBuildProjectName).AssemblyInfo.cs&quot;/&gt;
+&lt;/ItemGroup&gt;
+</code></pre>
+
+<p>This is one of the stranges parts of the file. The reason for this is, that during build the version infos from the csproj are written to an *.AssemblyInfo.cs file in the obj folder. Combined with the globbing in the new format, MSBuild now finds multiple *.AssemblyInfo.cs files (one for each project).
+So we have to remove the whole obj subtree from the compiler and readd the AssemblyInfo.cs for our project to get the version infos into the assembly.</p>
+
+<p>Everything clear now? 😉
+And the best, Visual Studio 2017 can handle this files without problems.</p>
+
+<p>You can find a complete example with two projects here: <a href="https://github.com/SabotageAndi/MultipleProjecsInSameFolder">https://github.com/SabotageAndi/MultipleProjecsInSameFolder</a></p>
+
+<p>Conclusion: I have to say, I am very happy with the new project system. Something like this wouldn&rsquo;t be possible with the old one (or it would be a lot more painful).
+Let&rsquo;s see what nice hacks are also possible in the future.</p>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2017/09/10/uninstall-.net-core-sdks-on-macos/">Uninstall .NET Core SDKs on macOS</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Sep 10, 2017
+    
+</div>
+
+        
+        
+    </header>
+    <p>During checking for a <a href="https://github.com/cucumber/gherkin-dotnet/pull/6">build error</a> on Mac OS X of the Gherkin parser, I wanted to uninstall all my installed .NET Core SDKs, to have a clean slate.</p>
+
+<p>In my search how to do this, I found this script in the .NET Core repo: <a href="https://github.com/dotnet/cli/blob/master/scripts/obtain/uninstall/dotnet-uninstall-pkgs.sh">https://github.com/dotnet/cli/blob/master/scripts/obtain/uninstall/dotnet-uninstall-pkgs.sh</a></p>
+
+<p>Steps to use:</p>
+
+<pre><code class="language-bash">wget https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain/uninstall/dotnet-uninstall-pkgs.sh
+chmod +x dotnet-uninstall-pkgs.sh
+sudo ./dotnet-uninstall-pkgs.sh
+</code></pre>
+
+<p>After that, you have removed all .NET Core SDKs from your Mac and you can start from the beginning to install new ones. 😉</p>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2017/07/13/system-type-as-property-of-converter-in-uwp/">System.Type as Property of Converter in UWP – unexplainable XamlParseException</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Jul 13, 2017
+    
+</div>
+
+        
+        
+    </header>
+    <p>Two weeks ago in a project we had a XamlParseException when a special page was opened. Strange thing was, that we didn’t change anything of the XAML- Code, since the last working version. There were only some small changes in the code-behind of the page.</p>
+
+<p>The error message was following:
+Windows.UI.Xaml.Markup.XamlParseException: ‘The text associated with this error code could not be found. Failed to create a ‘UWPSystemTypeConverterTest.Converter.EnumTypeConverter’ from the text ‘enums:CustomEnum’. [Line: 14 Position: 56]’</p>
+
+<p>Here is the code that produces this error.
+Complete project can be found on <a href="https://github.com/SabotageAndi/UWPSystemTypeConverterTest">https://github.com/SabotageAndi/UWPSystemTypeConverterTest</a></p>
+
+<p>shortened XAML Page:</p>
+
+<pre><code class="language-xml">&lt;Page
+    x:Class=&quot;UWPSystemTypeConverterTest.MainPage&quot;
+    xmlns=&quot;http://schemas.microsoft.com/winfx/2006/xaml/presentation&quot;
+    xmlns:x=&quot;http://schemas.microsoft.com/winfx/2006/xaml&quot;
+    xmlns:d=&quot;http://schemas.microsoft.com/expression/blend/2008&quot;
+    xmlns:mc=&quot;http://schemas.openxmlformats.org/markup-compatibility/2006&quot;
+    xmlns:converter=&quot;using:UWPSystemTypeConverterTest.Converter&quot;
+    xmlns:enums=&quot;using:UWPSystemTypeConverterTest.Enum&quot;
+    mc:Ignorable=&quot;d&quot;&gt;
+    &lt;Page.Resources&gt;
+        &lt;converter:EnumTypeConverter x:Key=&quot;Converter&quot; TypeToDisplay=&quot;enums:CustomEnum&quot; /&gt;
+    &lt;/Page.Resources&gt;
+    &lt;Grid Background=&quot;{ThemeResource ApplicationPageBackgroundThemeBrush}&quot;&gt;
+        &lt;TextBlock Text=&quot;{Binding Converter={StaticResource Converter}}&quot; /&gt;
+    &lt;/Grid&gt;
+&lt;/Page&gt;
+</code></pre>
+
+<p>Converter:</p>
+
+<pre><code class="language-csharp">internal class EnumTypeConverter : IValueConverter
+{
+    public Type TypeToDisplay { get; set; }
+    public object Convert(object value, Type targetType, object parameter, string language)
+    {
+        return TypeToDisplay?.FullName;
+    }
+    public object ConvertBack(object value, Type targetType, object parameter, string language)
+    {
+        throw new NotImplementedException();
+    }
+}
+</code></pre>
+
+<p>The interesting thing was, when we added a public property of the enum to the code-behind of the XAML page, it worked.</p>
+
+<p>Code- Behind:</p>
+
+<pre><code class="language-csharp">public sealed partial class MainPage : Page
+{
+        public CustomEnum WithThisPropertyTheAppWorks { get; set; }
+        public MainPage()
+        {
+            InitializeComponent();
+            this.DataContext = this;
+        }
+}
+</code></pre>
+
+<p>Reason why it worked:
+After a StackOverflow post and some mails on a MVP mailing lists, I got an answer for the strange behaviour.
+The XAML compiler and the runtime don&rsquo;t support System.Type- typed properties. So the needed metadata is not generated and the runtime can not convert the string to the type.</p>
+
+<p>But because of the public properties on the code-behind, the compiler generates the needed metadata now. I am not that happy with the work around, but it is better than other solutions (e.g. a string property with the fullname to the type).</p>
+
+<p>I hope that in a future version of the UWP Xaml Compiler and runtime this will be addressed and will be no more issue.
+But up to now, you know how to fix the error if you encounter it.</p>
+
+</article>
+
+    
+
+
+
+
+
+<nav class="blog-pagination">
+    <ul class="pagination justify-content-center">
+        
+        <li class="page-item">
+            <a class="page-link" href="/blog/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+        </li>
+        
+        <li class="page-item disabled">
+            <a class="page-link" href="" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        </li>
+        
+        
+            
+            
+            
+            
+                
+                
+            
+            
+                <li class="page-item active">
+                    <a class="page-link" href="/blog/">1</a>
+                </li>
+            
+        
+            
+            
+            
+            
+                
+                
+            
+            
+                <li class="page-item ">
+                    <a class="page-link" href="/blog/blog/2/">2</a>
+                </li>
+            
+        
+        <li class="page-item ">
+            <a class="page-link" href="/blog/blog/2/" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        </li>
+        
+            <li class="page-item">
+                <a class="page-link" href="/blog/blog/2/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+            </li>
+        
+    </ul>
+</nav>
 
 
 
@@ -135,7 +998,7 @@
 
 
 
-<footer class="blog-footer w-100 fixed-bottom">
+<footer class="blog-footer w-100">
     <nav class="navbar navbar-light bg-light">
         <p class="w-100 text-center">Disclaimer: The opinions expressed herein are my own personal opinions and do not represent my employer’s view in any way.</p>
         <p class="w-100 text-center">Hugo template made with ❤ by <a href="https://github.com/Xzya">Xzya</a>, inspired by <a href="https://github.com/alanorth/hugo-theme-bootstrap4-blog">hugo-theme-bootstrap4-blog</a></p>

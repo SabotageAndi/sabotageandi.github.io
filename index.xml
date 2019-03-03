@@ -131,13 +131,90 @@ The first is the removal of the MSBuild dependency. This was always a pain, as M
     </item>
     
     <item>
-      <title></title>
-      <link>https://willich.io/about/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <title>Using SpecFlow&#43;Runners Parallelization Features</title>
+      <link>https://willich.io/2016/04/08/using-specflow-runners-parallelization-features/</link>
+      <pubDate>Fri, 08 Apr 2016 00:00:00 +0000</pubDate>
       
-      <guid>https://willich.io/about/</guid>
-      <description>About My name is Andreas Willich. I&amp;rsquo;m a software developer and hobby speaker and I am working at TechTalk in Vienna, Austria, but this blog, its content and opinions are my own.
-I have the feeling that every week I have at least one new thing learned or I combined some information to get something new out of them. So I will write about this daily .NET developing challenges that I encounter.</description>
+      <guid>https://willich.io/2016/04/08/using-specflow-runners-parallelization-features/</guid>
+      <description>To start a parallel test run, you simply need to change the testThreadCount property in your srProfile to a number higher than 1. How your tests are executed then depends on the testThreadIsolation property.
+The upcoming release of SpecFlow+Runner 1.4 adds an additional mode (SharedAppDomain), so I thought it time to explain this new option and the two existing ones (this option is already available in the pre-release version of 1.</description>
+    </item>
+    
+    <item>
+      <title>Impressions of using F# (with a little bit of Xamarin.Forms)</title>
+      <link>https://willich.io/2016/01/06/impressions-of-using-f#-with-a-little-bit-of-xamarin.forms/</link>
+      <pubDate>Wed, 06 Jan 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://willich.io/2016/01/06/impressions-of-using-f#-with-a-little-bit-of-xamarin.forms/</guid>
+      <description>In the last days I completed the first version of FFRAB-Mobile (see here). I used F# and Xamarin.Forms to gain more experience in a bigger project than a simple example app. You can find the sources here: https://github.com/SabotageAndi/ffrab-mobile
+Here are my impressions:
+Writing stateless could be hard, but it is worth the trouble Coming from a C# background, now writing code that is near complete stateless is new and unusual.</description>
+    </item>
+    
+    <item>
+      <title>Tips for starting develop in F# in Atom</title>
+      <link>https://willich.io/2016/01/04/tips-for-starting-develop-in-f#-in-atom/</link>
+      <pubDate>Mon, 04 Jan 2016 00:00:00 +0000</pubDate>
+      
+      <guid>https://willich.io/2016/01/04/tips-for-starting-develop-in-f#-in-atom/</guid>
+      <description>This blog post is outdated! Use VS Code and Ionide.
+After some days working with Atom to write in F# code, here are some tips:
+Read the manual and use the ionide-installer package 😉 On my first try I installed some ionide packages and so some features where missing. So really read the manual and use the ionide-installer package.
+On Mac OS X – use the Mono package and not the one from Homebrew When you are using the Homebrew version, Ionide can not spawn the background service for the autocompletion.</description>
+    </item>
+    
+    <item>
+      <title>Using NodaTime in SQLite.Net</title>
+      <link>https://willich.io/2015/12/30/using-nodatime-in-sqlite.net/</link>
+      <pubDate>Wed, 30 Dec 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://willich.io/2015/12/30/using-nodatime-in-sqlite.net/</guid>
+      <description>For a project I wanted to try out NodaTime, because of its nice handling with timezones. In this project I have also to save the values into a SQLite database and for that I normally use SQLite.net for that. Normally SQlite.net does not know how to handle the NodaTime types, but there are 2 places to add your own support for types.
+ExtraTypeMapping You can specific for your types which SQLite type it should be.</description>
+    </item>
+    
+    <item>
+      <title>On the Bleeding Edge – Akka.Net &#43; Suave</title>
+      <link>https://willich.io/2015/07/03/on-the-bleeding-edge-akka.net-suave/</link>
+      <pubDate>Fri, 03 Jul 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://willich.io/2015/07/03/on-the-bleeding-edge-akka.net-suave/</guid>
+      <description>So after playing with Suave.io, I wanted to add some new bleeding edge stuff to it. 😉 And run it on a beta environment, the DNX 🙂
+First, the complete source of it is here: https://github.com/SabotageAndi/SuaveAkkaCore
+Thanks to Alxandr there is F# support for the DNX: https://github.com/YoloDev/YoloDev.Dnx.FSharp
+So here is a quick go through of the code to get the stuff working:
+1. Add needed NuGet feeds YoloDev: https://www.myget.org/F/yolodev/api/v2″ AspNetVNext: https://www.</description>
+    </item>
+    
+    <item>
+      <title>Playing With AngularJS and Suave</title>
+      <link>https://willich.io/2015/05/31/playing-with-angularjs-and-suave/</link>
+      <pubDate>Sun, 31 May 2015 00:00:00 +0000</pubDate>
+      
+      <guid>https://willich.io/2015/05/31/playing-with-angularjs-and-suave/</guid>
+      <description>After I found Suave.IO (lightweight HTTP Server in F#) I wanted to try it out. As I also wanted to play with AngularJS (I know I am a little bit late, but normally I get out of the way of web development). So why not combine both and create a small webserver that hosts the web app and the webservices.
+As example for the AngularJS app, I used the PhoneCat Tutorial App from AngularJS.</description>
+    </item>
+    
+    <item>
+      <title>F# Raw SQL Access</title>
+      <link>https://willich.io/2014/09/03/f#-raw-sql-access/</link>
+      <pubDate>Wed, 03 Sep 2014 19:53:26 +0100</pubDate>
+      
+      <guid>https://willich.io/2014/09/03/f#-raw-sql-access/</guid>
+      <description>With my start in working with F#, I came to the point to access a database. When you read my last post, you know that an ORM was out of question. What me really surprised at the end, was that the code is much less than every other DB access I wrote.
+So how does it look?
+The general idea was, to first create a record that holds the SQL statement and the parameters, that gets then executed.</description>
+    </item>
+    
+    <item>
+      <title>No More ORM</title>
+      <link>https://willich.io/2014/08/28/no-more-orm/</link>
+      <pubDate>Thu, 28 Aug 2014 20:00:53 +0100</pubDate>
+      
+      <guid>https://willich.io/2014/08/28/no-more-orm/</guid>
+      <description>After working some years with different OR- Mappers (NHibernate, Entity Framework, proprietary ones, …) to build a lot of line of business applications, I came to the conclusion to trash them.
+So how did I come to this conclusion? Yes, ORMs make it on the first look easy to access your database and query them. That is it all what you get. But you also get some problems, that were not there before.</description>
     </item>
     
   </channel>

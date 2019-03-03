@@ -1,0 +1,1163 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<meta property="og:title" content="Blogs" />
+<meta property="og:description" content="" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://willich.io/blog/" />
+
+<meta property="og:updated_time" content="2017-06-29T00:00:00&#43;00:00"/>
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Blogs"/>
+<meta name="twitter:description" content=""/>
+
+
+
+    <link rel="canonical" href="https://willich.io/blog/">
+
+    <title>
+      
+        Blogs | Hi, I&#39;m Andreas
+      
+    </title>
+
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://willich.io/css/style.css" rel="stylesheet">
+
+    
+    <link href="https://willich.io/blog/index.xml" rel="alternate" type="application/rss+xml" title="Hi, I&#39;m Andreas" />
+    
+
+    
+
+    
+  </head>
+  <body>
+    
+      
+
+<header class="blog-header">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="/">
+            Hi, I&#39;m Andreas
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/">Home</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/about/">About</a>
+                    
+                </li>
+                
+                <li class="nav-item active">
+                    
+                        <a class="nav-link" href="/blog/">Blog</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/speaking/">Speaking</a>
+                    
+                </li>
+                
+            </ul>
+            
+        </div>
+    </nav>
+</header>
+
+    
+
+    
+    <div class="container">
+      <div class="row">
+        <div class="col-12 blog-main">
+
+          
+
+
+
+
+
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2017/06/29/specflow-2-2-and-specflow-1-6-finally-released/">SpecFlow 2.2 and SpecFlow+ 1.6 finally released</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Jun 29, 2017
+    
+</div>
+
+        
+        
+    </header>
+    <p>Finally after 13 months, SpecFlow 2.2 and SpecFlow+ 1.6 (Runner and Excel) were finally released yesterday.<br />
+Here are the official release notes: <a href="http://specflow.org/category/release-notes">http://specflow.org/category/release-notes</a>.</p>
+
+<p>Two changes make me very happy.</p>
+
+<p>The first is the removal of the MSBuild dependency. This was always a pain, as MSBuild sometimes used a cached version of your current project which was not actual. So if you added files to your project, it could be that the code-behind-file generator does not know about it.
+Especially in SpecFlow+Excel was this often a reason for problems.</p>
+
+<p>The second is, that you can get now the FeatureContext as parameter of your Before/After- Feature hooks. With that, you do not need any more FeatureContext.Current (which has limitation in parallel execution scenarios).</p>
+
+<p>I am also very happy, that finally got time to add support for the XUnit ITestOutputHelper (<a href="https://github.com/techtalk/SpecFlow/pull/874">https://github.com/techtalk/SpecFlow/pull/874</a>). Thanks to Pushkar Apte for it!</p>
+
+<p>So, lets start work on the next release. Will it be 2.3 or 3.0? Lets see what happens. 😉</p>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2016/04/08/using-specflow-runners-parallelization-features/">Using SpecFlow+Runners Parallelization Features</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Apr 8, 2016
+    
+</div>
+
+        
+        
+    </header>
+    
+
+<p>To start a parallel test run, you simply need to change the testThreadCount property in your srProfile to a number higher than 1. How your tests are executed then depends on the testThreadIsolation property.</p>
+
+<p>The upcoming release of SpecFlow+Runner 1.4 adds an additional mode (SharedAppDomain), so I thought it time to explain this new option and the two existing ones (this option is already available in the pre-release version of 1.4 on GitHub).</p>
+
+<p>The three supported modes are now:</p>
+
+<ul>
+<li>AppDomain</li>
+<li>Process</li>
+<li>SharedAppDomain (new)</li>
+</ul>
+
+<h2 id="appdomain">AppDomain</h2>
+
+<p>This is the default mode. Each test thread is executed in a separate AppDomain. These AppDomains are created at the beginning of the test run, and are reused for the rest of the test run.</p>
+
+<h3 id="pros">Pros</h3>
+
+<p>Executed tests are isolated by the AppDomain border, so you do not have problems with static data.</p>
+
+<h3 id="cons">Cons</h3>
+
+<p>Limited when you have shared data on a process level (e.g. SQLite in-memory dbs)</p>
+
+<h2 id="process">Process</h2>
+
+<p>This mode has been supported since at least version 1.2 (I don’t know the exact version). A separate executor process is created for each test thread and is used to execute the tests. This is necessary if your application contains entities that exists once per process, e.g.  SQLite’s in-memory database. These processes are started at the beginning of the test run, and are reused for the rest of the test run.</p>
+
+<p>This mode is also used if you run your tests using the .NET 2.0 framework or for a different processor architecture.</p>
+
+<p>To keep your test run short, I would recommend settings testThreadCount to (CPU Cores – 1). The remaining core is then kept free for the actual test runner process to manage the other executor processes.</p>
+
+<h3 id="pros-1">Pros</h3>
+
+<p>Completely process-based separation of executed tests</p>
+
+<h3 id="cons-1">Cons</h3>
+
+<p>Slower due to the additional cost of starting the test execution processes and inter-process communication</p>
+
+<h2 id="sharedappdomain">SharedAppDomain</h2>
+
+<p>This new mode takes advantage of the new parallelization support in SpecFlow 2.0, and executes all tests in the same AppDomain. This makes it very fast, but the trade-off is that you lose the isolation between the currently executed tests. However if you have tests that do not require isolation, this is the fastest way to execute them.</p>
+
+<p>When using this mode, you can set testThreadCount to really high numbers and still have fast test runs.</p>
+
+<h3 id="pros-2">Pros</h3>
+
+<p>Very fast</p>
+
+<h3 id="cons-2">Cons</h3>
+
+<p>No isolation between currently executed tests</p>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2016/01/06/impressions-of-using-f#-with-a-little-bit-of-xamarin.forms/">Impressions of using F# (with a little bit of Xamarin.Forms)</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Jan 6, 2016
+    
+</div>
+
+        
+        
+    </header>
+    
+
+<p>In the last days I completed the first version of FFRAB-Mobile (see here). I used F# and Xamarin.Forms to gain more experience in a bigger project than a simple example app. You can find the sources here: <a href="https://github.com/SabotageAndi/ffrab-mobile">https://github.com/SabotageAndi/ffrab-mobile</a></p>
+
+<p>Here are my impressions:</p>
+
+<h2 id="writing-stateless-could-be-hard-but-it-is-worth-the-trouble">Writing stateless could be hard, but it is worth the trouble</h2>
+
+<p>Coming from a C# background, now writing code that is near complete stateless is new and unusual. So the first code I wrote was a lot of object oriented stuff with too much access to shared state. Especially the access to the database connection was at the beginning a little bit painful.</p>
+
+<p>But after some refactoring it got more and more in a functional style. At least I hope so.</p>
+
+<p>Before refactoring:</p>
+
+<p><a href="https://github.com/SabotageAndi/ffrab-mobile/blob/0e72e26e83f5112e6c95cc99959baa9a55eb9882/ffrab.common/model.fs">https://github.com/SabotageAndi/ffrab-mobile/blob/0e72e26e83f5112e6c95cc99959baa9a55eb9882/ffrab.common/model.fs</a> Line 52 – 140</p>
+
+<p>After refactoring:</p>
+
+<p><a href="https://github.com/SabotageAndi/ffrab-mobile/blob/master/ffrab.common/database.fs">https://github.com/SabotageAndi/ffrab-mobile/blob/master/ffrab.common/database.fs</a>
+<a href="https://github.com/SabotageAndi/ffrab-mobile/blob/master/ffrab.common/queries.fs">https://github.com/SabotageAndi/ffrab-mobile/blob/master/ffrab.common/queries.fs</a></p>
+
+<p>At the end it was worth the trouble. It is more readable and simpler code.</p>
+
+<h2 id="if-it-looks-ugly-make-a-function">If it looks ugly, make a function</h2>
+
+<p>When you have pure F# code and libraries, it is complete in your hands to write nice code. But when you are using C# libraries, i can quickly get ugly because of the library. This is because the parameters of the C# methods are represented as tuples. With them, you have a lot of brackets and can not use the forward pipe operator ‘|&gt;’.</p>
+
+<p>But simply wrap the C# method call in a small function and voila.</p>
+
+<p>Here is an example when using NodaTime (the “let startTime”- line is the important one):
+Direct call to C#:</p>
+
+<pre><code class="language-fsharp">let dateTimeFormat = OffsetDateTimePattern.CreateWithInvariantCulture(&quot;yyyy'-'MM'-'dd'T'HH':'mm':'sso&lt;G&gt;&quot;)
+let startTime = common.Formatting.dateTimeFormat.Parse(dayNode.[&quot;day_start&quot;].Value&lt;string&gt;()).Value
+</code></pre>
+
+<p>With F# wrapper function:</p>
+
+<pre><code class="language-fsharp">let parseNodaTime&lt;'T&gt; (pattern : NodaTime.Text.IPattern&lt;'T&gt;) rawValue =
+        let result = pattern.Parse(rawValue)
+        result.Value
+
+let dateTimeFormat = OffsetDateTimePattern.CreateWithInvariantCulture(&quot;yyyy'-'MM'-'dd'T'HH':'mm':'sso&lt;G&gt;&quot;)
+let startTime = (json.GetProperty &quot;day_start&quot;).AsString() |&gt; parseNodaTime common.Formatting.dateTimeFormat
+</code></pre>
+
+<p>For one usage it might be not that bad, but when you have multiple calls, it is more readable. Particularly you get the nice left- to- right readability back!</p>
+
+<h2 id="left-to-right-readability-combined-with-railway-oriented-programming-rop-rocks">Left- to- right readability combined with railway oriented programming (ROP) rocks!</h2>
+
+<p>Look at this example:</p>
+
+<pre><code class="language-fsharp">let synchronizeData conference =
+            match conference with
+            | Some conference -&gt;
+                conference 
+                |&gt; checkForTimeout
+                |&gt; getDataLocation
+                |&gt; fetchJson 
+                |&gt; Parser.parseJson conference
+                |&gt; Synchronization.sync conference
+            | _ -&gt;
+                ignore()
+            conference
+</code></pre>
+
+<p>All parts of the synchronization are nice one after one step easy readable and extendable. So adding the additional timeout check was easy to add to this pipeline.</p>
+
+<h2 id="mvvm-is-more-fun-with-fsharp-viewmodule-than-with-c">MVVM is more fun with FSharp.ViewModule than with C</h2>
+
+<p>With FSharp.ViewModule and F# you have so much less boilerplate code in your viewmodels. Without the curly brackets of C# you can reduce the line count again.</p>
+
+<p>So the 8 viewmodels are about 260 lines (with empty lines and boilder plate functions/type). In C# 3 of the viewmodels would have this code size.</p>
+
+<h2 id="tooling-enough-but-some-rough-edges">Tooling? Enough, but some rough edges</h2>
+
+<p>When you code in Visual Studio, you need the Visual F# Power Tools. And the first thing you have to do is to enable Folder organization. You do not need the folders for your F# code, but to organize other files like images or json-Files. No idea why it is disabled by default.</p>
+
+<p>On the Xamarin side there is sadly one bug, that prevents to use Xamarin.Forms on Android with F#. It looks like the F# CodeDom does not escape F# keywords.
+For details is here the Bugzilla entry: <a href="https://bugzilla.xamarin.com/show_bug.cgi?id=24709">https://bugzilla.xamarin.com/show_bug.cgi?id=24709</a>
+Hopefully the bug is fixed soon.</p>
+
+<p>For the C# developers with Resharper: First you think you will miss it, but you do not need it. The Power Tools have a Rename function. Other refactoring features like extracting or adding namespaces I didn’t miss.</p>
+
+<p>So for me is F# a really fun and productive language. Not everything is easy and clear when you are using it the first time, but the fog will lift with the time. When you are working some days concentrated with F#, you will learn and understand a lot. And it will be awesome. 😉</p>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2016/01/04/tips-for-starting-develop-in-f#-in-atom/">Tips for starting develop in F# in Atom</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Jan 4, 2016
+    
+</div>
+
+        
+        
+    </header>
+    
+
+<h1 id="this-blog-post-is-outdated">This blog post is outdated!</h1>
+
+<p>Use VS Code and Ionide.</p>
+
+<p>After some days working with Atom to write in F# code, here are some tips:</p>
+
+<h2 id="read-the-manual-and-use-the-ionide-installer-package">Read the manual and use the ionide-installer package 😉</h2>
+
+<p>On my first try I installed some ionide packages and so some features where missing. So really read the manual and use the ionide-installer package.</p>
+
+<h2 id="on-mac-os-x-use-the-mono-package-and-not-the-one-from-homebrew">On Mac OS X – use the Mono package and not the one from Homebrew</h2>
+
+<p>When you are using the Homebrew version, Ionide can not spawn the background service for the autocompletion.
+If you use the Mono one from <a href="http://www.mono-project.com/download/">http://www.mono-project.com/download/</a> everything works.
+Additional this package includes the reference assemblies for Portable Class Libraries. Without them you can not compile a PCL.</p>
+
+<h2 id="additional-packages">Additional packages</h2>
+
+<p>git-plus: <a href="https://atom.io/packages/git-plus">https://atom.io/packages/git-plus</a> – git commands available in command palette
+terminal-plus: <a href="https://atom.io/packages/terminal-plus">https://atom.io/packages/terminal-plus</a> – terminal within Atom; when you use a german keyboard, you have to adjust the key mappings for toggle
+minimal: <a href="https://atom.io/packages/minimap">https://atom.io/packages/minimap</a> – file preview on the right side</p>
+
+<h2 id="using-yeoman-and-the-generator-fsharp">using Yeoman and the generator-fsharp</h2>
+
+<p>Yeoman with the F#- Generator (<a href="https://github.com/fsprojects/generator-fsharp)">https://github.com/fsprojects/generator-fsharp)</a> is a nice tool for creating new projects from templates.
+I added some new features in the last view days:</p>
+
+<p>add FAKE support (<a href="https://github.com/fsprojects/generator-fsharp/pull/26)">https://github.com/fsprojects/generator-fsharp/pull/26)</a>
+add references to other projects (<a href="https://github.com/fsprojects/generator-fsharp/pull/26)">https://github.com/fsprojects/generator-fsharp/pull/26)</a>
+add template for PCLs with Profile 259 (<a href="https://github.com/fsprojects/generator-fsharp/pull/25)">https://github.com/fsprojects/generator-fsharp/pull/25)</a>
+Hopefully they will be merged in the next days.</p>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2015/12/30/using-nodatime-in-sqlite.net/">Using NodaTime in SQLite.Net</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Dec 30, 2015
+    
+</div>
+
+        
+        
+    </header>
+    
+
+<p>For a project I wanted to try out NodaTime, because of its nice handling with timezones.
+In this project I have also to save the values into a SQLite database and for that I normally use SQLite.net for that.
+Normally SQlite.net does not know how to handle the NodaTime types, but there are 2 places to add your own support for types.</p>
+
+<h2 id="extratypemapping">ExtraTypeMapping</h2>
+
+<p>You can specific for your types which SQLite type it should be. That could be INTEGER, REAL, TEXT or BLOB.
+It’s a simply Dictionary<System.Type, String> you provide as constructor parameter, where you set the SQLite.net Type to BLOB.</p>
+
+<h2 id="iblobserializer">IBlobSerializer</h2>
+
+<p>When you save your values as Blob, you can use the BlobSerializerDelegate of SQLite.net and provide the appropriate delegates to serialize and deserialize your types.</p>
+
+<p>When you combine both, you can simply save your own types as blob in your database.</p>
+
+<p>The code for saving LocalDate, OffsetDateTime and Duration you can find here: <a href="https://gist.github.com/SabotageAndi/194aa01e1c78cb614c1b.">https://gist.github.com/SabotageAndi/194aa01e1c78cb614c1b.</a></p>
+
+<p>It is in F#, but it is understandable by C#-only developers. 😉</p>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2015/07/03/on-the-bleeding-edge-akka.net-suave/">On the Bleeding Edge – Akka.Net + Suave</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Jul 3, 2015
+    
+</div>
+
+        
+        
+    </header>
+    
+
+<p>So after playing with Suave.io, I wanted to add some new bleeding edge stuff to it. 😉 And run it on a beta environment, the DNX 🙂</p>
+
+<p>First, the complete source of it is here: <a href="https://github.com/SabotageAndi/SuaveAkkaCore">https://github.com/SabotageAndi/SuaveAkkaCore</a></p>
+
+<p>Thanks to Alxandr there is F# support for the DNX: <a href="https://github.com/YoloDev/YoloDev.Dnx.FSharp">https://github.com/YoloDev/YoloDev.Dnx.FSharp</a></p>
+
+<p>So here is a quick go through of the code to get the stuff working:</p>
+
+<h2 id="1-add-needed-nuget-feeds">1. Add needed NuGet feeds</h2>
+
+<p>YoloDev: <a href="https://www.myget.org/F/yolodev/api/v2″">https://www.myget.org/F/yolodev/api/v2″</a>
+AspNetVNext: <a href="https://www.myget.org/F/aspnetvnext/api/v2″">https://www.myget.org/F/aspnetvnext/api/v2″</a></p>
+
+<h2 id="2-adapt-project-json-for-f-support">2. Adapt project.json for F# Support</h2>
+
+<pre><code class="language-json">{
+    “version”: “1.0.0-beta-*”,
+    “dependencies”: {
+    “YoloDev.Dnx.FSharp”: { “type”: “build”, “version”: “1.0.0-beta-*” },
+    “Suave”: “0.29.1”,
+            “Akka”: “1.0.3”,
+            “Akka.FSharp”: “1.0.3”
+    },
+    “frameworks”: {
+        “dnx451”: {
+            “frameworkAssemblies”: {
+                “System.Runtime”: “”,
+                “System.Threading.Tasks”: “”
+                }
+            }
+        },
+    “compiler”: {
+        “name”: “F#”,
+            “compilerAssembly”: “YoloDev.Dnx.FSharp”,
+            “compilerType”: “YoloDev.Dnx.FSharp.FSharpProjectCompiler”
+    }
+}
+</code></pre>
+
+<p>The bold text are the changes needed for the F# support, the italic one are the needed changes for Akka.net and Suave.io.</p>
+
+<h2 id="3-initialize-akka-net-suave-io">3. initialize Akka.net &amp; Suave.io</h2>
+
+<pre><code class="language-fsharp">member x.Main () =
+   use akkaSystem = System.create &quot;SuaveAkkaCore&quot; (Configuration.defaultConfig()) //1
+  
+   spawn akkaSystem &quot;root&quot; (actorOf2 handleRequest) |&gt; ignore //2
+  
+   let cts = new CancellationTokenSource()
+    
+   let startingServer, shutdownServer = startWebServerAsync defaultConfig (app akkaSystem) //3
+   Async.Start(shutdownServer, cts.Token)
+    
+   startingServer |&gt; Async.RunSynchronously |&gt; printfn &quot;started: %A&quot;
+ 
+   printfn &quot;Press Enter to stop&quot;
+   Console.Read() |&gt; ignore
+ 
+    
+   cts.Cancel()
+
+</code></pre>
+
+<p>on //1 the Akka System is created with a standard configuration. It is named “SuaveAkkaCore”. This is later important to find the actor again.
+The only one actor (named root) in this example is spawnd on //2. When the actor gets a message, the handleRequest function is called.
+Last part on initializing the system is on //3 the start of suave. Here is only one webpart involved.</p>
+
+<h2 id="4-suave-webpart">4. Suave webpart</h2>
+
+<pre><code class="language-fsharp">let app system : WebPart = 
+     fun (httpContext : HttpContext) -&gt;
+         async {
+             let response = sendRequestToActor system httpContext
+             return! response
+         }
+</code></pre>
+
+<p>It’s a simple web part that reacts on every request and calls the sendRequestToActor method with the current Akka system and HttpContext (there is the request, response stuff in Suave).</p>
+
+<h2 id="5-sending-message-to-actor">5. sending message to actor</h2>
+
+<pre><code class="language-fsharp">let sendRequestToActor system (httpContext : HttpContext) =
+     
+    let callActor = async { 
+      let actor = select &quot;akka://SuaveAkkaCore/user/root&quot; system
+      let! resp = actor &lt;? httpContext
+      return Some resp
+    }
+    
+    let response = callActor |&gt; Async.RunSynchronously
+    response httpContext   
+</code></pre>
+
+<p>In the first part, the root- Actor is selected. Here is the system name and actor name needed.
+With the &lt;? operator, the actor is asked with the HttpContext.
+After that, we run the async workflow and return the response.</p>
+
+<h2 id="6-the-actor-function-itself">6. the actor function itself</h2>
+
+<pre><code class="language-fsharp">let handleRequest (mailbox : Actor&lt;'a&gt;) (msg : HttpContext) =
+   let url = msg.request.url.ToString()                                     
+   mailbox.Sender() &lt;! (OK url)
+</code></pre>
+
+<p>In the actor function, we get the mailbox and the message as parameters. Here I simply take the request url and return it as OK response.</p>
+
+<p>To run the stuff, you need the DNX runtime installed.
+Switch to the mono runtime for dnx with “dnvm use 1.0.0-beta6-12120 -p -r mono”
+With a “dnu restore” you get the needed packages.
+After that, a “dnx . run” starts the program.</p>
+
+<p>Now browse to <a href="http://localhost:8083">http://localhost:8083</a> and you see as response the browsed url.</p>
+
+<p>Have fun!</p>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2015/05/31/playing-with-angularjs-and-suave/">Playing With AngularJS and Suave</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        May 31, 2015
+    
+</div>
+
+        
+        
+    </header>
+    <p>After I found Suave.IO (lightweight HTTP Server in F#) I wanted to try it out. As I also wanted to play with AngularJS (I know I am a little bit late, but normally I get out of the way of web development). So why not combine both and create a small webserver that hosts the web app and the webservices.</p>
+
+<p>As example for the AngularJS app, I used the PhoneCat Tutorial App from AngularJS.</p>
+
+<p>You find the complete source on GitHub here: AngularSuave Repository</p>
+
+<p>Explanation step-by-step:</p>
+
+<pre><code class="language-fsharp">let mimeTypes =
+    defaultMimeTypesMap
+        &gt;=&gt; (function | &quot;.json&quot; -&gt; mkMimeType &quot;application/json&quot; true | _ -&gt; None)
+
+</code></pre>
+
+<p>In the default mime types from Suave is no entry for json- Files. So I simply add it.</p>
+
+<pre><code class="language-fsharp">let rootPath = Path.GetFullPath &quot;../../../Web&quot;
+</code></pre>
+
+<p>The source files for the AngularJS are located in a separate project.</p>
+
+<pre><code class="language-fsharp">let webConfig = 
+    { 
+        defaultConfig with 
+            homeFolder = Some rootPath
+            mimeTypesMap = mimeTypes
+    }
+</code></pre>
+
+<p>I use the default server config that is shipped with Suave and only adjust the needed parts.</p>
+
+<pre><code class="language-fsharp">let getPhone phoneName =
+    printfn &quot;getting data for phone: %s&quot; phoneName
+
+    let phoneFolder = Path.Combine(rootPath, &quot;app&quot;, &quot;phones&quot;)
+    browseFile phoneFolder phoneName
+</code></pre>
+
+<p>Function to return the data for the phones. It is stored as json- Files.</p>
+
+<pre><code class="language-fsharp">let api =
+    choose
+        [
+            GET &gt;&gt;= choose 
+                [
+                    pathScan &quot;/api/phones/%s&quot; (fun s -&gt; getPhone s)
+                ]
+        ]
+</code></pre>
+
+<p>In Suave you have WebParts which can react on the different urls. Here I react on all calls to /api/phones/ and call the function to get the phone data.</p>
+
+<pre><code class="language-fsharp">let getFile name =
+    let rootPath = webConfig.homeFolder.Value
+    browseFile rootPath name
+</code></pre>
+
+<p>Function to return the file content of the requested file.</p>
+
+<pre><code class="language-fsharp">let angularApp =
+    choose
+        [ GET &gt;&gt;= choose
+            [
+                path &quot;/&quot; &gt;&gt;=  redirect &quot;app/index.html&quot;
+                pathScan &quot;/%s&quot; (fun s -&gt; getFile s)                
+            ]
+        ]
+</code></pre>
+
+<p>The AngularJS app is still located under /app/<em>. So I make a redirect, when you simple browse to the root page.
+For all other request to /</em>, I simple return the requested file.</p>
+
+<pre><code>let app =
+    choose
+        [
+            api
+            angularApp
+        ]
+</code></pre>
+
+<p>The choose web part executes every web part in the list and only stops if someone is successful.
+In this case, the correct order is important, because the /%s in the angularApp WebPart will eat every request.
+If the order is changed, no call is ever made to the api Webpart.</p>
+
+<pre><code class="language-fsharp">[&lt;EntryPoint&gt;]
+let main argv = 
+     
+    let cts = new CancellationTokenSource()
+    let startingServer, shutdownServer = startWebServerAsync webConfig app
+ 
+    Async.Start(shutdownServer, cts.Token)
+ 
+    startingServer |&gt; Async.RunSynchronously |&gt; printfn &quot;started: %A&quot;
+ 
+    printfn &quot;Press Enter to stop&quot;
+    Console.Read() |&gt; ignore
+ 
+    cts.Cancel()
+ 
+    0
+</code></pre>
+
+<p>At the end, I simply start the the webserver with the individual web config and the app WebPart.</p>
+
+<p>When you start the programm and open <a href="http://localhost:8083/">http://localhost:8083/</a> you can see the PhoneCat Tutorial App hosted by Suave.IO.</p>
+
+<p>So have fun with it. 😉</p>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2014/09/03/f#-raw-sql-access/">F# Raw SQL Access</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Sep 3, 2014
+    
+</div>
+
+        
+        
+    </header>
+    <p>With my start in working with F#, I came to the point to access a database. When you read my last post, you know that an ORM was out of question. What me really surprised at the end, was that the code is much less than every other DB access I wrote.</p>
+
+<p>So how does it look?</p>
+
+<p>The general idea was, to first create a record that holds the SQL statement and the parameters, that gets then executed.</p>
+
+<p>The record enables you to write tests for your database access.</p>
+
+<p>For accessing the ADO.Net functions, I use FsSql.</p>
+
+<p>So beginn with the entity with represents one row of the table:</p>
+
+<pre><code class="language-fsharp">type Weather() =
+    member val Id = 0 with get,set
+ 
+    member val LocationId = Guid.Empty with get,set
+    member val DataFrom = DateTimeOffset.MinValue with get,set
+    member val DataTo = DateTimeOffset.MinValue with get,set
+    member val Temperature = 0.0m with get,set
+    member val Humidity = 0.0m with get,set
+    member val Rain = 0.0m with get,set
+    member val WindSpeed = 0.0m with get,set
+    member val WindDirection = 0.0m with get,set
+    member val Clouds = 0.0m with get,set
+    member val Pressure = 0.0m with get,set
+</code></pre>
+
+<p>It’s a simple store for weather data for a location.</p>
+
+<p>To insert an entry to the table, we need a function to get the wrapper record:</p>
+
+<pre><code class="language-fsharp">let private insert (weather : Weather ) =
+{
+    query = &quot;INSERT INTO \&quot;intersect\&quot;.\&quot;Weather\&quot;(
+                         locationid, datafrom, datato, temperature, humidity, rain,
+                         windspeed, winddirection, clouds, pressure)
+             VALUES (@locationid, @datafrom, @datato, @temperature, @humidity, @rain,
+                     @windspeed, @winddirection, @clouds, @pressure);
+             RETURNING id;&quot;;
+    parameters = [
+                 P(&quot;@locationid&quot;, weather.LocationId);
+                 P(&quot;@datafrom&quot;, weather.DataFrom);
+                 P(&quot;@datato&quot;, weather.DataTo);
+                 P(&quot;@temperature&quot;, weather.Temperature);
+                 P(&quot;@humidity&quot;, weather.Humidity);
+                 P(&quot;@rain&quot;, weather.Rain);
+                 P(&quot;@windspeed&quot;, weather.WindSpeed);
+                 P(&quot;@winddirection&quot;, weather.WindDirection);
+                 P(&quot;@clouds&quot;, weather.Clouds);
+                 P(&quot;@pressure&quot;, weather.Pressure);
+             ]
+}
+</code></pre>
+
+<p>The wrapper has the query as string and a list of SqlParameters.</p>
+
+<pre><code class="language-fsharp">type changeQueryObject =
+{
+    query : string;
+    parameters : Sql.Parameter list;
+}
+</code></pre>
+
+<p>The P- function is a shortcut for the FsSql Sql.Parameter.make.</p>
+
+<p>To execute the insert statement, we pass the changeQueryObject to following function:</p>
+
+<pre><code class="language-fsharp">let executeScalar (queryObj : changeQueryObject) =
+    sql.ExecScalar queryObj.query queryObj.parameters
+</code></pre>
+
+<p>With the “RETURNING id” at the end of the SQL statement and executing it with ExecScalar, we get the primary key of the new entry. Everything we want after the insert.</p>
+
+<p>The same works for updates:</p>
+
+<pre><code class="language-fsharp">let private update (weather : Weather ) =
+{
+    query = &quot;UPDATE \&quot;intersect\&quot;.\&quot;Weather\&quot;
+             SET locationid=@locationid, datafrom=@datafrom, datato=@datato, temperature=@temperature, humidity=@humidity,
+             rain=@rain, windspeed=@windspeed, winddirection=@winddirection, clouds=@clouds, pressure=@pressure
+             WHERE id=@id;
+             SELECT @id;
+             &quot;;
+    parameters = [
+                    P(&quot;@id&quot;, weather.Id);
+                    P(&quot;@locationid&quot;, weather.LocationId);
+                    P(&quot;@datafrom&quot;, weather.DataFrom);
+                    P(&quot;@datato&quot;, weather.DataTo);
+                    P(&quot;@temperature&quot;, weather.Temperature);
+                    P(&quot;@humidity&quot;, weather.Humidity);
+                    P(&quot;@rain&quot;, weather.Rain);
+                    P(&quot;@windspeed&quot;, weather.WindSpeed);
+                    P(&quot;@winddirection&quot;, weather.WindDirection);
+                    P(&quot;@clouds&quot;, weather.Clouds);
+                    P(&quot;@pressure&quot;, weather.Pressure);
+                 ]
+}
+</code></pre>
+
+<p>And with some little pattern matching, we get a nice save function:</p>
+
+<pre><code class="language-fsharp">let save (weather : Weather) =
+    match weather.Id with
+    | 0 -&gt; insert weather
+    | _ -&gt; update weather
+</code></pre>
+
+<p>But what is with querying and some filtering? Now F# plays it’s strength.</p>
+
+<p>For that we need an little changed query wrapper:</p>
+
+<pre><code class="language-fsharp">type selectQueryObject&lt;'T&gt; =
+{
+    query : string;
+    parameters : Sql.Parameter list;
+    deserialisation : (IDataRecord -&gt; 'T) option;
+}
+</code></pre>
+
+<p>The new field “deserialisation” holds an function to get an instance of the entity from a datarecord. This is the one for the weather entity.</p>
+
+<pre><code class="language-fsharp">let asWeather (r: IDataRecord) =
+    new Weather(Id = (r?id).Value, LocationId = (r?LocationId).Value, DataFrom = (r?DataFrom).Value,
+    DataTo = (r?DataTo).Value, Temperature = (r?Temperature).Value,
+    Humidity = (r?Humidity).Value, Rain = (r?Rain).Value, WindSpeed = (r?WindSpeed).Value,
+    WindDirection = (r?WindDirection).Value, Clouds = (r?Clouds).Value, Pressure = (r?Pressure).Value)
+</code></pre>
+
+<p>How looks the querying function?</p>
+
+<pre><code class="language-fsharp">let search (fc : WeatherSearchRequest) =
+    let query = &quot;SELECT id, locationid, datafrom, datato, temperature, humidity, rain, windspeed, winddirection, clouds, pressure FROM \&quot;intersect\&quot;.\&quot;Weather\&quot;&quot;
+ 
+    let locationIdPara = w &quot;locationid&quot; &quot;@locationid&quot; &quot;=&quot; fc.LocationId
+    let fomPara = w &quot;datafrom&quot; &quot;@datafrom&quot; &quot;&gt;=&quot; fc.From
+    let toPara = w &quot;datato&quot; &quot;@datato&quot; &quot;&lt;=&quot; fc.To
+    let datetimeFromPara = w &quot;datafrom&quot; &quot;@datafrom&quot; &quot;&gt;=&quot; fc.DateTime
+    let datetimeToPara = w &quot;datato&quot; &quot;@datato&quot; &quot;&lt;=&quot; fc.DateTime
+ 
+    Some asWeather
+    |&gt; emptyQueryPart
+    |&gt; combineAnd locationIdPara
+    |&gt; combineAnd fomPara
+    |&gt; combineAnd toPara
+    |&gt; combineAnd datetimeFromPara
+    |&gt; combineAnd datetimeToPara
+    |&gt; combineQueryParts query
+</code></pre>
+
+<p>The WeatherSearchRequest is a POCO which holds the various filter values.</p>
+
+<p>Every possible part of the where- Statement is wrapped in an queryPart record.</p>
+
+<pre><code class="language-fsharp">type queryPart =
+{
+    where : string;
+    parameter : Sql.Parameter option
+}
+</code></pre>
+
+<p>The w- function (for Where) creates such a record:</p>
+
+<pre><code class="language-fsharp">let private w&lt;'a when 'a : (new : unit -&gt; 'a) and 'a : struct and 'a :&gt; System.ValueType&gt; column parametername operator (value : System.Nullable&lt;'a&gt;) =
+    match value.HasValue with
+    | true -&gt; { where = sprintf &quot;%s %s %s&quot; column operator parametername; parameter = Some &lt;| P(parametername, value.Value)}
+    | false -&gt; {where = &quot;&quot;; parameter = Option&lt;Sql.Parameter&gt;.None}
+</code></pre>
+
+<p>When the filter value is set, it create a filled queryPart, else we get an empty one.</p>
+
+<p>But what do we do with it now? Let’s look at the next code block.</p>
+
+<pre><code class="language-fsharp">Some asWeather
+|&gt; emptyQueryPart
+...
+</code></pre>
+
+<p>This is to create a selectQueryObject with setted deserialisation function. The selectQueryObject is then piped to multiple combineAnd functions.</p>
+
+<pre><code class="language-fsharp">...
+|&gt; combineAnd locationIdPara
+|&gt; combineAnd fomPara
+|&gt; combineAnd toPara
+|&gt; combineAnd datetimeFromPara
+|&gt; combineAnd datetimeToPara
+...
+
+let private combineAnd&lt;'T&gt; (x : queryPart) (qo : selectQueryObject&lt;'T&gt;) =
+    match (x.parameter, qo.query) with
+    | (Some xpart, &quot;&quot;) -&gt; { query = x.where; parameters = [x.parameter.Value]; deserialisation = qo.deserialisation}
+    | (Some xpart, _) -&gt; {query = qo.query + &quot; AND &quot; + x.where; parameters = x.parameter.Value :: qo.parameters; deserialisation = qo.deserialisation}
+    | (None, _) -&gt; { query = qo.query; parameters = qo.parameters; deserialisation = qo.deserialisation}
+
+</code></pre>
+
+<p>Once again, we use some pattern matching.</p>
+
+<p>The first case is hit, when we have a filled queryPart but an empty selectQueryObject. So when the first filter criteria is hit.</p>
+
+<p>The second case is hit, when we add the other filter criteria to the selectQueryObject.</p>
+
+<p>The last one is hit, when we have already some data in the selectQueryObject, but the queryPart is empty. So when we have already some filter criteria added, but the current one is not set.</p>
+
+<p>At the end, we pipe the selectQueryObject to the combineQueryParts function.</p>
+
+<pre><code class="language-fsharp">...
+|&gt; combineQueryParts query
+...
+ 
+let private combineQueryParts&lt;'T&gt; (query :string) (qo :selectQueryObject&lt;'T&gt;) =
+    let mutable q = query
+    if (qo.query.Length &gt; 0) then
+        q &lt;- query + &quot; WHERE &quot; + qo.query
+ 
+    { query = q; parameters = qo.parameters; deserialisation = qo.deserialisation; }
+
+</code></pre>
+
+<p>This function simply combines the select- Query with the where- Statement if needed.</p>
+
+<p>At the end, we get a nice filled selectQueryObject which is then passed to a general function.</p>
+
+<pre><code class="language-fsharp">let executeReader&lt;'T&gt; (queryObj : selectQueryObject&lt;'T&gt; )=
+    sql.ExecReader queryObj.query queryObj.parameters
+    |&gt; Seq.ofDataReader
+    |&gt; Seq.map queryObj.deserialisation.Value
+</code></pre>
+
+<p>Nice, or?</p>
+
+<p>The complete code at once can be found here.</p>
+
+<p>So what about the testing? With the query wrapped into a record, we simply can tests the data in the record.</p>
+
+<pre><code class="language-fsharp">let checkSqlParameter (name : string) (value : obj) (parameter : Sql.Parameter) =
+    obj.Equals(parameter.ParameterName,name) &amp;&amp; obj.Equals(parameter.Value,value)
+ 
+let checkForSqlParameter (name : string) (value : obj) parameters =
+    parameters |&gt; Seq.exists (fun i -&gt; checkSqlParameter name value i) |&gt; should equal true
+ 
+let nullableFromPara = new Nullable&lt;DateTimeOffset&gt;(fromPara)
+let nullableToPara = new Nullable&lt;DateTimeOffset&gt;(toPara)
+let locationIdPara = new Nullable&lt;Guid&gt;(Guid.NewGuid())
+ 
+[&lt;Fact&gt;]
+let ``Check query with LocationId, From and To parameter``() =
+    let fc = new WeatherSearchRequest()
+    fc.LocationId &lt;- locationIdPara
+    fc.From &lt;- nullableFromPara
+    fc.To &lt;- nullableToPara
+ 
+    let queryObj = weather.search fc
+    queryObj.parameters |&gt; Seq.length |&gt; should equal 3
+    queryObj.parameters |&gt; checkForSqlParameter &quot;@datafrom&quot; fc.From
+    queryObj.parameters |&gt; checkForSqlParameter &quot;@datato&quot; fc.To
+    queryObj.parameters |&gt; checkForSqlParameter &quot;@locationid&quot; fc.LocationId
+ 
+    queryObj.query |&gt; should equal &quot;SELECT id, locationid, datafrom, datato, temperature, humidity, rain, windspeed, winddirection, clouds, pressure FROM \&quot;intersect\&quot;.\&quot;Weather\&quot; WHERE locationid = @locationid AND datafrom &gt;= @datafrom AND datato &lt;= @datato&quot;
+
+</code></pre>
+
+<p>When was the last time, you could test which SQL- query gets executed against your DBS? 😉</p>
+
+</article>
+
+    
+
+
+
+    
+        <article class="blog-post">
+    <header>
+        <h2 class="blog-post-title">
+    <a class="text-dark" href="/2014/08/28/no-more-orm/">No More ORM</a>
+</h2>
+
+        
+
+
+<div class="blog-post-date text-secondary">
+    
+        Aug 28, 2014
+    
+</div>
+
+        
+        
+    </header>
+    
+
+<p>After working some years with different OR- Mappers (NHibernate, Entity Framework, proprietary ones, …) to build a lot of line of business applications, I came to the conclusion to trash them.</p>
+
+<p>So how did I come to this conclusion? Yes, ORMs make it on the first look easy to access your database and query them. That is it all what you get. But you also get some problems, that were not there before.</p>
+
+<p>Some of them are here:</p>
+
+<h2 id="generated-queries-and-performance">Generated Queries and Performance</h2>
+
+<p>The ORM generates the SQL Query for you. But you will never get the best sql query to get your data. You do not want to fetch all columns of an table? Have fun!
+Transactions
+Every ORM has his own idea how to represent a transaction. Why? Plain db transactions are really easy to understand. Why add another complication to your application? When you want a stable and predictable LoB- Application, you want to know exactly when which changes are commited to the database.</p>
+
+<h2 id="predictability">Predictability</h2>
+
+<p>Do you know, when which query is executed against your database? How often did you looked for bugs where data not returned by a query, that are caused, because you forget to flush somewhere a session?</p>
+
+<h2 id="additional-query-language">Additional Query language</h2>
+
+<p>Most ORM have their own query language or uses LINQ for the queries. LINQ is very nice to query your objects, but when you create more complicated queries, it gets really quick ugly. Group by- Queries? Outer Joins? Hurray!
+Why add another abstraction when you have already a Structured Query Language?
+How often did you fix code of some unexperienced developers that had performance issues, because the queries are done in memory or results in hundred small queries against the db? Simply because the code looks the same and they did not think about it.</p>
+
+<h2 id="support-for-different-dbs-but-no-one-to-100">Support for different DBS, but no one to 100%</h2>
+
+<p>When did you the last time tried to access a DBS specific feature? You want to use PostGIS? Filestreams on MS SQL? Or much simplier, use timestamptz on PostgreSQL?  No chance.
+Why is this? Simply because the ORM have to provide an API over all supported DBS.
+And when did you wrote a LoB application that have to run on different DBS? I haven’t?</p>
+
+<h2 id="additional-problems-that-you-did-not-see-coming">Additional problems that you did not see coming</h2>
+
+<p>This week I was talking with a collegue about some problems with our used ORM and the build queue. WTF? What does the ORM have to do with the build queue?
+This post should not be a rant about ORM or dictate to everyone to not use them anymore. I recognized in the last weeks, that the people do not think anymore about the question, if they want to use an ORM. They simply say, “Yeah, let’s use X as ORM”, but did not think if they can achieve their requirements with it. So see this post as an starting point to rethink your technology choices.</p>
+
+<p>ORM are a part of your toolchain, you do not have to fix every problem with your beloved tool. Use the right tool for the job.</p>
+
+</article>
+
+    
+
+
+
+
+
+<nav class="blog-pagination">
+    <ul class="pagination justify-content-center">
+        
+        <li class="page-item">
+            <a class="page-link" href="/blog/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+        </li>
+        
+        <li class="page-item ">
+            <a class="page-link" href="/blog/" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        </li>
+        
+        
+            
+            
+            
+            
+                
+                
+            
+            
+                <li class="page-item ">
+                    <a class="page-link" href="/blog/">1</a>
+                </li>
+            
+        
+            
+            
+            
+            
+                
+                
+            
+            
+                <li class="page-item active">
+                    <a class="page-link" href="/blog/blog/2/">2</a>
+                </li>
+            
+        
+        <li class="page-item disabled">
+            <a class="page-link" href="" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        </li>
+        
+            <li class="page-item">
+                <a class="page-link" href="/blog/blog/2/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+            </li>
+        
+    </ul>
+</nav>
+
+
+
+
+        </div>
+
+        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+    
+    
+        <section>
+    
+        
+    
+        
+    
+        
+    
+</section>
+    
+</aside>
+
+      </div>
+    </div>
+    
+
+    
+      
+
+
+
+
+
+
+<footer class="blog-footer w-100">
+    <nav class="navbar navbar-light bg-light">
+        <p class="w-100 text-center">Disclaimer: The opinions expressed herein are my own personal opinions and do not represent my employer’s view in any way.</p>
+        <p class="w-100 text-center">Hugo template made with ❤ by <a href="https://github.com/Xzya">Xzya</a>, inspired by <a href="https://github.com/alanorth/hugo-theme-bootstrap4-blog">hugo-theme-bootstrap4-blog</a></p>
+    </nav>
+</footer>
+
+    
+
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </body>
+</html>

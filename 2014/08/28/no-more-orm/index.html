@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<meta property="og:title" content="No More ORM" />
+<meta property="og:description" content="After working some years with different OR- Mappers (NHibernate, Entity Framework, proprietary ones, …) to build a lot of line of business applications, I came to the conclusion to trash them.
+So how did I come to this conclusion? Yes, ORMs make it on the first look easy to access your database and query them. That is it all what you get. But you also get some problems, that were not there before." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://willich.io/2014/08/28/no-more-orm/" />
+<meta property="article:published_time" content="2014-08-28T20:00:53&#43;01:00"/>
+<meta property="article:modified_time" content="2014-08-28T20:00:53&#43;01:00"/>
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="No More ORM"/>
+<meta name="twitter:description" content="After working some years with different OR- Mappers (NHibernate, Entity Framework, proprietary ones, …) to build a lot of line of business applications, I came to the conclusion to trash them.
+So how did I come to this conclusion? Yes, ORMs make it on the first look easy to access your database and query them. That is it all what you get. But you also get some problems, that were not there before."/>
+
+
+
+    <link rel="canonical" href="https://willich.io/2014/08/28/no-more-orm/">
+
+    <title>
+      
+        No More ORM | Hi, I&#39;m Andreas
+      
+    </title>
+
+    
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://willich.io/css/style.css" rel="stylesheet">
+
+    
+
+    
+
+    
+  </head>
+  <body>
+    
+      
+
+<header class="blog-header">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <a class="navbar-brand" href="/">
+            Hi, I&#39;m Andreas
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+            aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <ul class="navbar-nav">
+                
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/">Home</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/about/">About</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/blog/">Blog</a>
+                    
+                </li>
+                
+                <li class="nav-item ">
+                    
+                        <a class="nav-link" href="/speaking/">Speaking</a>
+                    
+                </li>
+                
+            </ul>
+            
+        </div>
+    </nav>
+</header>
+
+    
+
+    
+    <div class="container">
+      <div class="row">
+        <div class="col-12 blog-main">
+
+          
+
+<header>
+    <h2 class="blog-post-title">
+        <a class="text-dark" href="/2014/08/28/no-more-orm/">No More ORM</a>
+    </h2>
+    
+
+
+<div class="blog-post-date text-secondary">
+    
+        Aug 28, 2014
+    
+</div>
+
+    
+    
+    <hr>
+</header>
+<article class="blog-post">
+    
+
+<p>After working some years with different OR- Mappers (NHibernate, Entity Framework, proprietary ones, …) to build a lot of line of business applications, I came to the conclusion to trash them.</p>
+
+<p>So how did I come to this conclusion? Yes, ORMs make it on the first look easy to access your database and query them. That is it all what you get. But you also get some problems, that were not there before.</p>
+
+<p>Some of them are here:</p>
+
+<h2 id="generated-queries-and-performance">Generated Queries and Performance</h2>
+
+<p>The ORM generates the SQL Query for you. But you will never get the best sql query to get your data. You do not want to fetch all columns of an table? Have fun!
+Transactions
+Every ORM has his own idea how to represent a transaction. Why? Plain db transactions are really easy to understand. Why add another complication to your application? When you want a stable and predictable LoB- Application, you want to know exactly when which changes are commited to the database.</p>
+
+<h2 id="predictability">Predictability</h2>
+
+<p>Do you know, when which query is executed against your database? How often did you looked for bugs where data not returned by a query, that are caused, because you forget to flush somewhere a session?</p>
+
+<h2 id="additional-query-language">Additional Query language</h2>
+
+<p>Most ORM have their own query language or uses LINQ for the queries. LINQ is very nice to query your objects, but when you create more complicated queries, it gets really quick ugly. Group by- Queries? Outer Joins? Hurray!
+Why add another abstraction when you have already a Structured Query Language?
+How often did you fix code of some unexperienced developers that had performance issues, because the queries are done in memory or results in hundred small queries against the db? Simply because the code looks the same and they did not think about it.</p>
+
+<h2 id="support-for-different-dbs-but-no-one-to-100">Support for different DBS, but no one to 100%</h2>
+
+<p>When did you the last time tried to access a DBS specific feature? You want to use PostGIS? Filestreams on MS SQL? Or much simplier, use timestamptz on PostgreSQL?  No chance.
+Why is this? Simply because the ORM have to provide an API over all supported DBS.
+And when did you wrote a LoB application that have to run on different DBS? I haven’t?</p>
+
+<h2 id="additional-problems-that-you-did-not-see-coming">Additional problems that you did not see coming</h2>
+
+<p>This week I was talking with a collegue about some problems with our used ORM and the build queue. WTF? What does the ORM have to do with the build queue?
+This post should not be a rant about ORM or dictate to everyone to not use them anymore. I recognized in the last weeks, that the people do not think anymore about the question, if they want to use an ORM. They simply say, “Yeah, let’s use X as ORM”, but did not think if they can achieve their requirements with it. So see this post as an starting point to rethink your technology choices.</p>
+
+<p>ORM are a part of your toolchain, you do not have to fix every problem with your beloved tool. Use the right tool for the job.</p>
+
+
+    
+
+    
+
+
+    <br/>
+    <br/>
+    <br/>
+    <br/>
+    &nbsp;
+</article>
+
+
+
+        </div>
+
+        <aside class="col-12 col-lg-3 ml-auto blog-sidebar">
+    
+    
+        <section>
+    
+        
+    
+        
+    
+        
+    
+</section>
+    
+</aside>
+
+      </div>
+    </div>
+    
+
+    
+      
+
+
+
+
+
+
+<footer class="blog-footer w-100">
+    <nav class="navbar navbar-light bg-light">
+        <p class="w-100 text-center">Disclaimer: The opinions expressed herein are my own personal opinions and do not represent my employer’s view in any way.</p>
+        <p class="w-100 text-center">Hugo template made with ❤ by <a href="https://github.com/Xzya">Xzya</a>, inspired by <a href="https://github.com/alanorth/hugo-theme-bootstrap4-blog">hugo-theme-bootstrap4-blog</a></p>
+    </nav>
+</footer>
+
+    
+
+    
+    
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+  </body>
+</html>
