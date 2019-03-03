@@ -2,6 +2,7 @@
 title: "From Need to Published NuGet Package in Less Than 8 Hours"
 date: 2019-02-17T14:18:59+01:00
 draft: false
+type: "post"
 ---
 
 I was trying to get SpecFlow to build under Mac OS and had some problems with an MSBuild target (<https://github.com/techtalk/SpecFlow/blob/master/Tests/TechTalk.SpecFlow.Specs/.build/build.targets#L32>).  

@@ -2,6 +2,7 @@
 title: "Comparision of Cross- Platform UI Libraries for .NET"
 date: "2019-02-13 14:33:00"
 draft: true
+type: "post"
 ---
 
 For an upcoming spare time project I need a UI library that work cross- plattform (Windows, Mac OS and Linux). So I began to research research what possibilities are currently available.

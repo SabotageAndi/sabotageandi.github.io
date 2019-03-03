@@ -2,6 +2,7 @@
 title: "1st year as a Microsoft MVP"
 date: 2018-01-19
 draft: false
+type: "post"
 ---
 
 A year ago I got out of nowhere following eMail:

@@ -4,7 +4,7 @@ title = "Hi, I'm Andreas"
 theme = "hugo-bootstrap"
 
 # Pagination
-paginate = 3
+paginate = 10
 paginatePath = "blog"
 
 #pygmentsUseClasses=true
@@ -26,13 +26,11 @@ enableRobotsTXT = true
 	url = "/"
 [[menu.main]]
     name = "About"
-    identifier = "about"
     weight = 2
     url = "/about/"
 [[menu.main]]
     name = "Blog"
     weight = 3
-    identifier = "posts"
     url = "/blog/"
 [[menu.main]]
     name = "Speaking"

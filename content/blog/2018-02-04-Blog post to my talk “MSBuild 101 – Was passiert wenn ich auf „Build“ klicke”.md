@@ -2,6 +2,7 @@
 title: "Blog post to my talk “MSBuild 101 – Was passiert wenn ich auf „Build“ klicke”"
 date: 2018-02-04
 draft: false
+type: "post"
 ---
 
 Last Monday (30. January) a colleague and I gave a talk about the basics of MSBuild. So that also others can enjoy my explanations, I wrote this post.

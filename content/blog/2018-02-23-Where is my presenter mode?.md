@@ -2,6 +2,7 @@
 title: "Where is my presenter mode?"
 date: 2018-02-23
 draft: false
+type: "post"
 ---
 
 During my preparation for my latest meetup talk, I noticed that I wasn't able to switch to presenter mode in Visual Studio. The Quick launch tasks were simply not there.
