@@ -11,8 +11,8 @@ So how does it look?
 The general idea was, to first create a record that holds the SQL statement and the parameters, that gets then executed." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://willich.io/2014/09/03/f#-raw-sql-access/" />
-<meta property="article:published_time" content="2014-09-03T19:53:26&#43;01:00"/>
-<meta property="article:modified_time" content="2014-09-03T19:53:26&#43;01:00"/>
+<meta property="article:published_time" content="2014-09-03T19:53:26+01:00" />
+<meta property="article:modified_time" content="2014-09-03T19:53:26+01:00" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="F# Raw SQL Access"/>
@@ -115,267 +115,201 @@ The general idea was, to first create a record that holds the SQL statement and 
 </header>
 <article class="blog-post">
     <p>With my start in working with F#, I came to the point to access a database. When you read my last post, you know that an ORM was out of question. What me really surprised at the end, was that the code is much less than every other DB access I wrote.</p>
-
 <p>So how does it look?</p>
-
 <p>The general idea was, to first create a record that holds the SQL statement and the parameters, that gets then executed.</p>
-
 <p>The record enables you to write tests for your database access.</p>
-
 <p>For accessing the ADO.Net functions, I use FsSql.</p>
-
 <p>So beginn with the entity with represents one row of the table:</p>
-
-<pre><code class="language-fsharp">type Weather() =
-    member val Id = 0 with get,set
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">Weather</span>() <span style="color:#f92672">=</span>
+    <span style="color:#66d9ef">member</span> <span style="color:#66d9ef">val</span> Id <span style="color:#f92672">=</span> 0 <span style="color:#66d9ef">with</span> get<span style="color:#f92672">,</span>set
  
-    member val LocationId = Guid.Empty with get,set
-    member val DataFrom = DateTimeOffset.MinValue with get,set
-    member val DataTo = DateTimeOffset.MinValue with get,set
-    member val Temperature = 0.0m with get,set
-    member val Humidity = 0.0m with get,set
-    member val Rain = 0.0m with get,set
-    member val WindSpeed = 0.0m with get,set
-    member val WindDirection = 0.0m with get,set
-    member val Clouds = 0.0m with get,set
-    member val Pressure = 0.0m with get,set
-</code></pre>
-
-<p>It’s a simple store for weather data for a location.</p>
-
+    <span style="color:#66d9ef">member</span> <span style="color:#66d9ef">val</span> LocationId <span style="color:#f92672">=</span> Guid.Empty <span style="color:#66d9ef">with</span> get<span style="color:#f92672">,</span>set
+    <span style="color:#66d9ef">member</span> <span style="color:#66d9ef">val</span> DataFrom <span style="color:#f92672">=</span> DateTimeOffset.MinValue <span style="color:#66d9ef">with</span> get<span style="color:#f92672">,</span>set
+    <span style="color:#66d9ef">member</span> <span style="color:#66d9ef">val</span> DataTo <span style="color:#f92672">=</span> DateTimeOffset.MinValue <span style="color:#66d9ef">with</span> get<span style="color:#f92672">,</span>set
+    <span style="color:#66d9ef">member</span> <span style="color:#66d9ef">val</span> Temperature <span style="color:#f92672">=</span> 0<span style="color:#f92672">.</span>0m <span style="color:#66d9ef">with</span> get<span style="color:#f92672">,</span>set
+    <span style="color:#66d9ef">member</span> <span style="color:#66d9ef">val</span> Humidity <span style="color:#f92672">=</span> 0<span style="color:#f92672">.</span>0m <span style="color:#66d9ef">with</span> get<span style="color:#f92672">,</span>set
+    <span style="color:#66d9ef">member</span> <span style="color:#66d9ef">val</span> Rain <span style="color:#f92672">=</span> 0<span style="color:#f92672">.</span>0m <span style="color:#66d9ef">with</span> get<span style="color:#f92672">,</span>set
+    <span style="color:#66d9ef">member</span> <span style="color:#66d9ef">val</span> WindSpeed <span style="color:#f92672">=</span> 0<span style="color:#f92672">.</span>0m <span style="color:#66d9ef">with</span> get<span style="color:#f92672">,</span>set
+    <span style="color:#66d9ef">member</span> <span style="color:#66d9ef">val</span> WindDirection <span style="color:#f92672">=</span> 0<span style="color:#f92672">.</span>0m <span style="color:#66d9ef">with</span> get<span style="color:#f92672">,</span>set
+    <span style="color:#66d9ef">member</span> <span style="color:#66d9ef">val</span> Clouds <span style="color:#f92672">=</span> 0<span style="color:#f92672">.</span>0m <span style="color:#66d9ef">with</span> get<span style="color:#f92672">,</span>set
+    <span style="color:#66d9ef">member</span> <span style="color:#66d9ef">val</span> Pressure <span style="color:#f92672">=</span> 0<span style="color:#f92672">.</span>0m <span style="color:#66d9ef">with</span> get<span style="color:#f92672">,</span>set
+</code></pre></div><p>It’s a simple store for weather data for a location.</p>
 <p>To insert an entry to the table, we need a function to get the wrapper record:</p>
-
-<pre><code class="language-fsharp">let private insert (weather : Weather ) =
-{
-    query = &quot;INSERT INTO \&quot;intersect\&quot;.\&quot;Weather\&quot;(
-                         locationid, datafrom, datato, temperature, humidity, rain,
-                         windspeed, winddirection, clouds, pressure)
-             VALUES (@locationid, @datafrom, @datato, @temperature, @humidity, @rain,
-                     @windspeed, @winddirection, @clouds, @pressure);
-             RETURNING id;&quot;;
-    parameters = [
-                 P(&quot;@locationid&quot;, weather.LocationId);
-                 P(&quot;@datafrom&quot;, weather.DataFrom);
-                 P(&quot;@datato&quot;, weather.DataTo);
-                 P(&quot;@temperature&quot;, weather.Temperature);
-                 P(&quot;@humidity&quot;, weather.Humidity);
-                 P(&quot;@rain&quot;, weather.Rain);
-                 P(&quot;@windspeed&quot;, weather.WindSpeed);
-                 P(&quot;@winddirection&quot;, weather.WindDirection);
-                 P(&quot;@clouds&quot;, weather.Clouds);
-                 P(&quot;@pressure&quot;, weather.Pressure);
-             ]
-}
-</code></pre>
-
-<p>The wrapper has the query as string and a list of SqlParameters.</p>
-
-<pre><code class="language-fsharp">type changeQueryObject =
-{
-    query : string;
-    parameters : Sql.Parameter list;
-}
-</code></pre>
-
-<p>The P- function is a shortcut for the FsSql Sql.Parameter.make.</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> private insert <span style="color:#f92672">(</span>weather <span style="color:#f92672">:</span> Weather <span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+<span style="color:#f92672">{</span>
+    query <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">INSERT INTO </span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">intersect</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">.</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">Weather</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">(
+</span><span style="color:#e6db74">                         locationid, datafrom, datato, temperature, humidity, rain,
+</span><span style="color:#e6db74">                         windspeed, winddirection, clouds, pressure)
+</span><span style="color:#e6db74">             VALUES (@locationid, @datafrom, @datato, @temperature, @humidity, @rain,
+</span><span style="color:#e6db74">                     @windspeed, @winddirection, @clouds, @pressure);
+</span><span style="color:#e6db74">             RETURNING id;</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">;</span>
+    parameters <span style="color:#f92672">=</span> <span style="color:#f92672">[</span>
+                 P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@locationid</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>LocationId<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                 P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@datafrom</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>DataFrom<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                 P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@datato</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>DataTo<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                 P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@temperature</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>Temperature<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                 P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@humidity</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>Humidity<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                 P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@rain</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>Rain<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                 P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@windspeed</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>WindSpeed<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                 P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@winddirection</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>WindDirection<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                 P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@clouds</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>Clouds<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                 P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@pressure</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>Pressure<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+             <span style="color:#f92672">]</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>The wrapper has the query as string and a list of SqlParameters.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">changeQueryObject</span> <span style="color:#f92672">=</span>
+<span style="color:#f92672">{</span>
+    query <span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span><span style="color:#f92672">;</span>
+    parameters <span style="color:#f92672">:</span> Sql.Parameter <span style="color:#66d9ef">list</span><span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>The P- function is a shortcut for the FsSql Sql.Parameter.make.</p>
 <p>To execute the insert statement, we pass the changeQueryObject to following function:</p>
-
-<pre><code class="language-fsharp">let executeScalar (queryObj : changeQueryObject) =
-    sql.ExecScalar queryObj.query queryObj.parameters
-</code></pre>
-
-<p>With the “RETURNING id” at the end of the SQL statement and executing it with ExecScalar, we get the primary key of the new entry. Everything we want after the insert.</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> executeScalar <span style="color:#f92672">(</span>queryObj <span style="color:#f92672">:</span> changeQueryObject<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+    sql<span style="color:#f92672">.</span>ExecScalar queryObj<span style="color:#f92672">.</span>query queryObj<span style="color:#f92672">.</span>parameters
+</code></pre></div><p>With the “RETURNING id” at the end of the SQL statement and executing it with ExecScalar, we get the primary key of the new entry. Everything we want after the insert.</p>
 <p>The same works for updates:</p>
-
-<pre><code class="language-fsharp">let private update (weather : Weather ) =
-{
-    query = &quot;UPDATE \&quot;intersect\&quot;.\&quot;Weather\&quot;
-             SET locationid=@locationid, datafrom=@datafrom, datato=@datato, temperature=@temperature, humidity=@humidity,
-             rain=@rain, windspeed=@windspeed, winddirection=@winddirection, clouds=@clouds, pressure=@pressure
-             WHERE id=@id;
-             SELECT @id;
-             &quot;;
-    parameters = [
-                    P(&quot;@id&quot;, weather.Id);
-                    P(&quot;@locationid&quot;, weather.LocationId);
-                    P(&quot;@datafrom&quot;, weather.DataFrom);
-                    P(&quot;@datato&quot;, weather.DataTo);
-                    P(&quot;@temperature&quot;, weather.Temperature);
-                    P(&quot;@humidity&quot;, weather.Humidity);
-                    P(&quot;@rain&quot;, weather.Rain);
-                    P(&quot;@windspeed&quot;, weather.WindSpeed);
-                    P(&quot;@winddirection&quot;, weather.WindDirection);
-                    P(&quot;@clouds&quot;, weather.Clouds);
-                    P(&quot;@pressure&quot;, weather.Pressure);
-                 ]
-}
-</code></pre>
-
-<p>And with some little pattern matching, we get a nice save function:</p>
-
-<pre><code class="language-fsharp">let save (weather : Weather) =
-    match weather.Id with
-    | 0 -&gt; insert weather
-    | _ -&gt; update weather
-</code></pre>
-
-<p>But what is with querying and some filtering? Now F# plays it’s strength.</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> private update <span style="color:#f92672">(</span>weather <span style="color:#f92672">:</span> Weather <span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+<span style="color:#f92672">{</span>
+    query <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">UPDATE </span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">intersect</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">.</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">Weather</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">
+</span><span style="color:#e6db74">             SET locationid=@locationid, datafrom=@datafrom, datato=@datato, temperature=@temperature, humidity=@humidity,
+</span><span style="color:#e6db74">             rain=@rain, windspeed=@windspeed, winddirection=@winddirection, clouds=@clouds, pressure=@pressure
+</span><span style="color:#e6db74">             WHERE id=@id;
+</span><span style="color:#e6db74">             SELECT @id;
+</span><span style="color:#e6db74">             </span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">;</span>
+    parameters <span style="color:#f92672">=</span> <span style="color:#f92672">[</span>
+                    P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@id</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>Id<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                    P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@locationid</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>LocationId<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                    P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@datafrom</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>DataFrom<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                    P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@datato</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>DataTo<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                    P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@temperature</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>Temperature<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                    P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@humidity</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>Humidity<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                    P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@rain</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>Rain<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                    P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@windspeed</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>WindSpeed<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                    P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@winddirection</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>WindDirection<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                    P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@clouds</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>Clouds<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                    P<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@pressure</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> weather<span style="color:#f92672">.</span>Pressure<span style="color:#f92672">)</span><span style="color:#f92672">;</span>
+                 <span style="color:#f92672">]</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>And with some little pattern matching, we get a nice save function:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> save <span style="color:#f92672">(</span>weather <span style="color:#f92672">:</span> Weather<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+    <span style="color:#66d9ef">match</span> weather<span style="color:#f92672">.</span>Id <span style="color:#66d9ef">with</span>
+    <span style="color:#f92672">|</span> 0 <span style="color:#f92672">-&gt;</span> insert weather
+    <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> update weather
+</code></pre></div><p>But what is with querying and some filtering? Now F# plays it’s strength.</p>
 <p>For that we need an little changed query wrapper:</p>
-
-<pre><code class="language-fsharp">type selectQueryObject&lt;'T&gt; =
-{
-    query : string;
-    parameters : Sql.Parameter list;
-    deserialisation : (IDataRecord -&gt; 'T) option;
-}
-</code></pre>
-
-<p>The new field “deserialisation” holds an function to get an instance of the entity from a datarecord. This is the one for the weather entity.</p>
-
-<pre><code class="language-fsharp">let asWeather (r: IDataRecord) =
-    new Weather(Id = (r?id).Value, LocationId = (r?LocationId).Value, DataFrom = (r?DataFrom).Value,
-    DataTo = (r?DataTo).Value, Temperature = (r?Temperature).Value,
-    Humidity = (r?Humidity).Value, Rain = (r?Rain).Value, WindSpeed = (r?WindSpeed).Value,
-    WindDirection = (r?WindDirection).Value, Clouds = (r?Clouds).Value, Pressure = (r?Pressure).Value)
-</code></pre>
-
-<p>How looks the querying function?</p>
-
-<pre><code class="language-fsharp">let search (fc : WeatherSearchRequest) =
-    let query = &quot;SELECT id, locationid, datafrom, datato, temperature, humidity, rain, windspeed, winddirection, clouds, pressure FROM \&quot;intersect\&quot;.\&quot;Weather\&quot;&quot;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">selectQueryObject</span><span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">=</span>
+<span style="color:#f92672">{</span>
+    query <span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span><span style="color:#f92672">;</span>
+    parameters <span style="color:#f92672">:</span> Sql.Parameter <span style="color:#66d9ef">list</span><span style="color:#f92672">;</span>
+    deserialisation <span style="color:#f92672">:</span> <span style="color:#f92672">(</span>IDataRecord <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">)</span> option<span style="color:#f92672">;</span>
+<span style="color:#f92672">}</span>
+</code></pre></div><p>The new field “deserialisation” holds an function to get an instance of the entity from a datarecord. This is the one for the weather entity.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> asWeather <span style="color:#f92672">(</span>r<span style="color:#f92672">:</span> IDataRecord<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+    <span style="color:#66d9ef">new</span> Weather<span style="color:#f92672">(</span>Id <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>r<span style="color:#f92672">?</span>id<span style="color:#f92672">)</span><span style="color:#f92672">.</span>Value<span style="color:#f92672">,</span> LocationId <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>r<span style="color:#f92672">?</span>LocationId<span style="color:#f92672">)</span><span style="color:#f92672">.</span>Value<span style="color:#f92672">,</span> DataFrom <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>r<span style="color:#f92672">?</span>DataFrom<span style="color:#f92672">)</span><span style="color:#f92672">.</span>Value<span style="color:#f92672">,</span>
+    DataTo <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>r<span style="color:#f92672">?</span>DataTo<span style="color:#f92672">)</span><span style="color:#f92672">.</span>Value<span style="color:#f92672">,</span> Temperature <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>r<span style="color:#f92672">?</span>Temperature<span style="color:#f92672">)</span><span style="color:#f92672">.</span>Value<span style="color:#f92672">,</span>
+    Humidity <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>r<span style="color:#f92672">?</span>Humidity<span style="color:#f92672">)</span><span style="color:#f92672">.</span>Value<span style="color:#f92672">,</span> Rain <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>r<span style="color:#f92672">?</span>Rain<span style="color:#f92672">)</span><span style="color:#f92672">.</span>Value<span style="color:#f92672">,</span> WindSpeed <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>r<span style="color:#f92672">?</span>WindSpeed<span style="color:#f92672">)</span><span style="color:#f92672">.</span>Value<span style="color:#f92672">,</span>
+    WindDirection <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>r<span style="color:#f92672">?</span>WindDirection<span style="color:#f92672">)</span><span style="color:#f92672">.</span>Value<span style="color:#f92672">,</span> Clouds <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>r<span style="color:#f92672">?</span>Clouds<span style="color:#f92672">)</span><span style="color:#f92672">.</span>Value<span style="color:#f92672">,</span> Pressure <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>r<span style="color:#f92672">?</span>Pressure<span style="color:#f92672">)</span><span style="color:#f92672">.</span>Value<span style="color:#f92672">)</span>
+</code></pre></div><p>How looks the querying function?</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> search <span style="color:#f92672">(</span>fc <span style="color:#f92672">:</span> WeatherSearchRequest<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+    <span style="color:#66d9ef">let</span> query <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">SELECT id, locationid, datafrom, datato, temperature, humidity, rain, windspeed, winddirection, clouds, pressure FROM </span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">intersect</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">.</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">Weather</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">&#34;</span>
  
-    let locationIdPara = w &quot;locationid&quot; &quot;@locationid&quot; &quot;=&quot; fc.LocationId
-    let fomPara = w &quot;datafrom&quot; &quot;@datafrom&quot; &quot;&gt;=&quot; fc.From
-    let toPara = w &quot;datato&quot; &quot;@datato&quot; &quot;&lt;=&quot; fc.To
-    let datetimeFromPara = w &quot;datafrom&quot; &quot;@datafrom&quot; &quot;&gt;=&quot; fc.DateTime
-    let datetimeToPara = w &quot;datato&quot; &quot;@datato&quot; &quot;&lt;=&quot; fc.DateTime
+    <span style="color:#66d9ef">let</span> locationIdPara <span style="color:#f92672">=</span> w <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">locationid</span><span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@locationid</span><span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">=</span><span style="color:#e6db74">&#34;</span> fc<span style="color:#f92672">.</span>LocationId
+    <span style="color:#66d9ef">let</span> fomPara <span style="color:#f92672">=</span> w <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">datafrom</span><span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@datafrom</span><span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&gt;=</span><span style="color:#e6db74">&#34;</span> fc<span style="color:#f92672">.</span>From
+    <span style="color:#66d9ef">let</span> toPara <span style="color:#f92672">=</span> w <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">datato</span><span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@datato</span><span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&lt;=</span><span style="color:#e6db74">&#34;</span> fc<span style="color:#f92672">.</span>To
+    <span style="color:#66d9ef">let</span> datetimeFromPara <span style="color:#f92672">=</span> w <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">datafrom</span><span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@datafrom</span><span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&gt;=</span><span style="color:#e6db74">&#34;</span> fc<span style="color:#f92672">.</span>DateTime
+    <span style="color:#66d9ef">let</span> datetimeToPara <span style="color:#f92672">=</span> w <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">datato</span><span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@datato</span><span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&lt;=</span><span style="color:#e6db74">&#34;</span> fc<span style="color:#f92672">.</span>DateTime
  
     Some asWeather
-    |&gt; emptyQueryPart
-    |&gt; combineAnd locationIdPara
-    |&gt; combineAnd fomPara
-    |&gt; combineAnd toPara
-    |&gt; combineAnd datetimeFromPara
-    |&gt; combineAnd datetimeToPara
-    |&gt; combineQueryParts query
-</code></pre>
-
-<p>The WeatherSearchRequest is a POCO which holds the various filter values.</p>
-
+    <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> emptyQueryPart
+    <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> combineAnd locationIdPara
+    <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> combineAnd fomPara
+    <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> combineAnd toPara
+    <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> combineAnd datetimeFromPara
+    <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> combineAnd datetimeToPara
+    <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> combineQueryParts query
+</code></pre></div><p>The WeatherSearchRequest is a POCO which holds the various filter values.</p>
 <p>Every possible part of the where- Statement is wrapped in an queryPart record.</p>
-
-<pre><code class="language-fsharp">type queryPart =
-{
-    where : string;
-    parameter : Sql.Parameter option
-}
-</code></pre>
-
-<p>The w- function (for Where) creates such a record:</p>
-
-<pre><code class="language-fsharp">let private w&lt;'a when 'a : (new : unit -&gt; 'a) and 'a : struct and 'a :&gt; System.ValueType&gt; column parametername operator (value : System.Nullable&lt;'a&gt;) =
-    match value.HasValue with
-    | true -&gt; { where = sprintf &quot;%s %s %s&quot; column operator parametername; parameter = Some &lt;| P(parametername, value.Value)}
-    | false -&gt; {where = &quot;&quot;; parameter = Option&lt;Sql.Parameter&gt;.None}
-</code></pre>
-
-<p>When the filter value is set, it create a filled queryPart, else we get an empty one.</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">type</span> <span style="color:#a6e22e">queryPart</span> <span style="color:#f92672">=</span>
+<span style="color:#f92672">{</span>
+    where <span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span><span style="color:#f92672">;</span>
+    parameter <span style="color:#f92672">:</span> Sql.Parameter option
+<span style="color:#f92672">}</span>
+</code></pre></div><p>The w- function (for Where) creates such a record:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> private w<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>a <span style="color:#66d9ef">when</span> <span style="color:#66d9ef">&#39;</span>a <span style="color:#f92672">:</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">new</span> <span style="color:#f92672">:</span> <span style="color:#66d9ef">unit</span> <span style="color:#f92672">-&gt;</span> <span style="color:#66d9ef">&#39;</span>a<span style="color:#f92672">)</span> <span style="color:#f92672">and</span> <span style="color:#66d9ef">&#39;</span>a <span style="color:#f92672">:</span> <span style="color:#66d9ef">struct</span> <span style="color:#f92672">and</span> <span style="color:#66d9ef">&#39;</span>a <span style="color:#f92672">:&gt;</span> System.ValueType<span style="color:#f92672">&gt;</span> column parametername operator <span style="color:#f92672">(</span>value <span style="color:#f92672">:</span> System.Nullable<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>a<span style="color:#f92672">&gt;</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+    <span style="color:#66d9ef">match</span> value<span style="color:#f92672">.</span>HasValue <span style="color:#66d9ef">with</span>
+    <span style="color:#f92672">|</span> <span style="color:#66d9ef">true</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span> where <span style="color:#f92672">=</span> sprintf <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">%s %s %s</span><span style="color:#e6db74">&#34;</span> column operator parametername<span style="color:#f92672">;</span> parameter <span style="color:#f92672">=</span> Some <span style="color:#f92672">&lt;</span><span style="color:#f92672">|</span> P<span style="color:#f92672">(</span>parametername<span style="color:#f92672">,</span> value<span style="color:#f92672">.</span>Value<span style="color:#f92672">)</span><span style="color:#f92672">}</span>
+    <span style="color:#f92672">|</span> <span style="color:#66d9ef">false</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>where <span style="color:#f92672">=</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">;</span> parameter <span style="color:#f92672">=</span> Option<span style="color:#f92672">&lt;</span>Sql.Parameter<span style="color:#f92672">&gt;</span><span style="color:#f92672">.</span>None<span style="color:#f92672">}</span>
+</code></pre></div><p>When the filter value is set, it create a filled queryPart, else we get an empty one.</p>
 <p>But what do we do with it now? Let’s look at the next code block.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp">Some asWeather
+<span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> emptyQueryPart
+<span style="color:#f92672">..</span><span style="color:#f92672">.</span>
+</code></pre></div><p>This is to create a selectQueryObject with setted deserialisation function. The selectQueryObject is then piped to multiple combineAnd functions.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#f92672">..</span><span style="color:#f92672">.</span>
+<span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> combineAnd locationIdPara
+<span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> combineAnd fomPara
+<span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> combineAnd toPara
+<span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> combineAnd datetimeFromPara
+<span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> combineAnd datetimeToPara
+<span style="color:#f92672">..</span><span style="color:#f92672">.</span>
 
-<pre><code class="language-fsharp">Some asWeather
-|&gt; emptyQueryPart
-...
-</code></pre>
+<span style="color:#66d9ef">let</span> private combineAnd<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">(</span>x <span style="color:#f92672">:</span> queryPart<span style="color:#f92672">)</span> <span style="color:#f92672">(</span>qo <span style="color:#f92672">:</span> selectQueryObject<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">&gt;</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+    <span style="color:#66d9ef">match</span> <span style="color:#f92672">(</span>x<span style="color:#f92672">.</span>parameter<span style="color:#f92672">,</span> qo<span style="color:#f92672">.</span>query<span style="color:#f92672">)</span> <span style="color:#66d9ef">with</span>
+    <span style="color:#f92672">|</span> <span style="color:#f92672">(</span>Some xpart<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span> query <span style="color:#f92672">=</span> x<span style="color:#f92672">.</span>where<span style="color:#f92672">;</span> parameters <span style="color:#f92672">=</span> <span style="color:#f92672">[</span>x<span style="color:#f92672">.</span>parameter<span style="color:#f92672">.</span>Value<span style="color:#f92672">]</span><span style="color:#f92672">;</span> deserialisation <span style="color:#f92672">=</span> qo<span style="color:#f92672">.</span>deserialisation<span style="color:#f92672">}</span>
+    <span style="color:#f92672">|</span> <span style="color:#f92672">(</span>Some xpart<span style="color:#f92672">,</span> <span style="color:#f92672">_</span><span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span>query <span style="color:#f92672">=</span> qo<span style="color:#f92672">.</span>query <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74"> AND </span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">+</span> x<span style="color:#f92672">.</span>where<span style="color:#f92672">;</span> parameters <span style="color:#f92672">=</span> x<span style="color:#f92672">.</span>parameter<span style="color:#f92672">.</span>Value <span style="color:#f92672">::</span> qo<span style="color:#f92672">.</span>parameters<span style="color:#f92672">;</span> deserialisation <span style="color:#f92672">=</span> qo<span style="color:#f92672">.</span>deserialisation<span style="color:#f92672">}</span>
+    <span style="color:#f92672">|</span> <span style="color:#f92672">(</span>None<span style="color:#f92672">,</span> <span style="color:#f92672">_</span><span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span> <span style="color:#f92672">{</span> query <span style="color:#f92672">=</span> qo<span style="color:#f92672">.</span>query<span style="color:#f92672">;</span> parameters <span style="color:#f92672">=</span> qo<span style="color:#f92672">.</span>parameters<span style="color:#f92672">;</span> deserialisation <span style="color:#f92672">=</span> qo<span style="color:#f92672">.</span>deserialisation<span style="color:#f92672">}</span>
 
-<p>This is to create a selectQueryObject with setted deserialisation function. The selectQueryObject is then piped to multiple combineAnd functions.</p>
-
-<pre><code class="language-fsharp">...
-|&gt; combineAnd locationIdPara
-|&gt; combineAnd fomPara
-|&gt; combineAnd toPara
-|&gt; combineAnd datetimeFromPara
-|&gt; combineAnd datetimeToPara
-...
-
-let private combineAnd&lt;'T&gt; (x : queryPart) (qo : selectQueryObject&lt;'T&gt;) =
-    match (x.parameter, qo.query) with
-    | (Some xpart, &quot;&quot;) -&gt; { query = x.where; parameters = [x.parameter.Value]; deserialisation = qo.deserialisation}
-    | (Some xpart, _) -&gt; {query = qo.query + &quot; AND &quot; + x.where; parameters = x.parameter.Value :: qo.parameters; deserialisation = qo.deserialisation}
-    | (None, _) -&gt; { query = qo.query; parameters = qo.parameters; deserialisation = qo.deserialisation}
-
-</code></pre>
-
-<p>Once again, we use some pattern matching.</p>
-
+</code></pre></div><p>Once again, we use some pattern matching.</p>
 <p>The first case is hit, when we have a filled queryPart but an empty selectQueryObject. So when the first filter criteria is hit.</p>
-
 <p>The second case is hit, when we add the other filter criteria to the selectQueryObject.</p>
-
 <p>The last one is hit, when we have already some data in the selectQueryObject, but the queryPart is empty. So when we have already some filter criteria added, but the current one is not set.</p>
-
 <p>At the end, we pipe the selectQueryObject to the combineQueryParts function.</p>
-
-<pre><code class="language-fsharp">...
-|&gt; combineQueryParts query
-...
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#f92672">..</span><span style="color:#f92672">.</span>
+<span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> combineQueryParts query
+<span style="color:#f92672">..</span><span style="color:#f92672">.</span>
  
-let private combineQueryParts&lt;'T&gt; (query :string) (qo :selectQueryObject&lt;'T&gt;) =
-    let mutable q = query
-    if (qo.query.Length &gt; 0) then
-        q &lt;- query + &quot; WHERE &quot; + qo.query
+<span style="color:#66d9ef">let</span> private combineQueryParts<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">(</span>query <span style="color:#f92672">:</span><span style="color:#66d9ef">string</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span>qo <span style="color:#f92672">:</span>selectQueryObject<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">&gt;</span><span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+    <span style="color:#66d9ef">let</span> mutable q <span style="color:#f92672">=</span> query
+    <span style="color:#66d9ef">if</span> <span style="color:#f92672">(</span>qo<span style="color:#f92672">.</span>query<span style="color:#f92672">.</span>Length <span style="color:#f92672">&gt;</span> 0<span style="color:#f92672">)</span> <span style="color:#66d9ef">then</span>
+        q <span style="color:#f92672">&lt;-</span> query <span style="color:#f92672">+</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74"> WHERE </span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">+</span> qo<span style="color:#f92672">.</span>query
  
-    { query = q; parameters = qo.parameters; deserialisation = qo.deserialisation; }
+    <span style="color:#f92672">{</span> query <span style="color:#f92672">=</span> q<span style="color:#f92672">;</span> parameters <span style="color:#f92672">=</span> qo<span style="color:#f92672">.</span>parameters<span style="color:#f92672">;</span> deserialisation <span style="color:#f92672">=</span> qo<span style="color:#f92672">.</span>deserialisation<span style="color:#f92672">;</span> <span style="color:#f92672">}</span>
 
-</code></pre>
-
-<p>This function simply combines the select- Query with the where- Statement if needed.</p>
-
+</code></pre></div><p>This function simply combines the select- Query with the where- Statement if needed.</p>
 <p>At the end, we get a nice filled selectQueryObject which is then passed to a general function.</p>
-
-<pre><code class="language-fsharp">let executeReader&lt;'T&gt; (queryObj : selectQueryObject&lt;'T&gt; )=
-    sql.ExecReader queryObj.query queryObj.parameters
-    |&gt; Seq.ofDataReader
-    |&gt; Seq.map queryObj.deserialisation.Value
-</code></pre>
-
-<p>Nice, or?</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> executeReader<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">(</span>queryObj <span style="color:#f92672">:</span> selectQueryObject<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">)</span><span style="color:#f92672">=</span>
+    sql<span style="color:#f92672">.</span>ExecReader queryObj<span style="color:#f92672">.</span>query queryObj<span style="color:#f92672">.</span>parameters
+    <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> Seq.ofDataReader
+    <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> Seq.map queryObj<span style="color:#f92672">.</span>deserialisation<span style="color:#f92672">.</span>Value
+</code></pre></div><p>Nice, or?</p>
 <p>The complete code at once can be found here.</p>
-
 <p>So what about the testing? With the query wrapped into a record, we simply can tests the data in the record.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> checkSqlParameter <span style="color:#f92672">(</span>name <span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span>value <span style="color:#f92672">:</span> <span style="color:#66d9ef">obj</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span>parameter <span style="color:#f92672">:</span> Sql.Parameter<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+    <span style="color:#66d9ef">obj</span><span style="color:#f92672">.</span>Equals<span style="color:#f92672">(</span>parameter<span style="color:#f92672">.</span>ParameterName<span style="color:#f92672">,</span>name<span style="color:#f92672">)</span> <span style="color:#f92672">&amp;&amp;</span> <span style="color:#66d9ef">obj</span><span style="color:#f92672">.</span>Equals<span style="color:#f92672">(</span>parameter<span style="color:#f92672">.</span>Value<span style="color:#f92672">,</span>value<span style="color:#f92672">)</span>
+ 
+<span style="color:#66d9ef">let</span> checkForSqlParameter <span style="color:#f92672">(</span>name <span style="color:#f92672">:</span> <span style="color:#66d9ef">string</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span>value <span style="color:#f92672">:</span> <span style="color:#66d9ef">obj</span><span style="color:#f92672">)</span> parameters <span style="color:#f92672">=</span>
+    parameters <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> Seq.exists <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> i <span style="color:#f92672">-&gt;</span> checkSqlParameter name value i<span style="color:#f92672">)</span> <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> should equal <span style="color:#66d9ef">true</span>
+ 
+<span style="color:#66d9ef">let</span> nullableFromPara <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Nullable<span style="color:#f92672">&lt;</span>DateTimeOffset<span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span>fromPara<span style="color:#f92672">)</span>
+<span style="color:#66d9ef">let</span> nullableToPara <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Nullable<span style="color:#f92672">&lt;</span>DateTimeOffset<span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span>toPara<span style="color:#f92672">)</span>
+<span style="color:#66d9ef">let</span> locationIdPara <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> Nullable<span style="color:#f92672">&lt;</span>Guid<span style="color:#f92672">&gt;</span><span style="color:#f92672">(</span>Guid.NewGuid()<span style="color:#f92672">)</span>
+ 
+<span style="color:#f92672">[&lt;</span>Fact<span style="color:#f92672">&gt;]</span>
+<span style="color:#66d9ef">let</span> ``Check query with LocationId, From and To parameter``() <span style="color:#f92672">=</span>
+    <span style="color:#66d9ef">let</span> fc <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> WeatherSearchRequest()
+    fc<span style="color:#f92672">.</span>LocationId <span style="color:#f92672">&lt;-</span> locationIdPara
+    fc<span style="color:#f92672">.</span>From <span style="color:#f92672">&lt;-</span> nullableFromPara
+    fc<span style="color:#f92672">.</span>To <span style="color:#f92672">&lt;-</span> nullableToPara
+ 
+    <span style="color:#66d9ef">let</span> queryObj <span style="color:#f92672">=</span> weather<span style="color:#f92672">.</span>search fc
+    queryObj<span style="color:#f92672">.</span>parameters <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> Seq.length <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> should equal 3
+    queryObj<span style="color:#f92672">.</span>parameters <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> checkForSqlParameter <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@datafrom</span><span style="color:#e6db74">&#34;</span> fc<span style="color:#f92672">.</span>From
+    queryObj<span style="color:#f92672">.</span>parameters <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> checkForSqlParameter <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@datato</span><span style="color:#e6db74">&#34;</span> fc<span style="color:#f92672">.</span>To
+    queryObj<span style="color:#f92672">.</span>parameters <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> checkForSqlParameter <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">@locationid</span><span style="color:#e6db74">&#34;</span> fc<span style="color:#f92672">.</span>LocationId
+ 
+    queryObj<span style="color:#f92672">.</span>query <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> should equal <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">SELECT id, locationid, datafrom, datato, temperature, humidity, rain, windspeed, winddirection, clouds, pressure FROM </span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">intersect</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">.</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74">Weather</span><span style="color:#ae81ff">\&#34;</span><span style="color:#e6db74"> WHERE locationid = @locationid AND datafrom &gt;= @datafrom AND datato &lt;= @datato</span><span style="color:#e6db74">&#34;</span>
 
-<pre><code class="language-fsharp">let checkSqlParameter (name : string) (value : obj) (parameter : Sql.Parameter) =
-    obj.Equals(parameter.ParameterName,name) &amp;&amp; obj.Equals(parameter.Value,value)
- 
-let checkForSqlParameter (name : string) (value : obj) parameters =
-    parameters |&gt; Seq.exists (fun i -&gt; checkSqlParameter name value i) |&gt; should equal true
- 
-let nullableFromPara = new Nullable&lt;DateTimeOffset&gt;(fromPara)
-let nullableToPara = new Nullable&lt;DateTimeOffset&gt;(toPara)
-let locationIdPara = new Nullable&lt;Guid&gt;(Guid.NewGuid())
- 
-[&lt;Fact&gt;]
-let ``Check query with LocationId, From and To parameter``() =
-    let fc = new WeatherSearchRequest()
-    fc.LocationId &lt;- locationIdPara
-    fc.From &lt;- nullableFromPara
-    fc.To &lt;- nullableToPara
- 
-    let queryObj = weather.search fc
-    queryObj.parameters |&gt; Seq.length |&gt; should equal 3
-    queryObj.parameters |&gt; checkForSqlParameter &quot;@datafrom&quot; fc.From
-    queryObj.parameters |&gt; checkForSqlParameter &quot;@datato&quot; fc.To
-    queryObj.parameters |&gt; checkForSqlParameter &quot;@locationid&quot; fc.LocationId
- 
-    queryObj.query |&gt; should equal &quot;SELECT id, locationid, datafrom, datato, temperature, humidity, rain, windspeed, winddirection, clouds, pressure FROM \&quot;intersect\&quot;.\&quot;Weather\&quot; WHERE locationid = @locationid AND datafrom &gt;= @datafrom AND datato &lt;= @datato&quot;
-
-</code></pre>
-
-<p>When was the last time, you could test which SQL- query gets executed against your DBS? 😉</p>
+</code></pre></div><p>When was the last time, you could test which SQL- query gets executed against your DBS? 😉</p>
 
 
     

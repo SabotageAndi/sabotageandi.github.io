@@ -8,17 +8,17 @@
 <meta property="og:title" content="Impressions of using F# (with a little bit of Xamarin.Forms)" />
 <meta property="og:description" content="In the last days I completed the first version of FFRAB-Mobile (see here). I used F# and Xamarin.Forms to gain more experience in a bigger project than a simple example app. You can find the sources here: https://github.com/SabotageAndi/ffrab-mobile
 Here are my impressions:
-Writing stateless could be hard, but it is worth the trouble Coming from a C# background, now writing code that is near complete stateless is new and unusual." />
+Writing stateless could be hard, but it is worth the trouble Coming from a C# background, now writing code that is near complete stateless is new and unusual. So the first code I wrote was a lot of object oriented stuff with too much access to shared state." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://willich.io/2016/01/06/impressions-of-using-f#-with-a-little-bit-of-xamarin.forms/" />
-<meta property="article:published_time" content="2016-01-06T00:00:00&#43;00:00"/>
-<meta property="article:modified_time" content="2016-01-06T00:00:00&#43;00:00"/>
+<meta property="article:published_time" content="2016-01-06T00:00:00+00:00" />
+<meta property="article:modified_time" content="2016-01-06T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Impressions of using F# (with a little bit of Xamarin.Forms)"/>
 <meta name="twitter:description" content="In the last days I completed the first version of FFRAB-Mobile (see here). I used F# and Xamarin.Forms to gain more experience in a bigger project than a simple example app. You can find the sources here: https://github.com/SabotageAndi/ffrab-mobile
 Here are my impressions:
-Writing stateless could be hard, but it is worth the trouble Coming from a C# background, now writing code that is near complete stateless is new and unusual."/>
+Writing stateless could be hard, but it is worth the trouble Coming from a C# background, now writing code that is near complete stateless is new and unusual. So the first code I wrote was a lot of object oriented stuff with too much access to shared state."/>
 
 
 
@@ -114,90 +114,56 @@ Writing stateless could be hard, but it is worth the trouble Coming from a C# ba
     <hr>
 </header>
 <article class="blog-post">
-    
-
-<p>In the last days I completed the first version of FFRAB-Mobile (see here). I used F# and Xamarin.Forms to gain more experience in a bigger project than a simple example app. You can find the sources here: <a href="https://github.com/SabotageAndi/ffrab-mobile">https://github.com/SabotageAndi/ffrab-mobile</a></p>
-
+    <p>In the last days I completed the first version of FFRAB-Mobile (see here). I used F# and Xamarin.Forms to gain more experience in a bigger project than a simple example app. You can find the sources here: <a href="https://github.com/SabotageAndi/ffrab-mobile">https://github.com/SabotageAndi/ffrab-mobile</a></p>
 <p>Here are my impressions:</p>
-
 <h2 id="writing-stateless-could-be-hard-but-it-is-worth-the-trouble">Writing stateless could be hard, but it is worth the trouble</h2>
-
 <p>Coming from a C# background, now writing code that is near complete stateless is new and unusual. So the first code I wrote was a lot of object oriented stuff with too much access to shared state. Especially the access to the database connection was at the beginning a little bit painful.</p>
-
 <p>But after some refactoring it got more and more in a functional style. At least I hope so.</p>
-
 <p>Before refactoring:</p>
-
 <p><a href="https://github.com/SabotageAndi/ffrab-mobile/blob/0e72e26e83f5112e6c95cc99959baa9a55eb9882/ffrab.common/model.fs">https://github.com/SabotageAndi/ffrab-mobile/blob/0e72e26e83f5112e6c95cc99959baa9a55eb9882/ffrab.common/model.fs</a> Line 52 – 140</p>
-
 <p>After refactoring:</p>
-
 <p><a href="https://github.com/SabotageAndi/ffrab-mobile/blob/master/ffrab.common/database.fs">https://github.com/SabotageAndi/ffrab-mobile/blob/master/ffrab.common/database.fs</a>
 <a href="https://github.com/SabotageAndi/ffrab-mobile/blob/master/ffrab.common/queries.fs">https://github.com/SabotageAndi/ffrab-mobile/blob/master/ffrab.common/queries.fs</a></p>
-
 <p>At the end it was worth the trouble. It is more readable and simpler code.</p>
-
 <h2 id="if-it-looks-ugly-make-a-function">If it looks ugly, make a function</h2>
-
 <p>When you have pure F# code and libraries, it is complete in your hands to write nice code. But when you are using C# libraries, i can quickly get ugly because of the library. This is because the parameters of the C# methods are represented as tuples. With them, you have a lot of brackets and can not use the forward pipe operator ‘|&gt;’.</p>
-
 <p>But simply wrap the C# method call in a small function and voila.</p>
-
 <p>Here is an example when using NodaTime (the “let startTime”- line is the important one):
 Direct call to C#:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> dateTimeFormat <span style="color:#f92672">=</span> OffsetDateTimePattern.CreateWithInvariantCulture<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">yyyy&#39;-&#39;MM&#39;-&#39;dd&#39;T&#39;HH&#39;:&#39;mm&#39;:&#39;sso&lt;G&gt;</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span>
+<span style="color:#66d9ef">let</span> startTime <span style="color:#f92672">=</span> common<span style="color:#f92672">.</span>Formatting<span style="color:#f92672">.</span>dateTimeFormat<span style="color:#f92672">.</span>Parse<span style="color:#f92672">(</span>dayNode<span style="color:#f92672">.</span><span style="color:#f92672">[</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">day_start</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">]</span><span style="color:#f92672">.</span>Value<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>()<span style="color:#f92672">)</span><span style="color:#f92672">.</span>Value
+</code></pre></div><p>With F# wrapper function:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> parseNodaTime<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">(</span>pattern <span style="color:#f92672">:</span> NodaTime.Text.IPattern<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">&gt;</span><span style="color:#f92672">)</span> rawValue <span style="color:#f92672">=</span>
+        <span style="color:#66d9ef">let</span> result <span style="color:#f92672">=</span> pattern<span style="color:#f92672">.</span>Parse<span style="color:#f92672">(</span>rawValue<span style="color:#f92672">)</span>
+        result<span style="color:#f92672">.</span>Value
 
-<pre><code class="language-fsharp">let dateTimeFormat = OffsetDateTimePattern.CreateWithInvariantCulture(&quot;yyyy'-'MM'-'dd'T'HH':'mm':'sso&lt;G&gt;&quot;)
-let startTime = common.Formatting.dateTimeFormat.Parse(dayNode.[&quot;day_start&quot;].Value&lt;string&gt;()).Value
-</code></pre>
-
-<p>With F# wrapper function:</p>
-
-<pre><code class="language-fsharp">let parseNodaTime&lt;'T&gt; (pattern : NodaTime.Text.IPattern&lt;'T&gt;) rawValue =
-        let result = pattern.Parse(rawValue)
-        result.Value
-
-let dateTimeFormat = OffsetDateTimePattern.CreateWithInvariantCulture(&quot;yyyy'-'MM'-'dd'T'HH':'mm':'sso&lt;G&gt;&quot;)
-let startTime = (json.GetProperty &quot;day_start&quot;).AsString() |&gt; parseNodaTime common.Formatting.dateTimeFormat
-</code></pre>
-
-<p>For one usage it might be not that bad, but when you have multiple calls, it is more readable. Particularly you get the nice left- to- right readability back!</p>
-
-<h2 id="left-to-right-readability-combined-with-railway-oriented-programming-rop-rocks">Left- to- right readability combined with railway oriented programming (ROP) rocks!</h2>
-
+<span style="color:#66d9ef">let</span> dateTimeFormat <span style="color:#f92672">=</span> OffsetDateTimePattern.CreateWithInvariantCulture<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">yyyy&#39;-&#39;MM&#39;-&#39;dd&#39;T&#39;HH&#39;:&#39;mm&#39;:&#39;sso&lt;G&gt;</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span>
+<span style="color:#66d9ef">let</span> startTime <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>json<span style="color:#f92672">.</span>GetProperty <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">day_start</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span>AsString() <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> parseNodaTime common<span style="color:#f92672">.</span>Formatting<span style="color:#f92672">.</span>dateTimeFormat
+</code></pre></div><p>For one usage it might be not that bad, but when you have multiple calls, it is more readable. Particularly you get the nice left- to- right readability back!</p>
+<h2 id="left--to--right-readability-combined-with-railway-oriented-programming-rop-rocks">Left- to- right readability combined with railway oriented programming (ROP) rocks!</h2>
 <p>Look at this example:</p>
-
-<pre><code class="language-fsharp">let synchronizeData conference =
-            match conference with
-            | Some conference -&gt;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> synchronizeData conference <span style="color:#f92672">=</span>
+            <span style="color:#66d9ef">match</span> conference <span style="color:#66d9ef">with</span>
+            <span style="color:#f92672">|</span> Some conference <span style="color:#f92672">-&gt;</span>
                 conference 
-                |&gt; checkForTimeout
-                |&gt; getDataLocation
-                |&gt; fetchJson 
-                |&gt; Parser.parseJson conference
-                |&gt; Synchronization.sync conference
-            | _ -&gt;
+                <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> checkForTimeout
+                <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> getDataLocation
+                <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> fetchJson 
+                <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> Parser.parseJson conference
+                <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> Synchronization.sync conference
+            <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span>
                 ignore()
             conference
-</code></pre>
-
-<p>All parts of the synchronization are nice one after one step easy readable and extendable. So adding the additional timeout check was easy to add to this pipeline.</p>
-
-<h2 id="mvvm-is-more-fun-with-fsharp-viewmodule-than-with-c">MVVM is more fun with FSharp.ViewModule than with C</h2>
-
+</code></pre></div><p>All parts of the synchronization are nice one after one step easy readable and extendable. So adding the additional timeout check was easy to add to this pipeline.</p>
+<h2 id="mvvm-is-more-fun-with-fsharpviewmodule-than-with-c">MVVM is more fun with FSharp.ViewModule than with C#</h2>
 <p>With FSharp.ViewModule and F# you have so much less boilerplate code in your viewmodels. Without the curly brackets of C# you can reduce the line count again.</p>
-
 <p>So the 8 viewmodels are about 260 lines (with empty lines and boilder plate functions/type). In C# 3 of the viewmodels would have this code size.</p>
-
 <h2 id="tooling-enough-but-some-rough-edges">Tooling? Enough, but some rough edges</h2>
-
 <p>When you code in Visual Studio, you need the Visual F# Power Tools. And the first thing you have to do is to enable Folder organization. You do not need the folders for your F# code, but to organize other files like images or json-Files. No idea why it is disabled by default.</p>
-
 <p>On the Xamarin side there is sadly one bug, that prevents to use Xamarin.Forms on Android with F#. It looks like the F# CodeDom does not escape F# keywords.
 For details is here the Bugzilla entry: <a href="https://bugzilla.xamarin.com/show_bug.cgi?id=24709">https://bugzilla.xamarin.com/show_bug.cgi?id=24709</a>
 Hopefully the bug is fixed soon.</p>
-
 <p>For the C# developers with Resharper: First you think you will miss it, but you do not need it. The Power Tools have a Rename function. Other refactoring features like extracting or adding namespaces I didn’t miss.</p>
-
 <p>So for me is F# a really fun and productive language. Not everything is easy and clear when you are using it the first time, but the fog will lift with the time. When you are working some days concentrated with F#, you will learn and understand a lot. And it will be awesome. 😉</p>
 
 

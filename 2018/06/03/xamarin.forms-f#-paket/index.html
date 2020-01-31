@@ -11,8 +11,8 @@ Normally I am always following the steps here and here. But this time, after I h
 After some time of fiddling with Paket (I am not the expert user of it) I found the solution." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://willich.io/2018/06/03/xamarin.forms-f#-paket/" />
-<meta property="article:published_time" content="2018-06-03T00:00:00&#43;00:00"/>
-<meta property="article:modified_time" content="2018-06-03T00:00:00&#43;00:00"/>
+<meta property="article:published_time" content="2018-06-03T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-06-03T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Xamarin.Forms &#43; F# &#43; Paket"/>
@@ -115,21 +115,15 @@ After some time of fiddling with Paket (I am not the expert user of it) I found 
 </header>
 <article class="blog-post">
     <p>Yesterday I started a new Xamarin.Forms project in F# on my Mac. Because the NuGet experience isn’t the best in Visual Studio for Mac, I always use Paket for managing my dependencies.</p>
-
 <p>Normally I am always following the steps <a href="https://fsprojects.github.io/Paket/paket-and-dotnet-cli.html">here</a> and <a href="https://fsprojects.github.io/Paket/convert-from-nuget-tutorial.html">here</a>. But this time, after I have done everything, the project didn’t compile anymore.</p>
-
 <p>After some time of fiddling with Paket (I am not the expert user of it) I found the solution. You have to add a framework restriction to the Xamarin.Forms and Xamarin.Android.FSharp.ResourceProvider entry.</p>
-
 <p>The reason is, that if you not add it, on Android Paket is using MonoAndroid1.0 as target framework and so the dependencies are resolved not correctly. I found this GitHub issue for this behaviour: <a href="https://github.com/fsprojects/Paket/issues/2762">https://github.com/fsprojects/Paket/issues/2762</a></p>
-
 <p>The complete paket.dependencies file looks like this:</p>
-
 <pre><code>source https://www.nuget.org/api/v2
 nuget FSharp.Core
 nuget Xamarin.Forms framework: MonoAndroid8.1,netstandard2.0,xamarinios
 nuget Xamarin.Android.FSharp.ResourceProvider framework:monoandroid8.1
 </code></pre>
-
 
     
 

@@ -8,18 +8,18 @@
 <meta property="og:title" content="Blog post to my talk “MSBuild 101 – Was passiert wenn ich auf „Build“ klicke”" />
 <meta property="og:description" content="Last Monday (30. January) a colleague and I gave a talk about the basics of MSBuild. So that also others can enjoy my explanations, I wrote this post.
 All examples can be found here:
-Classic Hello World &lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt; &lt;Target Name=&quot;HelloWorld&quot;&gt; &lt;Message Text=&quot;Hello World!&quot; /&gt; &lt;/Target&gt; &lt;/Project&gt;  Command: msbuild %Filename%.csproj /t:HelloWorld
+Classic Hello World &lt;Project Sdk=&#34;Microsoft.NET.Sdk&#34;&gt; &lt;Target Name=&#34;HelloWorld&#34;&gt; &lt;Message Text=&#34;Hello World!&#34; /&gt; &lt;/Target&gt; &lt;/Project&gt; Command: msbuild %Filename%.csproj /t:HelloWorld
 That&rsquo;s the classic &ldquo;Hello World&rdquo; as for every programming language. And yes, MSBuild looks like XML, but it&rsquo;s a programming language." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://willich.io/2018/02/04/blog-post-to-my-talk-msbuild-101-was-passiert-wenn-ich-auf-build-klicke/" />
-<meta property="article:published_time" content="2018-02-04T00:00:00&#43;00:00"/>
-<meta property="article:modified_time" content="2018-02-04T00:00:00&#43;00:00"/>
+<meta property="article:published_time" content="2018-02-04T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-02-04T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Blog post to my talk “MSBuild 101 – Was passiert wenn ich auf „Build“ klicke”"/>
 <meta name="twitter:description" content="Last Monday (30. January) a colleague and I gave a talk about the basics of MSBuild. So that also others can enjoy my explanations, I wrote this post.
 All examples can be found here:
-Classic Hello World &lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt; &lt;Target Name=&quot;HelloWorld&quot;&gt; &lt;Message Text=&quot;Hello World!&quot; /&gt; &lt;/Target&gt; &lt;/Project&gt;  Command: msbuild %Filename%.csproj /t:HelloWorld
+Classic Hello World &lt;Project Sdk=&#34;Microsoft.NET.Sdk&#34;&gt; &lt;Target Name=&#34;HelloWorld&#34;&gt; &lt;Message Text=&#34;Hello World!&#34; /&gt; &lt;/Target&gt; &lt;/Project&gt; Command: msbuild %Filename%.csproj /t:HelloWorld
 That&rsquo;s the classic &ldquo;Hello World&rdquo; as for every programming language. And yes, MSBuild looks like XML, but it&rsquo;s a programming language."/>
 
 
@@ -116,164 +116,121 @@ That&rsquo;s the classic &ldquo;Hello World&rdquo; as for every programming lang
     <hr>
 </header>
 <article class="blog-post">
-    
-
-<p>Last Monday (30. January) a colleague and I gave a talk about the basics of MSBuild. So that also others can enjoy my explanations, I wrote this post.</p>
-
+    <p>Last Monday (30. January) a colleague and I gave a talk about the basics of MSBuild. So that also others can enjoy my explanations, I wrote this post.</p>
 <p>All examples can be found here:</p>
-
 <h1 id="classic-hello-world">Classic Hello World</h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">&gt;</span>
 
-<pre><code class="language-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
+    <span style="color:#f92672">&lt;Target</span> <span style="color:#a6e22e">Name=</span><span style="color:#e6db74">&#34;HelloWorld&#34;</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;Message</span> <span style="color:#a6e22e">Text=</span><span style="color:#e6db74">&#34;Hello World!&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;/Target&gt;</span>
 
-    &lt;Target Name=&quot;HelloWorld&quot;&gt;
-        &lt;Message Text=&quot;Hello World!&quot; /&gt;
-    &lt;/Target&gt;
-
-&lt;/Project&gt;
-</code></pre>
-
-<p>Command: msbuild %Filename%.csproj /t:HelloWorld</p>
-
+<span style="color:#f92672">&lt;/Project&gt;</span>
+</code></pre></div><p>Command: msbuild %Filename%.csproj /t:HelloWorld</p>
 <p>That&rsquo;s the classic &ldquo;Hello World&rdquo; as for every programming language. And yes, MSBuild looks like XML, but it&rsquo;s a programming language. &ldquo;Target&rdquo; defines a &ldquo;method&rdquo;, which can call other targets and tasks. Tasks are functions that are defined in assemblies.</p>
-
-<p>With the /t parameter, you specific which target is executed. When you don&rsquo;t specify it, a default target is executed, but in this case, we want that the &ldquo;HelloWorld&rdquo; target is executed and print &ldquo;Hello World!&rdquo;.</p>
-
+<p>With the /t parameter, you specific which target is executed. When you don&rsquo;t specify it, a default target is executed, but in this case, we want that the &ldquo;HelloWorld&rdquo; target is executed and print &ldquo;Hello World!&quot;.</p>
 <h1 id="variables">Variables</h1>
-
 <p>As functions/methods there are also variables in MSBuild. You define them in PropertyGroups.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">&gt;</span>
 
-<pre><code class="language-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
+    <span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;HelloText</span><span style="color:#f92672">&gt;</span>World<span style="color:#f92672">&lt;/HelloText&gt;</span>
+    <span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
 
-    &lt;PropertyGroup&gt;
-        &lt;HelloText&gt;World&lt;/HelloText&gt;
-    &lt;/PropertyGroup&gt;
+    <span style="color:#f92672">&lt;Target</span> <span style="color:#a6e22e">Name=</span><span style="color:#e6db74">&#34;HelloWorld&#34;</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;Message</span> <span style="color:#a6e22e">Text=</span><span style="color:#e6db74">&#34;Hello $(HelloText)!&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;/Target&gt;</span>
 
-    &lt;Target Name=&quot;HelloWorld&quot;&gt;
-        &lt;Message Text=&quot;Hello $(HelloText)!&quot; /&gt;
-    &lt;/Target&gt;
-
-&lt;/Project&gt;
-</code></pre>
-
-<p>You can access them with $(%VariableName%).</p>
-
+<span style="color:#f92672">&lt;/Project&gt;</span>
+</code></pre></div><p>You can access them with $(%VariableName%).</p>
 <h1 id="parameters">Parameters</h1>
-
 <p>To get some data from outside into your MSBuild script, you can pass parameters with /p and access them as other variables.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">&gt;</span>
 
-<pre><code class="language-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
+    <span style="color:#f92672">&lt;Target</span> <span style="color:#a6e22e">Name=</span><span style="color:#e6db74">&#34;HelloWorld&#34;</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;Message</span> <span style="color:#a6e22e">Text=</span><span style="color:#e6db74">&#34;Hello $(HelloText)!&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;/Target&gt;</span>
 
-    &lt;Target Name=&quot;HelloWorld&quot;&gt;
-        &lt;Message Text=&quot;Hello $(HelloText)!&quot; /&gt;
-    &lt;/Target&gt;
-
-&lt;/Project&gt;
-</code></pre>
-
-<p>Command: msbuild HelloParameter.csproj /t:HelloWorld /p:HelloText=Internet</p>
-
+<span style="color:#f92672">&lt;/Project&gt;</span>
+</code></pre></div><p>Command: msbuild HelloParameter.csproj /t:HelloWorld /p:HelloText=Internet</p>
 <h1 id="ifs-aka-conditions">Ifs aka Conditions</h1>
-
 <p>And as in other languages, there are also Ifs available. Here are they called Conditions and</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">&gt;</span>
 
-<pre><code class="language-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
-
-    &lt;PropertyGroup&gt;
-        &lt;HelloText Condition=&quot;$(HelloText)==''&quot;&gt;World&lt;/HelloText&gt;
-    &lt;/PropertyGroup&gt;
+    <span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;HelloText</span> <span style="color:#a6e22e">Condition=</span><span style="color:#e6db74">&#34;$(HelloText)==&#39;&#39;&#34;</span><span style="color:#f92672">&gt;</span>World<span style="color:#f92672">&lt;/HelloText&gt;</span>
+    <span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
 
 
-    &lt;Target Name=&quot;HelloWorld&quot;&gt;
-        &lt;Message Text=&quot;Hello $(HelloText)!&quot; /&gt;
-    &lt;/Target&gt;
+    <span style="color:#f92672">&lt;Target</span> <span style="color:#a6e22e">Name=</span><span style="color:#e6db74">&#34;HelloWorld&#34;</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;Message</span> <span style="color:#a6e22e">Text=</span><span style="color:#e6db74">&#34;Hello $(HelloText)!&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;/Target&gt;</span>
 
-&lt;/Project&gt;
-</code></pre>
-
-<p>You can add the Condition element on nearly everything. It could be variables, whole property groups, targets or tasks.</p>
-
+<span style="color:#f92672">&lt;/Project&gt;</span>
+</code></pre></div><p>You can add the Condition element on nearly everything. It could be variables, whole property groups, targets or tasks.</p>
 <p>This example uses conditions to set the variable &ldquo;HelloText&rdquo; to a default value if it wasn&rsquo;t defined via parameter.</p>
-
 <h1 id="multiple-targets">multiple Targets</h1>
-
 <p>Who wants to write everything in a single method? Nobody. But nothing stops you to write more targets.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">&gt;</span>
 
-<pre><code class="language-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
+    <span style="color:#f92672">&lt;Target</span> <span style="color:#a6e22e">Name=</span><span style="color:#e6db74">&#34;HelloWorld&#34;</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;CallTarget</span> <span style="color:#a6e22e">Targets=</span><span style="color:#e6db74">&#34;PrintHello&#34;</span><span style="color:#f92672">/&gt;</span>
+        <span style="color:#f92672">&lt;CallTarget</span> <span style="color:#a6e22e">Targets=</span><span style="color:#e6db74">&#34;PrintWorld&#34;</span><span style="color:#f92672">/&gt;</span>
+        <span style="color:#f92672">&lt;CallTarget</span> <span style="color:#a6e22e">Targets=</span><span style="color:#e6db74">&#34;PrintExclamationMark&#34;</span><span style="color:#f92672">/&gt;</span>        
+    <span style="color:#f92672">&lt;/Target&gt;</span>
 
-    &lt;Target Name=&quot;HelloWorld&quot;&gt;
-        &lt;CallTarget Targets=&quot;PrintHello&quot;/&gt;
-        &lt;CallTarget Targets=&quot;PrintWorld&quot;/&gt;
-        &lt;CallTarget Targets=&quot;PrintExclamationMark&quot;/&gt;        
-    &lt;/Target&gt;
+    <span style="color:#f92672">&lt;Target</span> <span style="color:#a6e22e">Name=</span><span style="color:#e6db74">&#34;PrintHello&#34;</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;Message</span> <span style="color:#a6e22e">Text=</span><span style="color:#e6db74">&#34;Hello&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;/Target&gt;</span>
 
-    &lt;Target Name=&quot;PrintHello&quot;&gt;
-        &lt;Message Text=&quot;Hello&quot; /&gt;
-    &lt;/Target&gt;
+    <span style="color:#f92672">&lt;Target</span> <span style="color:#a6e22e">Name=</span><span style="color:#e6db74">&#34;PrintWorld&#34;</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;Message</span> <span style="color:#a6e22e">Text=</span><span style="color:#e6db74">&#34;World&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;/Target&gt;</span>
 
-    &lt;Target Name=&quot;PrintWorld&quot;&gt;
-        &lt;Message Text=&quot;World&quot; /&gt;
-    &lt;/Target&gt;
+    <span style="color:#f92672">&lt;Target</span> <span style="color:#a6e22e">Name=</span><span style="color:#e6db74">&#34;PrintExclamationMark&#34;</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;Message</span> <span style="color:#a6e22e">Text=</span><span style="color:#e6db74">&#34;!&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;/Target&gt;</span>
 
-    &lt;Target Name=&quot;PrintExclamationMark&quot;&gt;
-        &lt;Message Text=&quot;!&quot; /&gt;
-    &lt;/Target&gt;
-
-&lt;/Project&gt;
-</code></pre>
-
-<p>With the &ldquo;CallTarget&rdquo; task you can execute other targets.</p>
-
+<span style="color:#f92672">&lt;/Project&gt;</span>
+</code></pre></div><p>With the &ldquo;CallTarget&rdquo; task you can execute other targets.</p>
 <h1 id="events">&ldquo;Events&rdquo;</h1>
-
 <p>Sometimes you can not add a &ldquo;CallTarget&rdquo; to get your own code executed in MSBuild. For that there is a feature, that you can also trigger your targets before or after another target.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">&gt;</span>
 
-<pre><code class="language-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
-
-    &lt;Target Name=&quot;HelloWorld&quot;&gt;
-        &lt;Message Text=&quot;Hello World!&quot; /&gt;
-    &lt;/Target&gt;
+    <span style="color:#f92672">&lt;Target</span> <span style="color:#a6e22e">Name=</span><span style="color:#e6db74">&#34;HelloWorld&#34;</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;Message</span> <span style="color:#a6e22e">Text=</span><span style="color:#e6db74">&#34;Hello World!&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;/Target&gt;</span>
 
 
-    &lt;Target Name=&quot;Before&quot; BeforeTargets=&quot;HelloWorld&quot;&gt;
-        &lt;Message Text=&quot;BeforeHelloWorld&quot; /&gt;        
-    &lt;/Target&gt;
+    <span style="color:#f92672">&lt;Target</span> <span style="color:#a6e22e">Name=</span><span style="color:#e6db74">&#34;Before&#34;</span> <span style="color:#a6e22e">BeforeTargets=</span><span style="color:#e6db74">&#34;HelloWorld&#34;</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;Message</span> <span style="color:#a6e22e">Text=</span><span style="color:#e6db74">&#34;BeforeHelloWorld&#34;</span> <span style="color:#f92672">/&gt;</span>        
+    <span style="color:#f92672">&lt;/Target&gt;</span>
 
-    &lt;Target Name=&quot;After&quot; AfterTargets=&quot;HelloWorld&quot;&gt;
-        &lt;Message Text=&quot;AfterHelloWorld&quot; /&gt;        
-    &lt;/Target&gt;
+    <span style="color:#f92672">&lt;Target</span> <span style="color:#a6e22e">Name=</span><span style="color:#e6db74">&#34;After&#34;</span> <span style="color:#a6e22e">AfterTargets=</span><span style="color:#e6db74">&#34;HelloWorld&#34;</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;Message</span> <span style="color:#a6e22e">Text=</span><span style="color:#e6db74">&#34;AfterHelloWorld&#34;</span> <span style="color:#f92672">/&gt;</span>        
+    <span style="color:#f92672">&lt;/Target&gt;</span>
 
-&lt;/Project&gt;
-</code></pre>
-
-<p>With setting the Before/After- Targets elements you register your target to be executed before or after the target. Real nice feature to hang your targets into the existing lifecycle of compiling a project.</p>
-
+<span style="color:#f92672">&lt;/Project&gt;</span>
+</code></pre></div><p>With setting the Before/After- Targets elements you register your target to be executed before or after the target. Real nice feature to hang your targets into the existing lifecycle of compiling a project.</p>
 <h1 id="files">Files</h1>
-
 <p>Sometimes you need to execute a target for a list of files. This is possible with ItemGroups.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">&gt;</span>
 
-<pre><code class="language-xml">&lt;Project Sdk=&quot;Microsoft.NET.Sdk&quot;&gt;
+    <span style="color:#f92672">&lt;ItemGroup</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;Files</span> <span style="color:#a6e22e">Include=</span><span style="color:#e6db74">&#34;*.*&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;/ItemGroup&gt;</span>
 
-    &lt;ItemGroup&gt;
-        &lt;Files Include=&quot;*.*&quot; /&gt;
-    &lt;/ItemGroup&gt;
-
-    &lt;Target Name=&quot;HelloWorld&quot;
-            Inputs=&quot;@(Files)&quot;
-            Outputs=&quot;%(Identity).Dummy&quot;&gt;
-        &lt;Message Text=&quot;@(Files)&quot; /&gt;
-    &lt;/Target&gt;
+    <span style="color:#f92672">&lt;Target</span> <span style="color:#a6e22e">Name=</span><span style="color:#e6db74">&#34;HelloWorld&#34;</span>
+            <span style="color:#a6e22e">Inputs=</span><span style="color:#e6db74">&#34;@(Files)&#34;</span>
+            <span style="color:#a6e22e">Outputs=</span><span style="color:#e6db74">&#34;%(Identity).Dummy&#34;</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;Message</span> <span style="color:#a6e22e">Text=</span><span style="color:#e6db74">&#34;@(Files)&#34;</span> <span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;/Target&gt;</span>
    
-&lt;/Project&gt;
-</code></pre>
-
-<p>With ItemGroups you can define a variable that holds a list of files. You can include and exclude to this variable with additional entries in the ItemGroup.</p>
-
+<span style="color:#f92672">&lt;/Project&gt;</span>
+</code></pre></div><p>With ItemGroups you can define a variable that holds a list of files. You can include and exclude to this variable with additional entries in the ItemGroup.</p>
 <p>To get a target executed per entry in a file variable, you have to use the Inputs and Outputs attributes. In difference to variables, you have to use @(…) and not $(…).
 You have to set the Outputs attribute if you set the Inputs attribute. In this case, we can set it to %(Identity).Dummy, because we generate no output files.</p>
-
 <h1 id="the-end-of-my-part">The end of my part</h1>
-
 <p>So that was my part of the talk. My colleague Raoul Holzer continued with a little bit more advanced stuff. His examples can be found here: <a href="https://github.com/RaoulHolzer/MSBuild201">https://github.com/RaoulHolzer/MSBuild201</a>
 And as soon he has written his blog post, I will link it here.</p>
 

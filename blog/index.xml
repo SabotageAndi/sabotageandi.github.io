@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Blogs on Hi, I&#39;m Andreas</title>
@@ -72,7 +72,7 @@ After some research together with the audience, we found the reason. The present
       <guid>https://willich.io/2018/02/04/blog-post-to-my-talk-msbuild-101-was-passiert-wenn-ich-auf-build-klicke/</guid>
       <description>Last Monday (30. January) a colleague and I gave a talk about the basics of MSBuild. So that also others can enjoy my explanations, I wrote this post.
 All examples can be found here:
-Classic Hello World &amp;lt;Project Sdk=&amp;quot;Microsoft.NET.Sdk&amp;quot;&amp;gt; &amp;lt;Target Name=&amp;quot;HelloWorld&amp;quot;&amp;gt; &amp;lt;Message Text=&amp;quot;Hello World!&amp;quot; /&amp;gt; &amp;lt;/Target&amp;gt; &amp;lt;/Project&amp;gt;  Command: msbuild %Filename%.csproj /t:HelloWorld
+Classic Hello World &amp;lt;Project Sdk=&amp;#34;Microsoft.NET.Sdk&amp;#34;&amp;gt; &amp;lt;Target Name=&amp;#34;HelloWorld&amp;#34;&amp;gt; &amp;lt;Message Text=&amp;#34;Hello World!&amp;#34; /&amp;gt; &amp;lt;/Target&amp;gt; &amp;lt;/Project&amp;gt; Command: msbuild %Filename%.csproj /t:HelloWorld
 That&amp;rsquo;s the classic &amp;ldquo;Hello World&amp;rdquo; as for every programming language. And yes, MSBuild looks like XML, but it&amp;rsquo;s a programming language.</description>
     </item>
     
@@ -105,7 +105,7 @@ I had filled out a profile and entered my activities on https://mvp.microsoft.co
       <description>During checking for a build error on Mac OS X of the Gherkin parser, I wanted to uninstall all my installed .NET Core SDKs, to have a clean slate.
 In my search how to do this, I found this script in the .NET Core repo: https://github.com/dotnet/cli/blob/master/scripts/obtain/uninstall/dotnet-uninstall-pkgs.sh
 Steps to use:
-wget https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain/uninstall/dotnet-uninstall-pkgs.sh chmod +x dotnet-uninstall-pkgs.sh sudo ./dotnet-uninstall-pkgs.sh  After that, you have removed all .NET Core SDKs from your Mac and you can start from the beginning to install new ones.</description>
+wget https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain/uninstall/dotnet-uninstall-pkgs.sh chmod +x dotnet-uninstall-pkgs.sh sudo ./dotnet-uninstall-pkgs.sh After that, you have removed all .NET Core SDKs from your Mac and you can start from the beginning to install new ones.</description>
     </item>
     
     <item>
@@ -148,7 +148,7 @@ The upcoming release of SpecFlow+Runner 1.4 adds an additional mode (SharedAppDo
       <guid>https://willich.io/2016/01/06/impressions-of-using-f#-with-a-little-bit-of-xamarin.forms/</guid>
       <description>In the last days I completed the first version of FFRAB-Mobile (see here). I used F# and Xamarin.Forms to gain more experience in a bigger project than a simple example app. You can find the sources here: https://github.com/SabotageAndi/ffrab-mobile
 Here are my impressions:
-Writing stateless could be hard, but it is worth the trouble Coming from a C# background, now writing code that is near complete stateless is new and unusual.</description>
+Writing stateless could be hard, but it is worth the trouble Coming from a C# background, now writing code that is near complete stateless is new and unusual. So the first code I wrote was a lot of object oriented stuff with too much access to shared state.</description>
     </item>
     
     <item>

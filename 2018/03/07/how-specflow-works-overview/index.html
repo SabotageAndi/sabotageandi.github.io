@@ -11,8 +11,8 @@ So as starting ponts, let&rsquo;s have a look at the normal workflow, when you w
  The user opens or creates a feature file, writes it Scenario in Gherkin and saves." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://willich.io/2018/03/07/how-specflow-works-overview/" />
-<meta property="article:published_time" content="2018-03-07T00:00:00&#43;00:00"/>
-<meta property="article:modified_time" content="2018-03-07T00:00:00&#43;00:00"/>
+<meta property="article:published_time" content="2018-03-07T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-03-07T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="How SpecFlow works – Overview"/>
@@ -115,9 +115,7 @@ So as starting ponts, let&rsquo;s have a look at the normal workflow, when you w
 </header>
 <article class="blog-post">
     <p>In preparation of continuing the work on .NET Core/Standard support for SpecFlow and recognising in talks at the MVP Summit, that it is not that simple to explain how SpecFlow works, I thought it would be good to start writing it done.</p>
-
 <p>So as starting ponts, let&rsquo;s have a look at the normal workflow, when you write a new Scenario?</p>
-
 <ol>
 <li>The user opens or creates a feature file, writes it Scenario in Gherkin and saves.</li>
 <li>A code-behind file is generated, which contains code for a test class of the configured unit test provider. This could be SpecFlow+Runner, xUnit, NUnit, MsTest or MbUnit.</li>
@@ -129,50 +127,43 @@ So as starting ponts, let&rsquo;s have a look at the normal workflow, when you w
 <li>The user runs the tests</li>
 <li>The tests are hopefully green.</li>
 </ol>
-
 <p>That&rsquo;s a lot of steps to get from a scenario to a executed tests.</p>
-
 <p>And these are the parts that are involved in this:</p>
-
 <ul>
 <li>Generator
-
 <ul>
 <li>Code- Behind File generation</li>
 <li>Plugins</li>
-</ul></li>
+</ul>
+</li>
 <li>Runtime
-
 <ul>
 <li>Binding lookup</li>
 <li>Assists</li>
 <li>Plugins</li>
-</ul></li>
+</ul>
+</li>
 <li>Visual Studio Extension
-
 <ul>
 <li>Syntax Highlighting/IntelliSense</li>
 <li>Navigation</li>
 <li>Code- Behind Generation</li>
 <li>Skeleton Generation</li>
 <li>ItemTemplates</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <p>More than you would think, or?</p>
-
 <p>Additionally SpecFlow has also a console application (specflow.exe), which also contains crucial functionality:</p>
-
 <ul>
 <li>SpecFlow.exe
-
 <ul>
 <li>generateAll Command</li>
 <li>MSBuild tasks</li>
 <li>Reports</li>
-</ul></li>
 </ul>
-
+</li>
+</ul>
 <p>To make it easier to read for you (and to write for me), every major part will get it&rsquo;s own blog posts. So you don&rsquo;t have to wait until I am completely finished with everything. I will add links to the individual posts when they are ready.</p>
 
 

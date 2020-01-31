@@ -9,8 +9,8 @@
 <meta property="og:description" content="In SpecFlow&#43; we are supporting multiple different versions of SpecFlow (currently 1.9, 2.1 and 2.2) and so we have to test each version with the full set of our test suite. As we don&rsquo;t want to copy a lot of code and then change some references/package version, I was looking if it is without much pain possible, that you have multiple projects/csprojs in one folder and produce so multiple assemblies. We are already having a solution with the old project system, but it involves a lot of linked files and manual editing of the project files." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://willich.io/2017/10/12/multiple-projects-in-the-same-folder/" />
-<meta property="article:published_time" content="2017-10-12T00:00:00&#43;00:00"/>
-<meta property="article:modified_time" content="2017-10-12T00:00:00&#43;00:00"/>
+<meta property="article:published_time" content="2017-10-12T00:00:00+00:00" />
+<meta property="article:modified_time" content="2017-10-12T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Multiple projects in the same folder"/>
@@ -113,77 +113,52 @@
     <p>In SpecFlow+ we are supporting multiple different versions of SpecFlow (currently 1.9, 2.1 and 2.2) and so we have to test each version with the full set of our test suite.
 As we don&rsquo;t want to copy a lot of code and then change some references/package version, I was looking if it is without much pain possible, that you have multiple projects/csprojs in one folder and produce so multiple assemblies.
 We are already having a solution with the old project system, but it involves a lot of  linked files and manual editing of the project files. So with the new project system it was time to look at this again.</p>
-
 <p>And after some work I had a solution to achieve this with the new csproj format. Here it is:</p>
-
-<pre><code class="language-xml">&lt;Project&gt;
-    &lt;PropertyGroup&gt;
-        &lt;BaseIntermediateOutputPath&gt;obj\$(MSBuildProjectName)&lt;/BaseIntermediateOutputPath&gt;
-    &lt;/PropertyGroup&gt;
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;BaseIntermediateOutputPath</span><span style="color:#f92672">&gt;</span>obj\$(MSBuildProjectName)<span style="color:#f92672">&lt;/BaseIntermediateOutputPath&gt;</span>
+    <span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
     
-    &lt;Import Project=&quot;Sdk.props&quot; Sdk=&quot;Microsoft.NET.Sdk&quot;/&gt;
+    <span style="color:#f92672">&lt;Import</span> <span style="color:#a6e22e">Project=</span><span style="color:#e6db74">&#34;Sdk.props&#34;</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">/&gt;</span>
 
-    &lt;PropertyGroup&gt;
-        &lt;TargetFramework&gt;netstandard2.0&lt;/TargetFramework&gt;
-        &lt;OutputPath&gt;bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)&lt;/OutputPath&gt;
-    &lt;/PropertyGroup&gt;
+    <span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;TargetFramework</span><span style="color:#f92672">&gt;</span>netstandard2.0<span style="color:#f92672">&lt;/TargetFramework&gt;</span>
+        <span style="color:#f92672">&lt;OutputPath</span><span style="color:#f92672">&gt;</span>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)<span style="color:#f92672">&lt;/OutputPath&gt;</span>
+    <span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
 
-    &lt;Import Project=&quot;Sdk.targets&quot; Sdk=&quot;Microsoft.NET.Sdk&quot;/&gt;
+    <span style="color:#f92672">&lt;Import</span> <span style="color:#a6e22e">Project=</span><span style="color:#e6db74">&#34;Sdk.targets&#34;</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">/&gt;</span>
 
-    &lt;ItemGroup&gt;
-        &lt;Compile Remove=&quot;obj\\**\*&quot;/&gt;
-        &lt;Compile Include=&quot;obj\$(MSBuildProjectName)\**\$(MSBuildProjectName).AssemblyInfo.cs&quot;/&gt;
-    &lt;/ItemGroup&gt;
-&lt;/Project&gt;
-</code></pre>
-
-<p>So what does it in detail?</p>
-
-<pre><code class="language-xml">&lt;Project&gt;
-</code></pre>
-
-<p>Yes, there is no Sdk attribute defined. How does this work?</p>
-
-<pre><code class="language-xml">&lt;PropertyGroup&gt;
-    &lt;BaseIntermediateOutputPath&gt;obj\$(MSBuildProjectName)&lt;/BaseIntermediateOutputPath&gt;
-&lt;/PropertyGroup&gt;
-</code></pre>
-
-<p>We are adjusting the BaseIntermediateOutputPath, so that each project has it&rsquo;s own and don&rsquo;t replace each others file. This is also the reason, why we have no Sdk attribute set. This property has to be set before the Sdk.props file is evaluated.</p>
-
-<pre><code class="language-xml">&lt;Import Project=&quot;Sdk.props&quot; Sdk=&quot;Microsoft.NET.Sdk&quot;/&gt;
-</code></pre>
-
-<p>So, finally import the first part of the Sdk.</p>
-
-<pre><code class="language-xml">&lt;PropertyGroup&gt;
-    &lt;TargetFramework&gt;netstandard2.0&lt;/TargetFramework&gt;
-    &lt;OutputPath&gt;bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)&lt;/OutputPath&gt;
-&lt;/PropertyGroup&gt;
-</code></pre>
-
-<p>The TargetFramework property is well known. Nothing to add about this here.
+    <span style="color:#f92672">&lt;ItemGroup</span><span style="color:#f92672">&gt;</span>
+        <span style="color:#f92672">&lt;Compile</span> <span style="color:#a6e22e">Remove=</span><span style="color:#e6db74">&#34;obj\\**\*&#34;</span><span style="color:#f92672">/&gt;</span>
+        <span style="color:#f92672">&lt;Compile</span> <span style="color:#a6e22e">Include=</span><span style="color:#e6db74">&#34;obj\$(MSBuildProjectName)\**\$(MSBuildProjectName).AssemblyInfo.cs&#34;</span><span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;/ItemGroup&gt;</span>
+<span style="color:#f92672">&lt;/Project&gt;</span>
+</code></pre></div><p>So what does it in detail?</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span><span style="color:#f92672">&gt;</span>
+</code></pre></div><p>Yes, there is no Sdk attribute defined. How does this work?</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;BaseIntermediateOutputPath</span><span style="color:#f92672">&gt;</span>obj\$(MSBuildProjectName)<span style="color:#f92672">&lt;/BaseIntermediateOutputPath&gt;</span>
+<span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
+</code></pre></div><p>We are adjusting the BaseIntermediateOutputPath, so that each project has it&rsquo;s own and don&rsquo;t replace each others file. This is also the reason, why we have no Sdk attribute set. This property has to be set before the Sdk.props file is evaluated.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Import</span> <span style="color:#a6e22e">Project=</span><span style="color:#e6db74">&#34;Sdk.props&#34;</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">/&gt;</span>
+</code></pre></div><p>So, finally import the first part of the Sdk.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;TargetFramework</span><span style="color:#f92672">&gt;</span>netstandard2.0<span style="color:#f92672">&lt;/TargetFramework&gt;</span>
+    <span style="color:#f92672">&lt;OutputPath</span><span style="color:#f92672">&gt;</span>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)<span style="color:#f92672">&lt;/OutputPath&gt;</span>
+<span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
+</code></pre></div><p>The TargetFramework property is well known. Nothing to add about this here.
 The OutputPath property is the location where the finished assemblies are copied. As BaseIntermediateOutputPath it has to be adjusted, so that each project has it&rsquo;s own folder.</p>
-
-<pre><code class="language-xml">&lt;Import Project=&quot;Sdk.targets&quot; Sdk=&quot;Microsoft.NET.Sdk&quot;/&gt;
-</code></pre>
-
-<p>And now the second and last part of the Sdk is imported.</p>
-
-<pre><code class="language-xml">&lt;ItemGroup&gt;
-    &lt;Compile Remove=&quot;obj\\**\*&quot;/&gt;
-    &lt;Compile Include=&quot;obj\$(MSBuildProjectName)\**\$(MSBuildProjectName).AssemblyInfo.cs&quot;/&gt;
-&lt;/ItemGroup&gt;
-</code></pre>
-
-<p>This is one of the stranges parts of the file. The reason for this is, that during build the version infos from the csproj are written to an *.AssemblyInfo.cs file in the obj folder. Combined with the globbing in the new format, MSBuild now finds multiple *.AssemblyInfo.cs files (one for each project).
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Import</span> <span style="color:#a6e22e">Project=</span><span style="color:#e6db74">&#34;Sdk.targets&#34;</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">/&gt;</span>
+</code></pre></div><p>And now the second and last part of the Sdk is imported.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;ItemGroup</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;Compile</span> <span style="color:#a6e22e">Remove=</span><span style="color:#e6db74">&#34;obj\\**\*&#34;</span><span style="color:#f92672">/&gt;</span>
+    <span style="color:#f92672">&lt;Compile</span> <span style="color:#a6e22e">Include=</span><span style="color:#e6db74">&#34;obj\$(MSBuildProjectName)\**\$(MSBuildProjectName).AssemblyInfo.cs&#34;</span><span style="color:#f92672">/&gt;</span>
+<span style="color:#f92672">&lt;/ItemGroup&gt;</span>
+</code></pre></div><p>This is one of the stranges parts of the file. The reason for this is, that during build the version infos from the csproj are written to an *.AssemblyInfo.cs file in the obj folder. Combined with the globbing in the new format, MSBuild now finds multiple *.AssemblyInfo.cs files (one for each project).
 So we have to remove the whole obj subtree from the compiler and readd the AssemblyInfo.cs for our project to get the version infos into the assembly.</p>
-
 <p>Everything clear now? 😉
 And the best, Visual Studio 2017 can handle this files without problems.</p>
-
 <p>You can find a complete example with two projects here: <a href="https://github.com/SabotageAndi/MultipleProjecsInSameFolder">https://github.com/SabotageAndi/MultipleProjecsInSameFolder</a></p>
-
 <p>Conclusion: I have to say, I am very happy with the new project system. Something like this wouldn&rsquo;t be possible with the old one (or it would be a lot more painful).
 Let&rsquo;s see what nice hacks are also possible in the future.</p>
 

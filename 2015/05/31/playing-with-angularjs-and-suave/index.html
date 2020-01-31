@@ -10,8 +10,8 @@
 As example for the AngularJS app, I used the PhoneCat Tutorial App from AngularJS." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://willich.io/2015/05/31/playing-with-angularjs-and-suave/" />
-<meta property="article:published_time" content="2015-05-31T00:00:00&#43;00:00"/>
-<meta property="article:modified_time" content="2015-05-31T00:00:00&#43;00:00"/>
+<meta property="article:published_time" content="2015-05-31T00:00:00+00:00" />
+<meta property="article:modified_time" content="2015-05-31T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Playing With AngularJS and Suave"/>
@@ -113,111 +113,79 @@ As example for the AngularJS app, I used the PhoneCat Tutorial App from AngularJ
 </header>
 <article class="blog-post">
     <p>After I found Suave.IO (lightweight HTTP Server in F#) I wanted to try it out. As I also wanted to play with AngularJS (I know I am a little bit late, but normally I get out of the way of web development). So why not combine both and create a small webserver that hosts the web app and the webservices.</p>
-
 <p>As example for the AngularJS app, I used the PhoneCat Tutorial App from AngularJS.</p>
-
 <p>You find the complete source on GitHub here: AngularSuave Repository</p>
-
 <p>Explanation step-by-step:</p>
-
-<pre><code class="language-fsharp">let mimeTypes =
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> mimeTypes <span style="color:#f92672">=</span>
     defaultMimeTypesMap
-        &gt;=&gt; (function | &quot;.json&quot; -&gt; mkMimeType &quot;application/json&quot; true | _ -&gt; None)
+        <span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">function</span> <span style="color:#f92672">|</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">.json</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">-&gt;</span> mkMimeType <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">application/json</span><span style="color:#e6db74">&#34;</span> <span style="color:#66d9ef">true</span> <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> None<span style="color:#f92672">)</span>
 
-</code></pre>
+</code></pre></div><p>In the default mime types from Suave is no entry for json- Files. So I simply add it.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> rootPath <span style="color:#f92672">=</span> Path.GetFullPath <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">../../../Web</span><span style="color:#e6db74">&#34;</span>
+</code></pre></div><p>The source files for the AngularJS are located in a separate project.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> webConfig <span style="color:#f92672">=</span> 
+    <span style="color:#f92672">{</span> 
+        defaultConfig <span style="color:#66d9ef">with</span> 
+            homeFolder <span style="color:#f92672">=</span> Some rootPath
+            mimeTypesMap <span style="color:#f92672">=</span> mimeTypes
+    <span style="color:#f92672">}</span>
+</code></pre></div><p>I use the default server config that is shipped with Suave and only adjust the needed parts.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> getPhone phoneName <span style="color:#f92672">=</span>
+    printfn <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">getting data for phone: %s</span><span style="color:#e6db74">&#34;</span> phoneName
 
-<p>In the default mime types from Suave is no entry for json- Files. So I simply add it.</p>
-
-<pre><code class="language-fsharp">let rootPath = Path.GetFullPath &quot;../../../Web&quot;
-</code></pre>
-
-<p>The source files for the AngularJS are located in a separate project.</p>
-
-<pre><code class="language-fsharp">let webConfig = 
-    { 
-        defaultConfig with 
-            homeFolder = Some rootPath
-            mimeTypesMap = mimeTypes
-    }
-</code></pre>
-
-<p>I use the default server config that is shipped with Suave and only adjust the needed parts.</p>
-
-<pre><code class="language-fsharp">let getPhone phoneName =
-    printfn &quot;getting data for phone: %s&quot; phoneName
-
-    let phoneFolder = Path.Combine(rootPath, &quot;app&quot;, &quot;phones&quot;)
+    <span style="color:#66d9ef">let</span> phoneFolder <span style="color:#f92672">=</span> Path.Combine<span style="color:#f92672">(</span>rootPath<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">app</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">phones</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span>
     browseFile phoneFolder phoneName
-</code></pre>
-
-<p>Function to return the data for the phones. It is stored as json- Files.</p>
-
-<pre><code class="language-fsharp">let api =
+</code></pre></div><p>Function to return the data for the phones. It is stored as json- Files.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> api <span style="color:#f92672">=</span>
     choose
-        [
-            GET &gt;&gt;= choose 
-                [
-                    pathScan &quot;/api/phones/%s&quot; (fun s -&gt; getPhone s)
-                ]
-        ]
-</code></pre>
-
-<p>In Suave you have WebParts which can react on the different urls. Here I react on all calls to /api/phones/ and call the function to get the phone data.</p>
-
-<pre><code class="language-fsharp">let getFile name =
-    let rootPath = webConfig.homeFolder.Value
+        <span style="color:#f92672">[</span>
+            GET <span style="color:#f92672">&gt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span> choose 
+                <span style="color:#f92672">[</span>
+                    pathScan <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">/api/phones/%s</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> s <span style="color:#f92672">-&gt;</span> getPhone s<span style="color:#f92672">)</span>
+                <span style="color:#f92672">]</span>
+        <span style="color:#f92672">]</span>
+</code></pre></div><p>In Suave you have WebParts which can react on the different urls. Here I react on all calls to /api/phones/ and call the function to get the phone data.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> getFile name <span style="color:#f92672">=</span>
+    <span style="color:#66d9ef">let</span> rootPath <span style="color:#f92672">=</span> webConfig<span style="color:#f92672">.</span>homeFolder<span style="color:#f92672">.</span>Value
     browseFile rootPath name
-</code></pre>
-
-<p>Function to return the file content of the requested file.</p>
-
-<pre><code class="language-fsharp">let angularApp =
+</code></pre></div><p>Function to return the file content of the requested file.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> angularApp <span style="color:#f92672">=</span>
     choose
-        [ GET &gt;&gt;= choose
-            [
-                path &quot;/&quot; &gt;&gt;=  redirect &quot;app/index.html&quot;
-                pathScan &quot;/%s&quot; (fun s -&gt; getFile s)                
-            ]
-        ]
-</code></pre>
-
-<p>The AngularJS app is still located under /app/<em>. So I make a redirect, when you simple browse to the root page.
+        <span style="color:#f92672">[</span> GET <span style="color:#f92672">&gt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span> choose
+            <span style="color:#f92672">[</span>
+                path <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">/</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">&gt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span>  redirect <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">app/index.html</span><span style="color:#e6db74">&#34;</span>
+                pathScan <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">/%s</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> s <span style="color:#f92672">-&gt;</span> getFile s<span style="color:#f92672">)</span>                
+            <span style="color:#f92672">]</span>
+        <span style="color:#f92672">]</span>
+</code></pre></div><p>The AngularJS app is still located under /app/<em>. So I make a redirect, when you simple browse to the root page.
 For all other request to /</em>, I simple return the requested file.</p>
-
 <pre><code>let app =
     choose
         [
             api
             angularApp
         ]
-</code></pre>
-
-<p>The choose web part executes every web part in the list and only stops if someone is successful.
+</code></pre><p>The choose web part executes every web part in the list and only stops if someone is successful.
 In this case, the correct order is important, because the /%s in the angularApp WebPart will eat every request.
 If the order is changed, no call is ever made to the api Webpart.</p>
-
-<pre><code class="language-fsharp">[&lt;EntryPoint&gt;]
-let main argv = 
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#f92672">[&lt;</span>EntryPoint<span style="color:#f92672">&gt;]</span>
+<span style="color:#66d9ef">let</span> main argv <span style="color:#f92672">=</span> 
      
-    let cts = new CancellationTokenSource()
-    let startingServer, shutdownServer = startWebServerAsync webConfig app
+    <span style="color:#66d9ef">let</span> cts <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> CancellationTokenSource()
+    <span style="color:#66d9ef">let</span> startingServer<span style="color:#f92672">,</span> shutdownServer <span style="color:#f92672">=</span> startWebServerAsync webConfig app
  
-    Async.Start(shutdownServer, cts.Token)
+    Async.Start<span style="color:#f92672">(</span>shutdownServer<span style="color:#f92672">,</span> cts<span style="color:#f92672">.</span>Token<span style="color:#f92672">)</span>
  
-    startingServer |&gt; Async.RunSynchronously |&gt; printfn &quot;started: %A&quot;
+    startingServer <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> Async.RunSynchronously <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> printfn <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">started: %A</span><span style="color:#e6db74">&#34;</span>
  
-    printfn &quot;Press Enter to stop&quot;
-    Console.Read() |&gt; ignore
+    printfn <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Press Enter to stop</span><span style="color:#e6db74">&#34;</span>
+    Console.Read() <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> ignore
  
-    cts.Cancel()
+    cts<span style="color:#f92672">.</span>Cancel()
  
     0
-</code></pre>
-
-<p>At the end, I simply start the the webserver with the individual web config and the app WebPart.</p>
-
+</code></pre></div><p>At the end, I simply start the the webserver with the individual web config and the app WebPart.</p>
 <p>When you start the programm and open <a href="http://localhost:8083/">http://localhost:8083/</a> you can see the PhoneCat Tutorial App hosted by Suave.IO.</p>
-
 <p>So have fun with it. 😉</p>
 
 

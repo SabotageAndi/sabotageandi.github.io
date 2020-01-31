@@ -12,8 +12,8 @@ Two changes make me very happy.
 The first is the removal of the MSBuild dependency. This was always a pain, as MSBuild sometimes used a cached version of your current project which was not actual. So if you added files to your project, it could be that the code-behind-file generator does not know about it." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://willich.io/2017/06/29/specflow-2-2-and-specflow-1-6-finally-released/" />
-<meta property="article:published_time" content="2017-06-29T00:00:00&#43;00:00"/>
-<meta property="article:modified_time" content="2017-06-29T00:00:00&#43;00:00"/>
+<meta property="article:published_time" content="2017-06-29T00:00:00+00:00" />
+<meta property="article:modified_time" content="2017-06-29T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="SpecFlow 2.2 and SpecFlow&#43; 1.6 finally released"/>
@@ -116,18 +116,13 @@ The first is the removal of the MSBuild dependency. This was always a pain, as M
     <hr>
 </header>
 <article class="blog-post">
-    <p>Finally after 13 months, SpecFlow 2.2 and SpecFlow+ 1.6 (Runner and Excel) were finally released yesterday.<br />
+    <p>Finally after 13 months, SpecFlow 2.2 and SpecFlow+ 1.6 (Runner and Excel) were finally released yesterday.<br>
 Here are the official release notes: <a href="http://specflow.org/category/release-notes">http://specflow.org/category/release-notes</a>.</p>
-
 <p>Two changes make me very happy.</p>
-
 <p>The first is the removal of the MSBuild dependency. This was always a pain, as MSBuild sometimes used a cached version of your current project which was not actual. So if you added files to your project, it could be that the code-behind-file generator does not know about it.
 Especially in SpecFlow+Excel was this often a reason for problems.</p>
-
 <p>The second is, that you can get now the FeatureContext as parameter of your Before/After- Feature hooks. With that, you do not need any more FeatureContext.Current (which has limitation in parallel execution scenarios).</p>
-
-<p>I am also very happy, that finally got time to add support for the XUnit ITestOutputHelper (<a href="https://github.com/techtalk/SpecFlow/pull/874">https://github.com/techtalk/SpecFlow/pull/874</a>). Thanks to Pushkar Apte for it!</p>
-
+<p>I am also very happy, that finally got time to add support for the XUnit ITestOutputHelper (<a href="https://github.com/techtalk/SpecFlow/pull/874)">https://github.com/techtalk/SpecFlow/pull/874)</a>. Thanks to Pushkar Apte for it!</p>
 <p>So, lets start work on the next release. Will it be 2.3 or 3.0? Lets see what happens. 😉</p>
 
 

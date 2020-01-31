@@ -13,8 +13,8 @@ So here is a quick go through of the code to get the stuff working:
 1. Add needed NuGet feeds YoloDev: https://www.myget.org/F/yolodev/api/v2″ AspNetVNext: https://www." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://willich.io/2015/07/03/on-the-bleeding-edge-akka.net-suave/" />
-<meta property="article:published_time" content="2015-07-03T00:00:00&#43;00:00"/>
-<meta property="article:modified_time" content="2015-07-03T00:00:00&#43;00:00"/>
+<meta property="article:published_time" content="2015-07-03T00:00:00+00:00" />
+<meta property="article:modified_time" content="2015-07-03T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="On the Bleeding Edge – Akka.Net &#43; Suave"/>
@@ -118,121 +118,91 @@ So here is a quick go through of the code to get the stuff working:
     <hr>
 </header>
 <article class="blog-post">
-    
-
-<p>So after playing with Suave.io, I wanted to add some new bleeding edge stuff to it. 😉 And run it on a beta environment, the DNX 🙂</p>
-
+    <p>So after playing with Suave.io, I wanted to add some new bleeding edge stuff to it. 😉 And run it on a beta environment, the DNX 🙂</p>
 <p>First, the complete source of it is here: <a href="https://github.com/SabotageAndi/SuaveAkkaCore">https://github.com/SabotageAndi/SuaveAkkaCore</a></p>
-
 <p>Thanks to Alxandr there is F# support for the DNX: <a href="https://github.com/YoloDev/YoloDev.Dnx.FSharp">https://github.com/YoloDev/YoloDev.Dnx.FSharp</a></p>
-
 <p>So here is a quick go through of the code to get the stuff working:</p>
-
 <h2 id="1-add-needed-nuget-feeds">1. Add needed NuGet feeds</h2>
-
-<p>YoloDev: <a href="https://www.myget.org/F/yolodev/api/v2″">https://www.myget.org/F/yolodev/api/v2″</a>
-AspNetVNext: <a href="https://www.myget.org/F/aspnetvnext/api/v2″">https://www.myget.org/F/aspnetvnext/api/v2″</a></p>
-
-<h2 id="2-adapt-project-json-for-f-support">2. Adapt project.json for F# Support</h2>
-
-<pre><code class="language-json">{
-    “version”: “1.0.0-beta-*”,
-    “dependencies”: {
-    “YoloDev.Dnx.FSharp”: { “type”: “build”, “version”: “1.0.0-beta-*” },
-    “Suave”: “0.29.1”,
-            “Akka”: “1.0.3”,
-            “Akka.FSharp”: “1.0.3”
-    },
-    “frameworks”: {
-        “dnx451”: {
-            “frameworkAssemblies”: {
-                “System.Runtime”: “”,
-                “System.Threading.Tasks”: “”
+<p>YoloDev: <a href="https://www.myget.org/F/yolodev/api/v2%E2%80%B3">https://www.myget.org/F/yolodev/api/v2″</a>
+AspNetVNext: <a href="https://www.myget.org/F/aspnetvnext/api/v2%E2%80%B3">https://www.myget.org/F/aspnetvnext/api/v2″</a></p>
+<h2 id="2-adapt-projectjson-for-f-support">2. Adapt project.json for F# Support</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-json" data-lang="json">{
+    <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">v</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">1</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#960050;background-color:#1e0010">0</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#960050;background-color:#1e0010">0</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#960050;background-color:#1e0010">b</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#960050;background-color:#1e0010">*</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">,</span>
+    <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">d</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">p</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">d</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">c</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">{</span>
+    <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">Y</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">D</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">v</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#960050;background-color:#1e0010">D</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">x</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#960050;background-color:#1e0010">F</span><span style="color:#960050;background-color:#1e0010">S</span><span style="color:#960050;background-color:#1e0010">h</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">p</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">{</span> <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">y</span><span style="color:#960050;background-color:#1e0010">p</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">b</span><span style="color:#960050;background-color:#1e0010">u</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">d</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">,</span> <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">v</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">1</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#960050;background-color:#1e0010">0</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#960050;background-color:#1e0010">0</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#960050;background-color:#1e0010">b</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">-</span><span style="color:#960050;background-color:#1e0010">*</span><span style="color:#960050;background-color:#1e0010">”</span> }<span style="color:#960050;background-color:#1e0010">,</span>
+    <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">S</span><span style="color:#960050;background-color:#1e0010">u</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">v</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#ae81ff">0.29</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">,</span>
+            <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">A</span><span style="color:#960050;background-color:#1e0010">k</span><span style="color:#960050;background-color:#1e0010">k</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#ae81ff">1.0</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#ae81ff">3</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">,</span>
+            <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">A</span><span style="color:#960050;background-color:#1e0010">k</span><span style="color:#960050;background-color:#1e0010">k</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#960050;background-color:#1e0010">F</span><span style="color:#960050;background-color:#1e0010">S</span><span style="color:#960050;background-color:#1e0010">h</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">p</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#ae81ff">1.0</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#ae81ff">3</span><span style="color:#960050;background-color:#1e0010">”</span>
+    <span style="color:#960050;background-color:#1e0010">}</span><span style="color:#960050;background-color:#1e0010">,</span>
+    <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">f</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">w</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">k</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> {
+        <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">d</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">x</span><span style="color:#960050;background-color:#1e0010">4</span><span style="color:#960050;background-color:#1e0010">5</span><span style="color:#960050;background-color:#1e0010">1</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">{</span>
+            <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">f</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">w</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">k</span><span style="color:#960050;background-color:#1e0010">A</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">b</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">{</span>
+                <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">S</span><span style="color:#960050;background-color:#1e0010">y</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#960050;background-color:#1e0010">R</span><span style="color:#960050;background-color:#1e0010">u</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">,</span>
+                <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">S</span><span style="color:#960050;background-color:#1e0010">y</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#960050;background-color:#1e0010">T</span><span style="color:#960050;background-color:#1e0010">h</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">d</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">g</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#960050;background-color:#1e0010">T</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">k</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">”</span>
                 }
-            }
-        },
-    “compiler”: {
-        “name”: “F#”,
-            “compilerAssembly”: “YoloDev.Dnx.FSharp”,
-            “compilerType”: “YoloDev.Dnx.FSharp.FSharpProjectCompiler”
+            <span style="color:#960050;background-color:#1e0010">}</span>
+        <span style="color:#960050;background-color:#1e0010">}</span><span style="color:#960050;background-color:#1e0010">,</span>
+    <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">c</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">p</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> {
+        <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">F</span><span style="color:#960050;background-color:#1e0010">#</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">,</span>
+            <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">c</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">p</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">A</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">s</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">b</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">y</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">Y</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">D</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">v</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#960050;background-color:#1e0010">D</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">x</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#960050;background-color:#1e0010">F</span><span style="color:#960050;background-color:#1e0010">S</span><span style="color:#960050;background-color:#1e0010">h</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">p</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">,</span>
+            <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">c</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">p</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">T</span><span style="color:#960050;background-color:#1e0010">y</span><span style="color:#960050;background-color:#1e0010">p</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">”</span><span style="color:#960050;background-color:#1e0010">:</span> <span style="color:#960050;background-color:#1e0010">“</span><span style="color:#960050;background-color:#1e0010">Y</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">D</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">v</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#960050;background-color:#1e0010">D</span><span style="color:#960050;background-color:#1e0010">n</span><span style="color:#960050;background-color:#1e0010">x</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#960050;background-color:#1e0010">F</span><span style="color:#960050;background-color:#1e0010">S</span><span style="color:#960050;background-color:#1e0010">h</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">p</span><span style="color:#960050;background-color:#1e0010">.</span><span style="color:#960050;background-color:#1e0010">F</span><span style="color:#960050;background-color:#1e0010">S</span><span style="color:#960050;background-color:#1e0010">h</span><span style="color:#960050;background-color:#1e0010">a</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">p</span><span style="color:#960050;background-color:#1e0010">P</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">j</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">c</span><span style="color:#960050;background-color:#1e0010">t</span><span style="color:#960050;background-color:#1e0010">C</span><span style="color:#960050;background-color:#1e0010">o</span><span style="color:#960050;background-color:#1e0010">m</span><span style="color:#960050;background-color:#1e0010">p</span><span style="color:#960050;background-color:#1e0010">i</span><span style="color:#960050;background-color:#1e0010">l</span><span style="color:#960050;background-color:#1e0010">e</span><span style="color:#960050;background-color:#1e0010">r</span><span style="color:#960050;background-color:#1e0010">”</span>
     }
-}
-</code></pre>
-
-<p>The bold text are the changes needed for the F# support, the italic one are the needed changes for Akka.net and Suave.io.</p>
-
-<h2 id="3-initialize-akka-net-suave-io">3. initialize Akka.net &amp; Suave.io</h2>
-
-<pre><code class="language-fsharp">member x.Main () =
-   use akkaSystem = System.create &quot;SuaveAkkaCore&quot; (Configuration.defaultConfig()) //1
-  
-   spawn akkaSystem &quot;root&quot; (actorOf2 handleRequest) |&gt; ignore //2
-  
-   let cts = new CancellationTokenSource()
+<span style="color:#960050;background-color:#1e0010">}</span>
+</code></pre></div><p>The bold text are the changes needed for the F# support, the italic one are the needed changes for Akka.net and Suave.io.</p>
+<h2 id="3-initialize-akkanet--suaveio">3. initialize Akka.net &amp; Suave.io</h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">member</span> x.<span style="color:#a6e22e">Main</span> () <span style="color:#f92672">=</span>
+   <span style="color:#66d9ef">use</span> akkaSystem <span style="color:#f92672">=</span> System.create <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">SuaveAkkaCore</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">(</span>Configuration.defaultConfig()<span style="color:#f92672">)</span> <span style="color:#75715e">//1
+</span><span style="color:#75715e"></span>  
+   spawn akkaSystem <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">root</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">(</span>actorOf2 handleRequest<span style="color:#f92672">)</span> <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> ignore <span style="color:#75715e">//2
+</span><span style="color:#75715e"></span>  
+   <span style="color:#66d9ef">let</span> cts <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> CancellationTokenSource()
     
-   let startingServer, shutdownServer = startWebServerAsync defaultConfig (app akkaSystem) //3
-   Async.Start(shutdownServer, cts.Token)
+   <span style="color:#66d9ef">let</span> startingServer<span style="color:#f92672">,</span> shutdownServer <span style="color:#f92672">=</span> startWebServerAsync defaultConfig <span style="color:#f92672">(</span>app akkaSystem<span style="color:#f92672">)</span> <span style="color:#75715e">//3
+</span><span style="color:#75715e"></span>   Async.Start<span style="color:#f92672">(</span>shutdownServer<span style="color:#f92672">,</span> cts<span style="color:#f92672">.</span>Token<span style="color:#f92672">)</span>
     
-   startingServer |&gt; Async.RunSynchronously |&gt; printfn &quot;started: %A&quot;
+   startingServer <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> Async.RunSynchronously <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> printfn <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">started: %A</span><span style="color:#e6db74">&#34;</span>
  
-   printfn &quot;Press Enter to stop&quot;
-   Console.Read() |&gt; ignore
+   printfn <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Press Enter to stop</span><span style="color:#e6db74">&#34;</span>
+   Console.Read() <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> ignore
  
     
-   cts.Cancel()
+   cts<span style="color:#f92672">.</span>Cancel()
 
-</code></pre>
-
-<p>on //1 the Akka System is created with a standard configuration. It is named “SuaveAkkaCore”. This is later important to find the actor again.
+</code></pre></div><p>on //1 the Akka System is created with a standard configuration. It is named “SuaveAkkaCore”. This is later important to find the actor again.
 The only one actor (named root) in this example is spawnd on //2. When the actor gets a message, the handleRequest function is called.
 Last part on initializing the system is on //3 the start of suave. Here is only one webpart involved.</p>
-
 <h2 id="4-suave-webpart">4. Suave webpart</h2>
-
-<pre><code class="language-fsharp">let app system : WebPart = 
-     fun (httpContext : HttpContext) -&gt;
-         async {
-             let response = sendRequestToActor system httpContext
-             return! response
-         }
-</code></pre>
-
-<p>It’s a simple web part that reacts on every request and calls the sendRequestToActor method with the current Akka system and HttpContext (there is the request, response stuff in Suave).</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> app system <span style="color:#f92672">:</span> WebPart <span style="color:#f92672">=</span> 
+     <span style="color:#66d9ef">fun</span> <span style="color:#f92672">(</span>httpContext <span style="color:#f92672">:</span> HttpContext<span style="color:#f92672">)</span> <span style="color:#f92672">-&gt;</span>
+         async <span style="color:#f92672">{</span>
+             <span style="color:#66d9ef">let</span> response <span style="color:#f92672">=</span> sendRequestToActor system httpContext
+             <span style="color:#66d9ef">return</span><span style="color:#f92672">!</span> response
+         <span style="color:#f92672">}</span>
+</code></pre></div><p>It’s a simple web part that reacts on every request and calls the sendRequestToActor method with the current Akka system and HttpContext (there is the request, response stuff in Suave).</p>
 <h2 id="5-sending-message-to-actor">5. sending message to actor</h2>
-
-<pre><code class="language-fsharp">let sendRequestToActor system (httpContext : HttpContext) =
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> sendRequestToActor system <span style="color:#f92672">(</span>httpContext <span style="color:#f92672">:</span> HttpContext<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
      
-    let callActor = async { 
-      let actor = select &quot;akka://SuaveAkkaCore/user/root&quot; system
-      let! resp = actor &lt;? httpContext
-      return Some resp
-    }
+    <span style="color:#66d9ef">let</span> callActor <span style="color:#f92672">=</span> async <span style="color:#f92672">{</span> 
+      <span style="color:#66d9ef">let</span> actor <span style="color:#f92672">=</span> <span style="color:#66d9ef">select</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">akka://SuaveAkkaCore/user/root</span><span style="color:#e6db74">&#34;</span> system
+      <span style="color:#66d9ef">let!</span> resp <span style="color:#f92672">=</span> actor <span style="color:#f92672">&lt;</span><span style="color:#f92672">?</span> httpContext
+      <span style="color:#66d9ef">return</span> Some resp
+    <span style="color:#f92672">}</span>
     
-    let response = callActor |&gt; Async.RunSynchronously
+    <span style="color:#66d9ef">let</span> response <span style="color:#f92672">=</span> callActor <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> Async.RunSynchronously
     response httpContext   
-</code></pre>
-
-<p>In the first part, the root- Actor is selected. Here is the system name and actor name needed.
+</code></pre></div><p>In the first part, the root- Actor is selected. Here is the system name and actor name needed.
 With the &lt;? operator, the actor is asked with the HttpContext.
 After that, we run the async workflow and return the response.</p>
-
 <h2 id="6-the-actor-function-itself">6. the actor function itself</h2>
-
-<pre><code class="language-fsharp">let handleRequest (mailbox : Actor&lt;'a&gt;) (msg : HttpContext) =
-   let url = msg.request.url.ToString()                                     
-   mailbox.Sender() &lt;! (OK url)
-</code></pre>
-
-<p>In the actor function, we get the mailbox and the message as parameters. Here I simply take the request url and return it as OK response.</p>
-
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> handleRequest <span style="color:#f92672">(</span>mailbox <span style="color:#f92672">:</span> Actor<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>a<span style="color:#f92672">&gt;</span><span style="color:#f92672">)</span> <span style="color:#f92672">(</span>msg <span style="color:#f92672">:</span> HttpContext<span style="color:#f92672">)</span> <span style="color:#f92672">=</span>
+   <span style="color:#66d9ef">let</span> url <span style="color:#f92672">=</span> msg<span style="color:#f92672">.</span>request<span style="color:#f92672">.</span>url<span style="color:#f92672">.</span>ToString()                                     
+   mailbox<span style="color:#f92672">.</span>Sender() <span style="color:#f92672">&lt;</span><span style="color:#f92672">!</span> <span style="color:#f92672">(</span>OK url<span style="color:#f92672">)</span>
+</code></pre></div><p>In the actor function, we get the mailbox and the message as parameters. Here I simply take the request url and return it as OK response.</p>
 <p>To run the stuff, you need the DNX runtime installed.
 Switch to the mono runtime for dnx with “dnvm use 1.0.0-beta6-12120 -p -r mono”
 With a “dnu restore” you get the needed packages.
 After that, a “dnx . run” starts the program.</p>
-
 <p>Now browse to <a href="http://localhost:8083">http://localhost:8083</a> and you see as response the browsed url.</p>
-
 <p>Have fun!</p>
 
 

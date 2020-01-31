@@ -10,8 +10,8 @@
 ExtraTypeMapping You can specific for your types which SQLite type it should be." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://willich.io/2015/12/30/using-nodatime-in-sqlite.net/" />
-<meta property="article:published_time" content="2015-12-30T00:00:00&#43;00:00"/>
-<meta property="article:modified_time" content="2015-12-30T00:00:00&#43;00:00"/>
+<meta property="article:published_time" content="2015-12-30T00:00:00+00:00" />
+<meta property="article:modified_time" content="2015-12-30T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content="Using NodaTime in SQLite.Net"/>
@@ -112,25 +112,16 @@ ExtraTypeMapping You can specific for your types which SQLite type it should be.
     <hr>
 </header>
 <article class="blog-post">
-    
-
-<p>For a project I wanted to try out NodaTime, because of its nice handling with timezones.
+    <p>For a project I wanted to try out NodaTime, because of its nice handling with timezones.
 In this project I have also to save the values into a SQLite database and for that I normally use SQLite.net for that.
 Normally SQlite.net does not know how to handle the NodaTime types, but there are 2 places to add your own support for types.</p>
-
 <h2 id="extratypemapping">ExtraTypeMapping</h2>
-
 <p>You can specific for your types which SQLite type it should be. That could be INTEGER, REAL, TEXT or BLOB.
-It’s a simply Dictionary<System.Type, String> you provide as constructor parameter, where you set the SQLite.net Type to BLOB.</p>
-
+It’s a simply Dictionary&lt;System.Type, String&gt; you provide as constructor parameter, where you set the SQLite.net Type to BLOB.</p>
 <h2 id="iblobserializer">IBlobSerializer</h2>
-
 <p>When you save your values as Blob, you can use the BlobSerializerDelegate of SQLite.net and provide the appropriate delegates to serialize and deserialize your types.</p>
-
 <p>When you combine both, you can simply save your own types as blob in your database.</p>
-
 <p>The code for saving LocalDate, OffsetDateTime and Duration you can find here: <a href="https://gist.github.com/SabotageAndi/194aa01e1c78cb614c1b.">https://gist.github.com/SabotageAndi/194aa01e1c78cb614c1b.</a></p>
-
 <p>It is in F#, but it is understandable by C#-only developers. 😉</p>
 
 

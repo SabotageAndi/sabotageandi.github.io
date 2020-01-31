@@ -10,8 +10,8 @@
 For those who don&rsquo;t know Avalonia, you should check it out. It&rsquo;s an UI framework that uses XAML like WPF and Xamarin Forms and is implemented for .NET Framework and .NET Core. It runs on Windows, Linux and Mac OS." />
 <meta property="og:type" content="article" />
 <meta property="og:url" content="https://willich.io/2018/03/04/net-core-global-tools-with-ui/" />
-<meta property="article:published_time" content="2018-03-04T00:00:00&#43;00:00"/>
-<meta property="article:modified_time" content="2018-03-04T00:00:00&#43;00:00"/>
+<meta property="article:published_time" content="2018-03-04T00:00:00+00:00" />
+<meta property="article:modified_time" content="2018-03-04T00:00:00+00:00" />
 
 <meta name="twitter:card" content="summary"/>
 <meta name="twitter:title" content=".NET Core Global Tools with UI"/>
@@ -113,30 +113,18 @@ For those who don&rsquo;t know Avalonia, you should check it out. It&rsquo;s an 
 </header>
 <article class="blog-post">
     <p>Sometimes after the .NET team announced that they will add global tools to .NET Core, I asked myself if it would be possible to combine them with <a href="http://avaloniaui.net/">Avalonia</a> to make a global tool with an UI.</p>
-
 <p>For those who don&rsquo;t know Avalonia, you should check it out. It&rsquo;s an UI framework that uses XAML like WPF and Xamarin Forms and is implemented for .NET Framework and .NET Core. It runs on Windows, Linux and Mac OS.</p>
-
 <p>Back to the global tools.</p>
-
 <p>TL;DR: You can use Avalonia together with global tools. Here is a Sample: <a href="https://github.com/SabotageAndi/LicenseActivatorPrototype">https://github.com/SabotageAndi/LicenseActivatorPrototype</a></p>
-
 <p>But what it&rsquo;s needed? Not much.</p>
-
 <p>You have to add the PackAsTool and the ToolCommandName property.
 PackAsTool marks the project as a tool for installing. ToolCommandName specify how the tool is called after installation.</p>
-
 <p>This sets all, that you only have to do a dotnet pack to generate a NuGet package for the global tool.</p>
-
 <p>After that, you can install it with a dotnet install tool -g Your_Tool_Name. If you have packages from additional sources than NuGet.org, you can add them via command line argument or have a NuGet.config. In my prototype I am using nightlies of Avalonia and so I need to configure their feed as an additional source. Additionally I configured a local source, where the generated NuGet package gets published. It is here: <a href="https://github.com/SabotageAndi/LicenseActivatorPrototype/blob/master/NuGet.config">https://github.com/SabotageAndi/LicenseActivatorPrototype/blob/master/NuGet.config</a></p>
-
 <p>I had one small problem, where I got an error during installation, that there would be a downgrade of the System.Net.Primitives packages happen and so the tool can not be installed. The fix was to reference the package in project directly.</p>
-
 <p>So what does this mean, that we could use Avalonia in a global tool?</p>
-
 <p>We are not limited to only command line global tools, but can also write rich UI applications. And we can simply deploy them with a simple command line call.</p>
-
 <p>I would call this cool. Let&rsquo;s see what we will make out of it.</p>
-
 <p>Thanks to Martin Ullrich (<a href="https://dasmulli.blog/2018/01/23/exploring-global-net-core-tools/">https://dasmulli.blog/2018/01/23/exploring-global-net-core-tools/</a>) and Nate McMaster (<a href="https://www.natemcmaster.com/blog/2018/02/02/dotnet-global-tool/">https://www.natemcmaster.com/blog/2018/02/02/dotnet-global-tool/</a>) for their blog posts about global tools.</p>
 
 
