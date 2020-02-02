@@ -14,7 +14,7 @@
   <div>
     <h2>Recent posts</h2>
     <!-- Note that .Pages is the same as .Site.RegularPages on the homepage template. -->
-    {{ range first 10 .Pages }}
+    {{ range first 10 .Site.RegularPages }}
         {{ .Render "summary"}}
     {{ end }}
   </div>
