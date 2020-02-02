@@ -147,12 +147,12 @@ Job definition: <a href="https://github.com/SabotageAndi/MSBuild.AdditionalTasks
 <p>With now a working build pipeline, I created a new release pipeline that takes the artifact and uploads the nupkgs- files to NuGet.org.
 As of writing this article, only the UI is available to define release pipelines.</p>
 <h3 id="release-pipeline">Release pipeline</h3>
-<p>![](/images/2019-02-17 Release Pipeline.png)</p>
+<p><img src="/images/2019-02-17%20Release%20Pipeline.png" alt="release pipeline"></p>
 <h3 id="release-pipeline-detail">Release pipeline detail</h3>
-<p>![](/images/2019-02-17 Release Pipeline details.png)</p>
+<p><img src="/images/2019-02-17%20Release%20Pipeline%20details.png" alt="release pipeline detail"></p>
 <p>The &ldquo;hardest&rdquo; part was to create the service connection with NuGet.org. For that, you need an API key for your account. The steps for that are documented <a href="https://docs.microsoft.com/en-us/nuget/create-packages/publish-a-package#create-api-keys">here</a>.</p>
 <p>When you have it, you can create a NuGet service connection in Azure Pipelines.</p>
-<p>![](/images/2019-02-17 NuGet Service Connections.png)</p>
+<p><img src="/images/2019-02-17%20NuGet%20Service%20Connections.png" alt="nuget service connection"></p>
 <p>This service reference has to be used in the NuGet task. And after specifing the correct path where the NuGet packages are (yes, again pathes are hard).</p>
 <p>And that&rsquo;s it. At the second run of the release pipeline, a new version of NuGet package was uploaded to NuGet.org. Yeah!</p>
 <h2 id="problems-on-the-way">Problems on the way</h2>
