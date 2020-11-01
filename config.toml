@@ -32,10 +32,10 @@ enableRobotsTXT = true
     name = "Blog"
     weight = 3
     url = "/blog/"
-[[menu.main]]
-    name = "Speaking"
-    weight = 4
-    url = "/speaking/"
+# [[menu.main]]
+#     name = "Speaking"
+#     weight = 4
+#     url = "/speaking/"
 
 
 
