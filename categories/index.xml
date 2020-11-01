@@ -5,10 +5,6 @@
     <link>https://willich.io/categories/</link>
     <description>Recent content in Categories on Hi, I&#39;m Andreas</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    
-	<atom:link href="https://willich.io/categories/index.xml" rel="self" type="application/rss+xml" />
-    
-    
+    <language>en-us</language><atom:link href="https://willich.io/categories/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

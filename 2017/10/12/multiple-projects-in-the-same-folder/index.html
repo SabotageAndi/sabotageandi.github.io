@@ -71,12 +71,6 @@
                     
                 </li>
                 
-                <li class="nav-item ">
-                    
-                        <a class="nav-link" href="/speaking/">Speaking</a>
-                    
-                </li>
-                
             </ul>
             
         </div>
@@ -114,43 +108,43 @@
 As we don&rsquo;t want to copy a lot of code and then change some references/package version, I was looking if it is without much pain possible, that you have multiple projects/csprojs in one folder and produce so multiple assemblies.
 We are already having a solution with the old project system, but it involves a lot of  linked files and manual editing of the project files. So with the new project system it was time to look at this again.</p>
 <p>And after some work I had a solution to achieve this with the new csproj format. Here it is:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span><span style="color:#f92672">&gt;</span>
-    <span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
-        <span style="color:#f92672">&lt;BaseIntermediateOutputPath</span><span style="color:#f92672">&gt;</span>obj\$(MSBuildProjectName)<span style="color:#f92672">&lt;/BaseIntermediateOutputPath&gt;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project&gt;</span>
+    <span style="color:#f92672">&lt;PropertyGroup&gt;</span>
+        <span style="color:#f92672">&lt;BaseIntermediateOutputPath&gt;</span>obj\$(MSBuildProjectName)<span style="color:#f92672">&lt;/BaseIntermediateOutputPath&gt;</span>
     <span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
     
     <span style="color:#f92672">&lt;Import</span> <span style="color:#a6e22e">Project=</span><span style="color:#e6db74">&#34;Sdk.props&#34;</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">/&gt;</span>
 
-    <span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
-        <span style="color:#f92672">&lt;TargetFramework</span><span style="color:#f92672">&gt;</span>netstandard2.0<span style="color:#f92672">&lt;/TargetFramework&gt;</span>
-        <span style="color:#f92672">&lt;OutputPath</span><span style="color:#f92672">&gt;</span>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)<span style="color:#f92672">&lt;/OutputPath&gt;</span>
+    <span style="color:#f92672">&lt;PropertyGroup&gt;</span>
+        <span style="color:#f92672">&lt;TargetFramework&gt;</span>netstandard2.0<span style="color:#f92672">&lt;/TargetFramework&gt;</span>
+        <span style="color:#f92672">&lt;OutputPath&gt;</span>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)<span style="color:#f92672">&lt;/OutputPath&gt;</span>
     <span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
 
     <span style="color:#f92672">&lt;Import</span> <span style="color:#a6e22e">Project=</span><span style="color:#e6db74">&#34;Sdk.targets&#34;</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">/&gt;</span>
 
-    <span style="color:#f92672">&lt;ItemGroup</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;ItemGroup&gt;</span>
         <span style="color:#f92672">&lt;Compile</span> <span style="color:#a6e22e">Remove=</span><span style="color:#e6db74">&#34;obj\\**\*&#34;</span><span style="color:#f92672">/&gt;</span>
         <span style="color:#f92672">&lt;Compile</span> <span style="color:#a6e22e">Include=</span><span style="color:#e6db74">&#34;obj\$(MSBuildProjectName)\**\$(MSBuildProjectName).AssemblyInfo.cs&#34;</span><span style="color:#f92672">/&gt;</span>
     <span style="color:#f92672">&lt;/ItemGroup&gt;</span>
 <span style="color:#f92672">&lt;/Project&gt;</span>
 </code></pre></div><p>So what does it in detail?</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span><span style="color:#f92672">&gt;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project&gt;</span>
 </code></pre></div><p>Yes, there is no Sdk attribute defined. How does this work?</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
-    <span style="color:#f92672">&lt;BaseIntermediateOutputPath</span><span style="color:#f92672">&gt;</span>obj\$(MSBuildProjectName)<span style="color:#f92672">&lt;/BaseIntermediateOutputPath&gt;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;PropertyGroup&gt;</span>
+    <span style="color:#f92672">&lt;BaseIntermediateOutputPath&gt;</span>obj\$(MSBuildProjectName)<span style="color:#f92672">&lt;/BaseIntermediateOutputPath&gt;</span>
 <span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
 </code></pre></div><p>We are adjusting the BaseIntermediateOutputPath, so that each project has it&rsquo;s own and don&rsquo;t replace each others file. This is also the reason, why we have no Sdk attribute set. This property has to be set before the Sdk.props file is evaluated.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Import</span> <span style="color:#a6e22e">Project=</span><span style="color:#e6db74">&#34;Sdk.props&#34;</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">/&gt;</span>
 </code></pre></div><p>So, finally import the first part of the Sdk.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
-    <span style="color:#f92672">&lt;TargetFramework</span><span style="color:#f92672">&gt;</span>netstandard2.0<span style="color:#f92672">&lt;/TargetFramework&gt;</span>
-    <span style="color:#f92672">&lt;OutputPath</span><span style="color:#f92672">&gt;</span>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)<span style="color:#f92672">&lt;/OutputPath&gt;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;PropertyGroup&gt;</span>
+    <span style="color:#f92672">&lt;TargetFramework&gt;</span>netstandard2.0<span style="color:#f92672">&lt;/TargetFramework&gt;</span>
+    <span style="color:#f92672">&lt;OutputPath&gt;</span>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)<span style="color:#f92672">&lt;/OutputPath&gt;</span>
 <span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
 </code></pre></div><p>The TargetFramework property is well known. Nothing to add about this here.
 The OutputPath property is the location where the finished assemblies are copied. As BaseIntermediateOutputPath it has to be adjusted, so that each project has it&rsquo;s own folder.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Import</span> <span style="color:#a6e22e">Project=</span><span style="color:#e6db74">&#34;Sdk.targets&#34;</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">/&gt;</span>
 </code></pre></div><p>And now the second and last part of the Sdk is imported.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;ItemGroup</span><span style="color:#f92672">&gt;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;ItemGroup&gt;</span>
     <span style="color:#f92672">&lt;Compile</span> <span style="color:#a6e22e">Remove=</span><span style="color:#e6db74">&#34;obj\\**\*&#34;</span><span style="color:#f92672">/&gt;</span>
     <span style="color:#f92672">&lt;Compile</span> <span style="color:#a6e22e">Include=</span><span style="color:#e6db74">&#34;obj\$(MSBuildProjectName)\**\$(MSBuildProjectName).AssemblyInfo.cs&#34;</span><span style="color:#f92672">/&gt;</span>
 <span style="color:#f92672">&lt;/ItemGroup&gt;</span>

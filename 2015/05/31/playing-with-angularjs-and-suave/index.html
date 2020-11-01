@@ -73,12 +73,6 @@ As example for the AngularJS app, I used the PhoneCat Tutorial App from AngularJ
                     
                 </li>
                 
-                <li class="nav-item ">
-                    
-                        <a class="nav-link" href="/speaking/">Speaking</a>
-                    
-                </li>
-                
             </ul>
             
         </div>
@@ -118,10 +112,10 @@ As example for the AngularJS app, I used the PhoneCat Tutorial App from AngularJ
 <p>Explanation step-by-step:</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> mimeTypes <span style="color:#f92672">=</span>
     defaultMimeTypesMap
-        <span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span><span style="color:#f92672">&gt;</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">function</span> <span style="color:#f92672">|</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">.json</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">-&gt;</span> mkMimeType <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">application/json</span><span style="color:#e6db74">&#34;</span> <span style="color:#66d9ef">true</span> <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> None<span style="color:#f92672">)</span>
+        <span style="color:#f92672">&gt;=&gt;</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">function</span> <span style="color:#f92672">|</span> <span style="color:#e6db74">&#34;.json&#34;</span> <span style="color:#f92672">-&gt;</span> mkMimeType <span style="color:#e6db74">&#34;application/json&#34;</span> <span style="color:#66d9ef">true</span> <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span> None<span style="color:#f92672">)</span>
 
 </code></pre></div><p>In the default mime types from Suave is no entry for json- Files. So I simply add it.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> rootPath <span style="color:#f92672">=</span> Path.GetFullPath <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">../../../Web</span><span style="color:#e6db74">&#34;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> rootPath <span style="color:#f92672">=</span> Path.GetFullPath <span style="color:#e6db74">&#34;../../../Web&#34;</span>
 </code></pre></div><p>The source files for the AngularJS are located in a separate project.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> webConfig <span style="color:#f92672">=</span> 
     <span style="color:#f92672">{</span> 
@@ -131,17 +125,17 @@ As example for the AngularJS app, I used the PhoneCat Tutorial App from AngularJ
     <span style="color:#f92672">}</span>
 </code></pre></div><p>I use the default server config that is shipped with Suave and only adjust the needed parts.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> getPhone phoneName <span style="color:#f92672">=</span>
-    printfn <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">getting data for phone: %s</span><span style="color:#e6db74">&#34;</span> phoneName
+    printfn <span style="color:#e6db74">&#34;getting data for phone: %s&#34;</span> phoneName
 
-    <span style="color:#66d9ef">let</span> phoneFolder <span style="color:#f92672">=</span> Path.Combine<span style="color:#f92672">(</span>rootPath<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">app</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">phones</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span>
+    <span style="color:#66d9ef">let</span> phoneFolder <span style="color:#f92672">=</span> Path.Combine<span style="color:#f92672">(</span>rootPath<span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;app&#34;</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;phones&#34;</span><span style="color:#f92672">)</span>
     browseFile phoneFolder phoneName
 </code></pre></div><p>Function to return the data for the phones. It is stored as json- Files.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> api <span style="color:#f92672">=</span>
     choose
         <span style="color:#f92672">[</span>
-            GET <span style="color:#f92672">&gt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span> choose 
+            GET <span style="color:#f92672">&gt;&gt;=</span> choose 
                 <span style="color:#f92672">[</span>
-                    pathScan <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">/api/phones/%s</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> s <span style="color:#f92672">-&gt;</span> getPhone s<span style="color:#f92672">)</span>
+                    pathScan <span style="color:#e6db74">&#34;/api/phones/%s&#34;</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> s <span style="color:#f92672">-&gt;</span> getPhone s<span style="color:#f92672">)</span>
                 <span style="color:#f92672">]</span>
         <span style="color:#f92672">]</span>
 </code></pre></div><p>In Suave you have WebParts which can react on the different urls. Here I react on all calls to /api/phones/ and call the function to get the phone data.</p>
@@ -151,10 +145,10 @@ As example for the AngularJS app, I used the PhoneCat Tutorial App from AngularJ
 </code></pre></div><p>Function to return the file content of the requested file.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> angularApp <span style="color:#f92672">=</span>
     choose
-        <span style="color:#f92672">[</span> GET <span style="color:#f92672">&gt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span> choose
+        <span style="color:#f92672">[</span> GET <span style="color:#f92672">&gt;&gt;=</span> choose
             <span style="color:#f92672">[</span>
-                path <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">/</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">&gt;</span><span style="color:#f92672">&gt;</span><span style="color:#f92672">=</span>  redirect <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">app/index.html</span><span style="color:#e6db74">&#34;</span>
-                pathScan <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">/%s</span><span style="color:#e6db74">&#34;</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> s <span style="color:#f92672">-&gt;</span> getFile s<span style="color:#f92672">)</span>                
+                path <span style="color:#e6db74">&#34;/&#34;</span> <span style="color:#f92672">&gt;&gt;=</span>  redirect <span style="color:#e6db74">&#34;app/index.html&#34;</span>
+                pathScan <span style="color:#e6db74">&#34;/%s&#34;</span> <span style="color:#f92672">(</span><span style="color:#66d9ef">fun</span> s <span style="color:#f92672">-&gt;</span> getFile s<span style="color:#f92672">)</span>                
             <span style="color:#f92672">]</span>
         <span style="color:#f92672">]</span>
 </code></pre></div><p>The AngularJS app is still located under /app/<em>. So I make a redirect, when you simple browse to the root page.
@@ -176,10 +170,10 @@ If the order is changed, no call is ever made to the api Webpart.</p>
  
     Async.Start<span style="color:#f92672">(</span>shutdownServer<span style="color:#f92672">,</span> cts<span style="color:#f92672">.</span>Token<span style="color:#f92672">)</span>
  
-    startingServer <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> Async.RunSynchronously <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> printfn <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">started: %A</span><span style="color:#e6db74">&#34;</span>
+    startingServer <span style="color:#f92672">|&gt;</span> Async.RunSynchronously <span style="color:#f92672">|&gt;</span> printfn <span style="color:#e6db74">&#34;started: %A&#34;</span>
  
-    printfn <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">Press Enter to stop</span><span style="color:#e6db74">&#34;</span>
-    Console.Read() <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> ignore
+    printfn <span style="color:#e6db74">&#34;Press Enter to stop&#34;</span>
+    Console.Read() <span style="color:#f92672">|&gt;</span> ignore
  
     cts<span style="color:#f92672">.</span>Cancel()
  

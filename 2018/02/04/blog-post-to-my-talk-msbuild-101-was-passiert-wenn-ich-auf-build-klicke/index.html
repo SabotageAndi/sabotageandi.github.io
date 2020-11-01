@@ -77,12 +77,6 @@ That&rsquo;s the classic &ldquo;Hello World&rdquo; as for every programming lang
                     
                 </li>
                 
-                <li class="nav-item ">
-                    
-                        <a class="nav-link" href="/speaking/">Speaking</a>
-                    
-                </li>
-                
             </ul>
             
         </div>
@@ -128,13 +122,13 @@ That&rsquo;s the classic &ldquo;Hello World&rdquo; as for every programming lang
 <span style="color:#f92672">&lt;/Project&gt;</span>
 </code></pre></div><p>Command: msbuild %Filename%.csproj /t:HelloWorld</p>
 <p>That&rsquo;s the classic &ldquo;Hello World&rdquo; as for every programming language. And yes, MSBuild looks like XML, but it&rsquo;s a programming language. &ldquo;Target&rdquo; defines a &ldquo;method&rdquo;, which can call other targets and tasks. Tasks are functions that are defined in assemblies.</p>
-<p>With the /t parameter, you specific which target is executed. When you don&rsquo;t specify it, a default target is executed, but in this case, we want that the &ldquo;HelloWorld&rdquo; target is executed and print &ldquo;Hello World!&quot;.</p>
+<p>With the /t parameter, you specific which target is executed. When you don&rsquo;t specify it, a default target is executed, but in this case, we want that the &ldquo;HelloWorld&rdquo; target is executed and print &ldquo;Hello World!&rdquo;.</p>
 <h1 id="variables">Variables</h1>
 <p>As functions/methods there are also variables in MSBuild. You define them in PropertyGroups.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">&gt;</span>
 
-    <span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
-        <span style="color:#f92672">&lt;HelloText</span><span style="color:#f92672">&gt;</span>World<span style="color:#f92672">&lt;/HelloText&gt;</span>
+    <span style="color:#f92672">&lt;PropertyGroup&gt;</span>
+        <span style="color:#f92672">&lt;HelloText&gt;</span>World<span style="color:#f92672">&lt;/HelloText&gt;</span>
     <span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
 
     <span style="color:#f92672">&lt;Target</span> <span style="color:#a6e22e">Name=</span><span style="color:#e6db74">&#34;HelloWorld&#34;</span><span style="color:#f92672">&gt;</span>
@@ -157,7 +151,7 @@ That&rsquo;s the classic &ldquo;Hello World&rdquo; as for every programming lang
 <p>And as in other languages, there are also Ifs available. Here are they called Conditions and</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">&gt;</span>
 
-    <span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;PropertyGroup&gt;</span>
         <span style="color:#f92672">&lt;HelloText</span> <span style="color:#a6e22e">Condition=</span><span style="color:#e6db74">&#34;$(HelloText)==&#39;&#39;&#34;</span><span style="color:#f92672">&gt;</span>World<span style="color:#f92672">&lt;/HelloText&gt;</span>
     <span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
 
@@ -216,7 +210,7 @@ That&rsquo;s the classic &ldquo;Hello World&rdquo; as for every programming lang
 <p>Sometimes you need to execute a target for a list of files. This is possible with ItemGroups.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">&gt;</span>
 
-    <span style="color:#f92672">&lt;ItemGroup</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;ItemGroup&gt;</span>
         <span style="color:#f92672">&lt;Files</span> <span style="color:#a6e22e">Include=</span><span style="color:#e6db74">&#34;*.*&#34;</span> <span style="color:#f92672">/&gt;</span>
     <span style="color:#f92672">&lt;/ItemGroup&gt;</span>
 

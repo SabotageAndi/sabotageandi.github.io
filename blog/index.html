@@ -72,12 +72,6 @@
                     
                 </li>
                 
-                <li class="nav-item ">
-                    
-                        <a class="nav-link" href="/speaking/">Speaking</a>
-                    
-                </li>
-                
             </ul>
             
         </div>
@@ -386,13 +380,13 @@ PackAsTool marks the project as a tool for installing. ToolCommandName specify h
 <span style="color:#f92672">&lt;/Project&gt;</span>
 </code></pre></div><p>Command: msbuild %Filename%.csproj /t:HelloWorld</p>
 <p>That&rsquo;s the classic &ldquo;Hello World&rdquo; as for every programming language. And yes, MSBuild looks like XML, but it&rsquo;s a programming language. &ldquo;Target&rdquo; defines a &ldquo;method&rdquo;, which can call other targets and tasks. Tasks are functions that are defined in assemblies.</p>
-<p>With the /t parameter, you specific which target is executed. When you don&rsquo;t specify it, a default target is executed, but in this case, we want that the &ldquo;HelloWorld&rdquo; target is executed and print &ldquo;Hello World!&quot;.</p>
+<p>With the /t parameter, you specific which target is executed. When you don&rsquo;t specify it, a default target is executed, but in this case, we want that the &ldquo;HelloWorld&rdquo; target is executed and print &ldquo;Hello World!&rdquo;.</p>
 <h1 id="variables">Variables</h1>
 <p>As functions/methods there are also variables in MSBuild. You define them in PropertyGroups.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">&gt;</span>
 
-    <span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
-        <span style="color:#f92672">&lt;HelloText</span><span style="color:#f92672">&gt;</span>World<span style="color:#f92672">&lt;/HelloText&gt;</span>
+    <span style="color:#f92672">&lt;PropertyGroup&gt;</span>
+        <span style="color:#f92672">&lt;HelloText&gt;</span>World<span style="color:#f92672">&lt;/HelloText&gt;</span>
     <span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
 
     <span style="color:#f92672">&lt;Target</span> <span style="color:#a6e22e">Name=</span><span style="color:#e6db74">&#34;HelloWorld&#34;</span><span style="color:#f92672">&gt;</span>
@@ -415,7 +409,7 @@ PackAsTool marks the project as a tool for installing. ToolCommandName specify h
 <p>And as in other languages, there are also Ifs available. Here are they called Conditions and</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">&gt;</span>
 
-    <span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;PropertyGroup&gt;</span>
         <span style="color:#f92672">&lt;HelloText</span> <span style="color:#a6e22e">Condition=</span><span style="color:#e6db74">&#34;$(HelloText)==&#39;&#39;&#34;</span><span style="color:#f92672">&gt;</span>World<span style="color:#f92672">&lt;/HelloText&gt;</span>
     <span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
 
@@ -474,7 +468,7 @@ PackAsTool marks the project as a tool for installing. ToolCommandName specify h
 <p>Sometimes you need to execute a target for a list of files. This is possible with ItemGroups.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">&gt;</span>
 
-    <span style="color:#f92672">&lt;ItemGroup</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;ItemGroup&gt;</span>
         <span style="color:#f92672">&lt;Files</span> <span style="color:#a6e22e">Include=</span><span style="color:#e6db74">&#34;*.*&#34;</span> <span style="color:#f92672">/&gt;</span>
     <span style="color:#f92672">&lt;/ItemGroup&gt;</span>
 
@@ -576,43 +570,43 @@ So you get an Office 365 subscription and a Visual Studio Subscription. From Jet
 As we don&rsquo;t want to copy a lot of code and then change some references/package version, I was looking if it is without much pain possible, that you have multiple projects/csprojs in one folder and produce so multiple assemblies.
 We are already having a solution with the old project system, but it involves a lot of  linked files and manual editing of the project files. So with the new project system it was time to look at this again.</p>
 <p>And after some work I had a solution to achieve this with the new csproj format. Here it is:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span><span style="color:#f92672">&gt;</span>
-    <span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
-        <span style="color:#f92672">&lt;BaseIntermediateOutputPath</span><span style="color:#f92672">&gt;</span>obj\$(MSBuildProjectName)<span style="color:#f92672">&lt;/BaseIntermediateOutputPath&gt;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project&gt;</span>
+    <span style="color:#f92672">&lt;PropertyGroup&gt;</span>
+        <span style="color:#f92672">&lt;BaseIntermediateOutputPath&gt;</span>obj\$(MSBuildProjectName)<span style="color:#f92672">&lt;/BaseIntermediateOutputPath&gt;</span>
     <span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
     
     <span style="color:#f92672">&lt;Import</span> <span style="color:#a6e22e">Project=</span><span style="color:#e6db74">&#34;Sdk.props&#34;</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">/&gt;</span>
 
-    <span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
-        <span style="color:#f92672">&lt;TargetFramework</span><span style="color:#f92672">&gt;</span>netstandard2.0<span style="color:#f92672">&lt;/TargetFramework&gt;</span>
-        <span style="color:#f92672">&lt;OutputPath</span><span style="color:#f92672">&gt;</span>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)<span style="color:#f92672">&lt;/OutputPath&gt;</span>
+    <span style="color:#f92672">&lt;PropertyGroup&gt;</span>
+        <span style="color:#f92672">&lt;TargetFramework&gt;</span>netstandard2.0<span style="color:#f92672">&lt;/TargetFramework&gt;</span>
+        <span style="color:#f92672">&lt;OutputPath&gt;</span>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)<span style="color:#f92672">&lt;/OutputPath&gt;</span>
     <span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
 
     <span style="color:#f92672">&lt;Import</span> <span style="color:#a6e22e">Project=</span><span style="color:#e6db74">&#34;Sdk.targets&#34;</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">/&gt;</span>
 
-    <span style="color:#f92672">&lt;ItemGroup</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;ItemGroup&gt;</span>
         <span style="color:#f92672">&lt;Compile</span> <span style="color:#a6e22e">Remove=</span><span style="color:#e6db74">&#34;obj\\**\*&#34;</span><span style="color:#f92672">/&gt;</span>
         <span style="color:#f92672">&lt;Compile</span> <span style="color:#a6e22e">Include=</span><span style="color:#e6db74">&#34;obj\$(MSBuildProjectName)\**\$(MSBuildProjectName).AssemblyInfo.cs&#34;</span><span style="color:#f92672">/&gt;</span>
     <span style="color:#f92672">&lt;/ItemGroup&gt;</span>
 <span style="color:#f92672">&lt;/Project&gt;</span>
 </code></pre></div><p>So what does it in detail?</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project</span><span style="color:#f92672">&gt;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Project&gt;</span>
 </code></pre></div><p>Yes, there is no Sdk attribute defined. How does this work?</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
-    <span style="color:#f92672">&lt;BaseIntermediateOutputPath</span><span style="color:#f92672">&gt;</span>obj\$(MSBuildProjectName)<span style="color:#f92672">&lt;/BaseIntermediateOutputPath&gt;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;PropertyGroup&gt;</span>
+    <span style="color:#f92672">&lt;BaseIntermediateOutputPath&gt;</span>obj\$(MSBuildProjectName)<span style="color:#f92672">&lt;/BaseIntermediateOutputPath&gt;</span>
 <span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
 </code></pre></div><p>We are adjusting the BaseIntermediateOutputPath, so that each project has it&rsquo;s own and don&rsquo;t replace each others file. This is also the reason, why we have no Sdk attribute set. This property has to be set before the Sdk.props file is evaluated.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Import</span> <span style="color:#a6e22e">Project=</span><span style="color:#e6db74">&#34;Sdk.props&#34;</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">/&gt;</span>
 </code></pre></div><p>So, finally import the first part of the Sdk.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;PropertyGroup</span><span style="color:#f92672">&gt;</span>
-    <span style="color:#f92672">&lt;TargetFramework</span><span style="color:#f92672">&gt;</span>netstandard2.0<span style="color:#f92672">&lt;/TargetFramework&gt;</span>
-    <span style="color:#f92672">&lt;OutputPath</span><span style="color:#f92672">&gt;</span>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)<span style="color:#f92672">&lt;/OutputPath&gt;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;PropertyGroup&gt;</span>
+    <span style="color:#f92672">&lt;TargetFramework&gt;</span>netstandard2.0<span style="color:#f92672">&lt;/TargetFramework&gt;</span>
+    <span style="color:#f92672">&lt;OutputPath&gt;</span>bin\$(Configuration)\$(TargetFramework)\$(MSBuildProjectName)<span style="color:#f92672">&lt;/OutputPath&gt;</span>
 <span style="color:#f92672">&lt;/PropertyGroup&gt;</span>
 </code></pre></div><p>The TargetFramework property is well known. Nothing to add about this here.
 The OutputPath property is the location where the finished assemblies are copied. As BaseIntermediateOutputPath it has to be adjusted, so that each project has it&rsquo;s own folder.</p>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;Import</span> <span style="color:#a6e22e">Project=</span><span style="color:#e6db74">&#34;Sdk.targets&#34;</span> <span style="color:#a6e22e">Sdk=</span><span style="color:#e6db74">&#34;Microsoft.NET.Sdk&#34;</span><span style="color:#f92672">/&gt;</span>
 </code></pre></div><p>And now the second and last part of the Sdk is imported.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;ItemGroup</span><span style="color:#f92672">&gt;</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-xml" data-lang="xml"><span style="color:#f92672">&lt;ItemGroup&gt;</span>
     <span style="color:#f92672">&lt;Compile</span> <span style="color:#a6e22e">Remove=</span><span style="color:#e6db74">&#34;obj\\**\*&#34;</span><span style="color:#f92672">/&gt;</span>
     <span style="color:#f92672">&lt;Compile</span> <span style="color:#a6e22e">Include=</span><span style="color:#e6db74">&#34;obj\$(MSBuildProjectName)\**\$(MSBuildProjectName).AssemblyInfo.cs&#34;</span><span style="color:#f92672">/&gt;</span>
 <span style="color:#f92672">&lt;/ItemGroup&gt;</span>
@@ -697,7 +691,7 @@ Complete project can be found on <a href="https://github.com/SabotageAndi/UWPSys
     <span style="color:#a6e22e">xmlns:converter=</span><span style="color:#e6db74">&#34;using:UWPSystemTypeConverterTest.Converter&#34;</span>
     <span style="color:#a6e22e">xmlns:enums=</span><span style="color:#e6db74">&#34;using:UWPSystemTypeConverterTest.Enum&#34;</span>
     <span style="color:#a6e22e">mc:Ignorable=</span><span style="color:#e6db74">&#34;d&#34;</span><span style="color:#f92672">&gt;</span>
-    <span style="color:#f92672">&lt;Page.Resources</span><span style="color:#f92672">&gt;</span>
+    <span style="color:#f92672">&lt;Page.Resources&gt;</span>
         <span style="color:#f92672">&lt;converter:EnumTypeConverter</span> <span style="color:#a6e22e">x:Key=</span><span style="color:#e6db74">&#34;Converter&#34;</span> <span style="color:#a6e22e">TypeToDisplay=</span><span style="color:#e6db74">&#34;enums:CustomEnum&#34;</span> <span style="color:#f92672">/&gt;</span>
     <span style="color:#f92672">&lt;/Page.Resources&gt;</span>
     <span style="color:#f92672">&lt;Grid</span> <span style="color:#a6e22e">Background=</span><span style="color:#e6db74">&#34;{ThemeResource ApplicationPageBackgroundThemeBrush}&#34;</span><span style="color:#f92672">&gt;</span>

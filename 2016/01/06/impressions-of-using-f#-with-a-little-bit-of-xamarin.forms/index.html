@@ -75,12 +75,6 @@ Writing stateless could be hard, but it is worth the trouble Coming from a C# ba
                     
                 </li>
                 
-                <li class="nav-item ">
-                    
-                        <a class="nav-link" href="/speaking/">Speaking</a>
-                    
-                </li>
-                
             </ul>
             
         </div>
@@ -130,15 +124,15 @@ Writing stateless could be hard, but it is worth the trouble Coming from a C# ba
 <p>But simply wrap the C# method call in a small function and voila.</p>
 <p>Here is an example when using NodaTime (the “let startTime”- line is the important one):
 Direct call to C#:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> dateTimeFormat <span style="color:#f92672">=</span> OffsetDateTimePattern.CreateWithInvariantCulture<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">yyyy&#39;-&#39;MM&#39;-&#39;dd&#39;T&#39;HH&#39;:&#39;mm&#39;:&#39;sso&lt;G&gt;</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span>
-<span style="color:#66d9ef">let</span> startTime <span style="color:#f92672">=</span> common<span style="color:#f92672">.</span>Formatting<span style="color:#f92672">.</span>dateTimeFormat<span style="color:#f92672">.</span>Parse<span style="color:#f92672">(</span>dayNode<span style="color:#f92672">.</span><span style="color:#f92672">[</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">day_start</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">]</span><span style="color:#f92672">.</span>Value<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>()<span style="color:#f92672">)</span><span style="color:#f92672">.</span>Value
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> dateTimeFormat <span style="color:#f92672">=</span> OffsetDateTimePattern.CreateWithInvariantCulture<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;yyyy&#39;-&#39;MM&#39;-&#39;dd&#39;T&#39;HH&#39;:&#39;mm&#39;:&#39;sso&lt;G&gt;&#34;</span><span style="color:#f92672">)</span>
+<span style="color:#66d9ef">let</span> startTime <span style="color:#f92672">=</span> common<span style="color:#f92672">.</span>Formatting<span style="color:#f92672">.</span>dateTimeFormat<span style="color:#f92672">.</span>Parse<span style="color:#f92672">(</span>dayNode<span style="color:#f92672">.[</span><span style="color:#e6db74">&#34;day_start&#34;</span><span style="color:#f92672">].</span>Value<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">string</span><span style="color:#f92672">&gt;</span>()<span style="color:#f92672">).</span>Value
 </code></pre></div><p>With F# wrapper function:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> parseNodaTime<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">(</span>pattern <span style="color:#f92672">:</span> NodaTime.Text.IPattern<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">&gt;</span><span style="color:#f92672">)</span> rawValue <span style="color:#f92672">=</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-fsharp" data-lang="fsharp"><span style="color:#66d9ef">let</span> parseNodaTime<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">&gt;</span> <span style="color:#f92672">(</span>pattern <span style="color:#f92672">:</span> NodaTime.Text.IPattern<span style="color:#f92672">&lt;</span><span style="color:#66d9ef">&#39;</span>T<span style="color:#f92672">&gt;)</span> rawValue <span style="color:#f92672">=</span>
         <span style="color:#66d9ef">let</span> result <span style="color:#f92672">=</span> pattern<span style="color:#f92672">.</span>Parse<span style="color:#f92672">(</span>rawValue<span style="color:#f92672">)</span>
         result<span style="color:#f92672">.</span>Value
 
-<span style="color:#66d9ef">let</span> dateTimeFormat <span style="color:#f92672">=</span> OffsetDateTimePattern.CreateWithInvariantCulture<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;</span><span style="color:#e6db74">yyyy&#39;-&#39;MM&#39;-&#39;dd&#39;T&#39;HH&#39;:&#39;mm&#39;:&#39;sso&lt;G&gt;</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span>
-<span style="color:#66d9ef">let</span> startTime <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>json<span style="color:#f92672">.</span>GetProperty <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">day_start</span><span style="color:#e6db74">&#34;</span><span style="color:#f92672">)</span><span style="color:#f92672">.</span>AsString() <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> parseNodaTime common<span style="color:#f92672">.</span>Formatting<span style="color:#f92672">.</span>dateTimeFormat
+<span style="color:#66d9ef">let</span> dateTimeFormat <span style="color:#f92672">=</span> OffsetDateTimePattern.CreateWithInvariantCulture<span style="color:#f92672">(</span><span style="color:#e6db74">&#34;yyyy&#39;-&#39;MM&#39;-&#39;dd&#39;T&#39;HH&#39;:&#39;mm&#39;:&#39;sso&lt;G&gt;&#34;</span><span style="color:#f92672">)</span>
+<span style="color:#66d9ef">let</span> startTime <span style="color:#f92672">=</span> <span style="color:#f92672">(</span>json<span style="color:#f92672">.</span>GetProperty <span style="color:#e6db74">&#34;day_start&#34;</span><span style="color:#f92672">).</span>AsString() <span style="color:#f92672">|&gt;</span> parseNodaTime common<span style="color:#f92672">.</span>Formatting<span style="color:#f92672">.</span>dateTimeFormat
 </code></pre></div><p>For one usage it might be not that bad, but when you have multiple calls, it is more readable. Particularly you get the nice left- to- right readability back!</p>
 <h2 id="left--to--right-readability-combined-with-railway-oriented-programming-rop-rocks">Left- to- right readability combined with railway oriented programming (ROP) rocks!</h2>
 <p>Look at this example:</p>
@@ -146,11 +140,11 @@ Direct call to C#:</p>
             <span style="color:#66d9ef">match</span> conference <span style="color:#66d9ef">with</span>
             <span style="color:#f92672">|</span> Some conference <span style="color:#f92672">-&gt;</span>
                 conference 
-                <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> checkForTimeout
-                <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> getDataLocation
-                <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> fetchJson 
-                <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> Parser.parseJson conference
-                <span style="color:#f92672">|</span><span style="color:#f92672">&gt;</span> Synchronization.sync conference
+                <span style="color:#f92672">|&gt;</span> checkForTimeout
+                <span style="color:#f92672">|&gt;</span> getDataLocation
+                <span style="color:#f92672">|&gt;</span> fetchJson 
+                <span style="color:#f92672">|&gt;</span> Parser.parseJson conference
+                <span style="color:#f92672">|&gt;</span> Synchronization.sync conference
             <span style="color:#f92672">|</span> <span style="color:#f92672">_</span> <span style="color:#f92672">-&gt;</span>
                 ignore()
             conference
