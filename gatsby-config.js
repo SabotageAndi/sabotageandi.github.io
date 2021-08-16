@@ -1,7 +1,11 @@
+const path = require('path');
+
 module.exports = {
   siteMetadata: {
     siteUrl: "https://willich.io",
     title: "Hi, I'm Andi",
+    subtitle: "",
+    author: "@SabotageAndi"
   },
   plugins: [
     "gatsby-plugin-image",
@@ -29,10 +33,9 @@ module.exports = {
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        name: `blog`,
-        path: `./src/blog/`,
+        name: `markdown-pages`,
+        path: `./src/content/`,
       },
-      __key: "blog"
     },
   ],
 };
