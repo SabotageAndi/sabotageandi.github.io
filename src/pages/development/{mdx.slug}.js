@@ -1,8 +1,8 @@
 import React from "react"
 import { graphql } from "gatsby"
 import styled from "@emotion/styled"
-import Layout from "../components/layout"
-import SEO from "../components/seo"
+import Layout from "../../components/layout"
+import SEO from "../../components/seo"
 import { MDXRenderer } from 'gatsby-plugin-mdx'
 
 const Content = styled.div`
@@ -64,7 +64,7 @@ const BlogPost = ({ data }) => {
           {data.mdx.frontmatter.date}
         </HeaderDate>
         <MDXRenderer>
-              {node.body}
+              {data.mdx.body}
         </MDXRenderer>
       </Content>
     </Layout>
@@ -80,7 +80,6 @@ export const query = graphql`
       excerpt(pruneLength: 160)
       frontmatter {
         date(formatString: "DD MMMM, YYYY")
-        
         title
       }
     }

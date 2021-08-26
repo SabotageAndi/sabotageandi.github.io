@@ -33,8 +33,22 @@ module.exports = {
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        name: `markdown-pages`,
-        path: `./src/content/`,
+        name: `development`,
+        path: `./src/content/development`,
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `testautomation`,
+        path: `./src/content/testautomation`,
+      },
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `devrel`,
+        path: `./src/content/devrel`,
       },
     },
   ],

@@ -3,8 +3,8 @@ import { Link, graphql } from "gatsby"
 import { css } from "@emotion/react"
 import styled from "@emotion/styled"
 
-import Layout from "../components/layout"
-import SEO from "../components/seo"
+import Layout from "../../components/layout"
+import SEO from "../../components/seo"
 
 const Content = styled.div`
   margin: 0 auto;
@@ -39,13 +39,13 @@ const ReadingTime = styled.h5`
 const IndexPage = ({ data }) => {
   return (
     <Layout>
-      <SEO title="Blog" />
+      <SEO title="Development" />
       <Content>
         <h1>Blog</h1>
         {data.allMdx.edges.map(({ node }) => (
           <div key={node.id}>
             <Link
-              to={node.frontmatter.slug}
+              to={node.slug}
               css={css`
                 text-decoration: none;
                 color: inherit;
@@ -67,28 +67,29 @@ const IndexPage = ({ data }) => {
 export default IndexPage
 
 export const query = graphql`
-  query {
-    site {
-      siteMetadata {
-        title
-      }
+query 
+{
+  site {
+    siteMetadata {
+      title
     }
-    allMdx(sort: { fields: [frontmatter___date], order: DESC }) {
-      totalCount
-      edges {
-        node {
-          id
-          frontmatter {
-            title
-            date(formatString: "DD MMMM, YYYY")
-            slug
-          }
-          fields {
-            slug
-          }
-          excerpt
+  }
+  allMdx(
+    sort: {fields: [frontmatter___date], order: DESC}
+    filter: {fileAbsolutePath: {regex: "/.*development.*/"}}
+  ) {
+    totalCount
+    edges {
+      node {
+        id
+        frontmatter {
+          title
+          date(formatString: "DD MMMM, YYYY")
         }
+        excerpt
+        slug
       }
     }
   }
+}
 `
