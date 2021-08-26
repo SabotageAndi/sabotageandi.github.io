@@ -3,14 +3,21 @@ const path = require('path');
 module.exports = {
   siteMetadata: {
     siteUrl: "https://willich.io",
-    title: "Hi, I'm Andi",
+    title: "Hi Everyone! I'm Andi",
     subtitle: "",
     author: "@SabotageAndi"
   },
   plugins: [
     "gatsby-plugin-image",
     "gatsby-plugin-sitemap",
-    "gatsby-plugin-mdx",
+    {
+      resolve: `gatsby-plugin-mdx`,
+      options: {
+        defaultLayouts: {
+          default: require.resolve("./src/components/article.js"),
+        },
+      },
+    },
     "gatsby-plugin-sharp",
     "gatsby-transformer-sharp",
     "gatsby-plugin-slug",

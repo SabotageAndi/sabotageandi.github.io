@@ -6,7 +6,7 @@ import ArticleList from "../../components/article-list"
 
 const IndexPage = ({ data }) => {
   return (
-    <ArticleList data={data} title="Development"/>
+    <ArticleList data={data} title="Test Automation"/>
   )
 }
 
@@ -22,7 +22,7 @@ query
   }
   allMdx(
     sort: {fields: [frontmatter___date], order: DESC}
-    filter: {fileAbsolutePath: {regex: "/.*development.*/"}}
+    filter: {fileAbsolutePath: {regex: "/.*testautomation.*/"}}
   ) {
     totalCount
     edges {
