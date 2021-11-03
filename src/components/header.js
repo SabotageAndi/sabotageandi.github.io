@@ -11,7 +11,7 @@ const Content = styled.div`
 
 const NavLink = styled(Link)`
   color: black;
-  margin-left: 15px;
+  margin-left: 35px;
   text-decoration: none;
   display: inline-block;
   position: relative;
