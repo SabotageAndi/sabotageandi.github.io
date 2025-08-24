@@ -3,15 +3,25 @@ email: andreas@willich.io
 
 baseurl: ""
 url: "https://willich.io/"
-theme: minima
+theme: "minimal-mistakes-jekyll"
+
 paginate: 10
 paginate_path: "blog"
 plugins:
   - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-include-cache
+  - jekyll-archives
+  - jekyll-paginate
   - jekyll-seo-tag
-
+  - jekyll-redirect-from
+  - jekyll-collections
 # Author
 author: "Andreas Willich"
+
+# Minimal Mistakes settings
+minimal_mistakes_skin: "default"
+search: false
 
 # Taxonomies
 collections:
