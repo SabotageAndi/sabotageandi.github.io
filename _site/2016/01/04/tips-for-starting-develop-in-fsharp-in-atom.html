@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>Tips for starting develop in F# in Atom | SabotageAndi Blog</title>
+    <meta name="description" content="Personal blog migrated from Hugo to Jekyll">
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+    <header>
+      <h1><a href="/">SabotageAndi Blog</a></h1>
+    </header>
+    <main>
+      <h1 id="this-blog-post-is-outdated">This blog post is outdated!</h1>
+
+<p>Use VS Code and Ionide.</p>
+
+<p>After some days working with Atom to write in F# code, here are some tips:</p>
+
+<h2 id="read-the-manual-and-use-the-ionide-installer-package-">Read the manual and use the ionide-installer package 😉</h2>
+
+<p>On my first try I installed some ionide packages and so some features where missing. So really read the manual and use the ionide-installer package.</p>
+
+<h2 id="on-mac-os-x--use-the-mono-package-and-not-the-one-from-homebrew">On Mac OS X – use the Mono package and not the one from Homebrew</h2>
+
+<p>When you are using the Homebrew version, Ionide can not spawn the background service for the autocompletion.
+If you use the Mono one from <a href="http://www.mono-project.com/download/">http://www.mono-project.com/download/</a> everything works.
+Additional this package includes the reference assemblies for Portable Class Libraries. Without them you can not compile a PCL.</p>
+
+<h2 id="additional-packages">Additional packages</h2>
+
+<p>git-plus: <a href="https://atom.io/packages/git-plus">https://atom.io/packages/git-plus</a> – git commands available in command palette
+terminal-plus: <a href="https://atom.io/packages/terminal-plus">https://atom.io/packages/terminal-plus</a> – terminal within Atom; when you use a german keyboard, you have to adjust the key mappings for toggle
+minimal: <a href="https://atom.io/packages/minimap">https://atom.io/packages/minimap</a> – file preview on the right side</p>
+
+<h2 id="using-yeoman-and-the-generator-fsharp">using Yeoman and the generator-fsharp</h2>
+
+<p>Yeoman with the F#- Generator (<a href="https://github.com/fsprojects/generator-fsharp)">https://github.com/fsprojects/generator-fsharp)</a> is a nice tool for creating new projects from templates.
+I added some new features in the last view days:</p>
+
+<p>add FAKE support (<a href="https://github.com/fsprojects/generator-fsharp/pull/26)">https://github.com/fsprojects/generator-fsharp/pull/26)</a>
+add references to other projects (<a href="https://github.com/fsprojects/generator-fsharp/pull/26)">https://github.com/fsprojects/generator-fsharp/pull/26)</a>
+add template for PCLs with Profile 259 (<a href="https://github.com/fsprojects/generator-fsharp/pull/25)">https://github.com/fsprojects/generator-fsharp/pull/25)</a>
+Hopefully they will be merged in the next days.</p>
+
+    </main>
+    <footer>
+      <p>&copy; 2025 SabotageAndi Blog</p>
+    </footer>
+  </body>
+</html>

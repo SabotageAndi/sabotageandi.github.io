@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>On the Bleeding Edge – Akka.Net + Suave | SabotageAndi Blog</title>
+    <meta name="description" content="Personal blog migrated from Hugo to Jekyll">
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+    <header>
+      <h1><a href="/">SabotageAndi Blog</a></h1>
+    </header>
+    <main>
+      <p>So after playing with Suave.io, I wanted to add some new bleeding edge stuff to it. 😉 And run it on a beta environment, the DNX 🙂</p>
+
+<p>First, the complete source of it is here: <a href="https://github.com/SabotageAndi/SuaveAkkaCore">https://github.com/SabotageAndi/SuaveAkkaCore</a></p>
+
+<p>Thanks to Alxandr there is F# support for the DNX: <a href="https://github.com/YoloDev/YoloDev.Dnx.FSharp">https://github.com/YoloDev/YoloDev.Dnx.FSharp</a></p>
+
+<p>So here is a quick go through of the code to get the stuff working:</p>
+
+<h2 id="1-add-needed-nuget-feeds">1. Add needed NuGet feeds</h2>
+
+<p>YoloDev: <a href="https://www.myget.org/F/yolodev/api/v2″">https://www.myget.org/F/yolodev/api/v2″</a>
+AspNetVNext: <a href="https://www.myget.org/F/aspnetvnext/api/v2″">https://www.myget.org/F/aspnetvnext/api/v2″</a></p>
+
+<h2 id="2-adapt-projectjson-for-f-support">2. Adapt project.json for F# Support</h2>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+    </span><span class="err">“version”:</span><span class="w"> </span><span class="err">“</span><span class="mf">1.0</span><span class="err">.</span><span class="mi">0</span><span class="err">-beta-*”</span><span class="p">,</span><span class="w">
+    </span><span class="err">“dependencies”:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="err">“YoloDev.Dnx.FSharp”:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">“type”:</span><span class="w"> </span><span class="err">“build”</span><span class="p">,</span><span class="w"> </span><span class="err">“version”:</span><span class="w"> </span><span class="err">“</span><span class="mf">1.0</span><span class="err">.</span><span class="mi">0</span><span class="err">-beta-*”</span><span class="w"> </span><span class="p">},</span><span class="w">
+    </span><span class="err">“Suave”:</span><span class="w"> </span><span class="err">“</span><span class="mf">0.29</span><span class="err">.</span><span class="mi">1</span><span class="err">”</span><span class="p">,</span><span class="w">
+            </span><span class="err">“Akka”:</span><span class="w"> </span><span class="err">“</span><span class="mf">1.0</span><span class="err">.</span><span class="mi">3</span><span class="err">”</span><span class="p">,</span><span class="w">
+            </span><span class="err">“Akka.FSharp”:</span><span class="w"> </span><span class="err">“</span><span class="mf">1.0</span><span class="err">.</span><span class="mi">3</span><span class="err">”</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="err">“frameworks”:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="err">“dnx</span><span class="mi">451</span><span class="err">”:</span><span class="w"> </span><span class="p">{</span><span class="w">
+            </span><span class="err">“frameworkAssemblies”:</span><span class="w"> </span><span class="p">{</span><span class="w">
+                </span><span class="err">“System.Runtime”:</span><span class="w"> </span><span class="err">“”</span><span class="p">,</span><span class="w">
+                </span><span class="err">“System.Threading.Tasks”:</span><span class="w"> </span><span class="err">“”</span><span class="w">
+                </span><span class="p">}</span><span class="w">
+            </span><span class="p">}</span><span class="w">
+        </span><span class="p">},</span><span class="w">
+    </span><span class="err">“compiler”:</span><span class="w"> </span><span class="p">{</span><span class="w">
+        </span><span class="err">“name”:</span><span class="w"> </span><span class="err">“F#”</span><span class="p">,</span><span class="w">
+            </span><span class="err">“compilerAssembly”:</span><span class="w"> </span><span class="err">“YoloDev.Dnx.FSharp”</span><span class="p">,</span><span class="w">
+            </span><span class="err">“compilerType”:</span><span class="w"> </span><span class="err">“YoloDev.Dnx.FSharp.FSharpProjectCompiler”</span><span class="w">
+    </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>The bold text are the changes needed for the F# support, the italic one are the needed changes for Akka.net and Suave.io.</p>
+
+<h2 id="3-initialize-akkanet--suaveio">3. initialize Akka.net &amp; Suave.io</h2>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">member</span> <span class="n">x</span><span class="p">.</span><span class="nc">Main</span> <span class="bp">()</span> <span class="p">=</span>
+   <span class="k">use</span> <span class="n">akkaSystem</span> <span class="p">=</span> <span class="nn">System</span><span class="p">.</span><span class="n">create</span> <span class="s2">"SuaveAkkaCore"</span> <span class="p">(</span><span class="nn">Configuration</span><span class="p">.</span><span class="n">defaultConfig</span><span class="bp">()</span><span class="p">)</span> <span class="c1">//1</span>
+  
+   <span class="n">spawn</span> <span class="n">akkaSystem</span> <span class="s2">"root"</span> <span class="p">(</span><span class="n">actorOf2</span> <span class="n">handleRequest</span><span class="p">)</span> <span class="p">|&gt;</span> <span class="n">ignore</span> <span class="c1">//2</span>
+  
+   <span class="k">let</span> <span class="n">cts</span> <span class="p">=</span> <span class="k">new</span> <span class="nc">CancellationTokenSource</span><span class="bp">()</span>
+    
+   <span class="k">let</span> <span class="n">startingServer</span><span class="p">,</span> <span class="n">shutdownServer</span> <span class="p">=</span> <span class="n">startWebServerAsync</span> <span class="n">defaultConfig</span> <span class="p">(</span><span class="n">app</span> <span class="n">akkaSystem</span><span class="p">)</span> <span class="c1">//3</span>
+   <span class="nn">Async</span><span class="p">.</span><span class="nc">Start</span><span class="p">(</span><span class="n">shutdownServer</span><span class="p">,</span> <span class="n">cts</span><span class="p">.</span><span class="nc">Token</span><span class="p">)</span>
+    
+   <span class="n">startingServer</span> <span class="p">|&gt;</span> <span class="nn">Async</span><span class="p">.</span><span class="nc">RunSynchronously</span> <span class="p">|&gt;</span> <span class="n">printfn</span> <span class="s2">"started: %A"</span>
+ 
+   <span class="n">printfn</span> <span class="s2">"Press Enter to stop"</span>
+   <span class="nn">Console</span><span class="p">.</span><span class="nc">Read</span><span class="bp">()</span> <span class="p">|&gt;</span> <span class="n">ignore</span>
+ 
+    
+   <span class="n">cts</span><span class="p">.</span><span class="nc">Cancel</span><span class="bp">()</span>
+
+</code></pre></div></div>
+
+<p>on //1 the Akka System is created with a standard configuration. It is named “SuaveAkkaCore”. This is later important to find the actor again.
+The only one actor (named root) in this example is spawnd on //2. When the actor gets a message, the handleRequest function is called.
+Last part on initializing the system is on //3 the start of suave. Here is only one webpart involved.</p>
+
+<h2 id="4-suave-webpart">4. Suave webpart</h2>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">app</span> <span class="n">system</span> <span class="p">:</span> <span class="nc">WebPart</span> <span class="p">=</span> 
+     <span class="k">fun</span> <span class="p">(</span><span class="n">httpContext</span> <span class="p">:</span> <span class="nc">HttpContext</span><span class="p">)</span> <span class="p">-&gt;</span>
+         <span class="n">async</span> <span class="p">{</span>
+             <span class="k">let</span> <span class="n">response</span> <span class="p">=</span> <span class="n">sendRequestToActor</span> <span class="n">system</span> <span class="n">httpContext</span>
+             <span class="k">return</span><span class="o">!</span> <span class="n">response</span>
+         <span class="p">}</span>
+</code></pre></div></div>
+
+<p>It’s a simple web part that reacts on every request and calls the sendRequestToActor method with the current Akka system and HttpContext (there is the request, response stuff in Suave).</p>
+
+<h2 id="5-sending-message-to-actor">5. sending message to actor</h2>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">sendRequestToActor</span> <span class="n">system</span> <span class="p">(</span><span class="n">httpContext</span> <span class="p">:</span> <span class="nc">HttpContext</span><span class="p">)</span> <span class="p">=</span>
+     
+    <span class="k">let</span> <span class="n">callActor</span> <span class="p">=</span> <span class="n">async</span> <span class="p">{</span> 
+      <span class="k">let</span> <span class="n">actor</span> <span class="p">=</span> <span class="k">select</span> <span class="s2">"akka://SuaveAkkaCore/user/root"</span> <span class="n">system</span>
+      <span class="k">let</span><span class="o">!</span> <span class="n">resp</span> <span class="p">=</span> <span class="n">actor</span> <span class="o">&lt;?</span> <span class="n">httpContext</span>
+      <span class="k">return</span> <span class="nc">Some</span> <span class="n">resp</span>
+    <span class="p">}</span>
+    
+    <span class="k">let</span> <span class="n">response</span> <span class="p">=</span> <span class="n">callActor</span> <span class="p">|&gt;</span> <span class="nn">Async</span><span class="p">.</span><span class="nc">RunSynchronously</span>
+    <span class="n">response</span> <span class="n">httpContext</span>   
+</code></pre></div></div>
+
+<p>In the first part, the root- Actor is selected. Here is the system name and actor name needed.
+With the &lt;? operator, the actor is asked with the HttpContext.
+After that, we run the async workflow and return the response.</p>
+
+<h2 id="6-the-actor-function-itself">6. the actor function itself</h2>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">handleRequest</span> <span class="p">(</span><span class="n">mailbox</span> <span class="p">:</span> <span class="nc">Actor</span><span class="p">&lt;</span><span class="k">'</span><span class="n">a</span><span class="o">&gt;)</span> <span class="p">(</span><span class="n">msg</span> <span class="p">:</span> <span class="nc">HttpContext</span><span class="p">)</span> <span class="p">=</span>
+   <span class="k">let</span> <span class="n">url</span> <span class="p">=</span> <span class="n">msg</span><span class="p">.</span><span class="n">request</span><span class="p">.</span><span class="n">url</span><span class="p">.</span><span class="nc">ToString</span><span class="bp">()</span>                                     
+   <span class="n">mailbox</span><span class="p">.</span><span class="nc">Sender</span><span class="bp">()</span> <span class="o">&lt;!</span> <span class="p">(</span><span class="nc">OK</span> <span class="n">url</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>In the actor function, we get the mailbox and the message as parameters. Here I simply take the request url and return it as OK response.</p>
+
+<p>To run the stuff, you need the DNX runtime installed.
+Switch to the mono runtime for dnx with “dnvm use 1.0.0-beta6-12120 -p -r mono”
+With a “dnu restore” you get the needed packages.
+After that, a “dnx . run” starts the program.</p>
+
+<p>Now browse to <a href="http://localhost:8083">http://localhost:8083</a> and you see as response the browsed url.</p>
+
+<p>Have fun!</p>
+
+    </main>
+    <footer>
+      <p>&copy; 2025 SabotageAndi Blog</p>
+    </footer>
+  </body>
+</html>

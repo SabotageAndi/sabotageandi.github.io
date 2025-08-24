@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <title>F# Raw SQL Access | SabotageAndi Blog</title>
+    <meta name="description" content="Personal blog migrated from Hugo to Jekyll">
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+    <header>
+      <h1><a href="/">SabotageAndi Blog</a></h1>
+    </header>
+    <main>
+      <p>With my start in working with F#, I came to the point to access a database. When you read my last post, you know that an ORM was out of question. What me really surprised at the end, was that the code is much less than every other DB access I wrote.</p>
+
+<p>So how does it look?</p>
+
+<p>The general idea was, to first create a record that holds the SQL statement and the parameters, that gets then executed.</p>
+
+<p>The record enables you to write tests for your database access.</p>
+
+<p>For accessing the ADO.Net functions, I use FsSql.</p>
+
+<p>So beginn with the entity with represents one row of the table:</p>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="nc">Weather</span><span class="bp">()</span> <span class="p">=</span>
+    <span class="k">member</span> <span class="k">val</span> <span class="nc">Id</span> <span class="p">=</span> <span class="mi">0</span> <span class="k">with</span> <span class="n">get</span><span class="p">,</span><span class="n">set</span>
+ 
+    <span class="k">member</span> <span class="k">val</span> <span class="nc">LocationId</span> <span class="p">=</span> <span class="nn">Guid</span><span class="p">.</span><span class="nc">Empty</span> <span class="k">with</span> <span class="n">get</span><span class="p">,</span><span class="n">set</span>
+    <span class="k">member</span> <span class="k">val</span> <span class="nc">DataFrom</span> <span class="p">=</span> <span class="nn">DateTimeOffset</span><span class="p">.</span><span class="nc">MinValue</span> <span class="k">with</span> <span class="n">get</span><span class="p">,</span><span class="n">set</span>
+    <span class="k">member</span> <span class="k">val</span> <span class="nc">DataTo</span> <span class="p">=</span> <span class="nn">DateTimeOffset</span><span class="p">.</span><span class="nc">MinValue</span> <span class="k">with</span> <span class="n">get</span><span class="p">,</span><span class="n">set</span>
+    <span class="k">member</span> <span class="k">val</span> <span class="nc">Temperature</span> <span class="p">=</span> <span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="n">m</span> <span class="k">with</span> <span class="n">get</span><span class="p">,</span><span class="n">set</span>
+    <span class="k">member</span> <span class="k">val</span> <span class="nc">Humidity</span> <span class="p">=</span> <span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="n">m</span> <span class="k">with</span> <span class="n">get</span><span class="p">,</span><span class="n">set</span>
+    <span class="k">member</span> <span class="k">val</span> <span class="nc">Rain</span> <span class="p">=</span> <span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="n">m</span> <span class="k">with</span> <span class="n">get</span><span class="p">,</span><span class="n">set</span>
+    <span class="k">member</span> <span class="k">val</span> <span class="nc">WindSpeed</span> <span class="p">=</span> <span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="n">m</span> <span class="k">with</span> <span class="n">get</span><span class="p">,</span><span class="n">set</span>
+    <span class="k">member</span> <span class="k">val</span> <span class="nc">WindDirection</span> <span class="p">=</span> <span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="n">m</span> <span class="k">with</span> <span class="n">get</span><span class="p">,</span><span class="n">set</span>
+    <span class="k">member</span> <span class="k">val</span> <span class="nc">Clouds</span> <span class="p">=</span> <span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="n">m</span> <span class="k">with</span> <span class="n">get</span><span class="p">,</span><span class="n">set</span>
+    <span class="k">member</span> <span class="k">val</span> <span class="nc">Pressure</span> <span class="p">=</span> <span class="mi">0</span><span class="p">.</span><span class="mi">0</span><span class="n">m</span> <span class="k">with</span> <span class="n">get</span><span class="p">,</span><span class="n">set</span>
+</code></pre></div></div>
+
+<p>It’s a simple store for weather data for a location.</p>
+
+<p>To insert an entry to the table, we need a function to get the wrapper record:</p>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">private</span> <span class="n">insert</span> <span class="p">(</span><span class="n">weather</span> <span class="p">:</span> <span class="nc">Weather</span> <span class="p">)</span> <span class="p">=</span>
+<span class="p">{</span>
+    <span class="n">query</span> <span class="p">=</span> <span class="s2">"INSERT INTO </span><span class="se">\"</span><span class="s2">intersect</span><span class="se">\"</span><span class="s2">.</span><span class="se">\"</span><span class="s2">Weather</span><span class="se">\"</span><span class="s2">(
+                         locationid, datafrom, datato, temperature, humidity, rain,
+                         windspeed, winddirection, clouds, pressure)
+             VALUES (@locationid, @datafrom, @datato, @temperature, @humidity, @rain,
+                     @windspeed, @winddirection, @clouds, @pressure);
+             RETURNING id;"</span><span class="p">;</span>
+    <span class="n">parameters</span> <span class="p">=</span> <span class="p">[</span>
+                 <span class="nc">P</span><span class="p">(</span><span class="s2">"@locationid"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">LocationId</span><span class="o">);</span>
+                 <span class="nc">P</span><span class="p">(</span><span class="s2">"@datafrom"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">DataFrom</span><span class="o">);</span>
+                 <span class="nc">P</span><span class="p">(</span><span class="s2">"@datato"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">DataTo</span><span class="o">);</span>
+                 <span class="nc">P</span><span class="p">(</span><span class="s2">"@temperature"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">Temperature</span><span class="o">);</span>
+                 <span class="nc">P</span><span class="p">(</span><span class="s2">"@humidity"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">Humidity</span><span class="o">);</span>
+                 <span class="nc">P</span><span class="p">(</span><span class="s2">"@rain"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">Rain</span><span class="o">);</span>
+                 <span class="nc">P</span><span class="p">(</span><span class="s2">"@windspeed"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">WindSpeed</span><span class="o">);</span>
+                 <span class="nc">P</span><span class="p">(</span><span class="s2">"@winddirection"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">WindDirection</span><span class="o">);</span>
+                 <span class="nc">P</span><span class="p">(</span><span class="s2">"@clouds"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">Clouds</span><span class="o">);</span>
+                 <span class="nc">P</span><span class="p">(</span><span class="s2">"@pressure"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">Pressure</span><span class="o">);</span>
+             <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The wrapper has the query as string and a list of SqlParameters.</p>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">changeQueryObject</span> <span class="p">=</span>
+<span class="p">{</span>
+    <span class="n">query</span> <span class="p">:</span> <span class="kt">string</span><span class="p">;</span>
+    <span class="n">parameters</span> <span class="p">:</span> <span class="nn">Sql</span><span class="p">.</span><span class="nc">Parameter</span> <span class="kt">list</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The P- function is a shortcut for the FsSql Sql.Parameter.make.</p>
+
+<p>To execute the insert statement, we pass the changeQueryObject to following function:</p>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">executeScalar</span> <span class="p">(</span><span class="n">queryObj</span> <span class="p">:</span> <span class="n">changeQueryObject</span><span class="p">)</span> <span class="p">=</span>
+    <span class="n">sql</span><span class="p">.</span><span class="nc">ExecScalar</span> <span class="n">queryObj</span><span class="p">.</span><span class="n">query</span> <span class="n">queryObj</span><span class="p">.</span><span class="n">parameters</span>
+</code></pre></div></div>
+
+<p>With the “RETURNING id” at the end of the SQL statement and executing it with ExecScalar, we get the primary key of the new entry. Everything we want after the insert.</p>
+
+<p>The same works for updates:</p>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">private</span> <span class="n">update</span> <span class="p">(</span><span class="n">weather</span> <span class="p">:</span> <span class="nc">Weather</span> <span class="p">)</span> <span class="p">=</span>
+<span class="p">{</span>
+    <span class="n">query</span> <span class="p">=</span> <span class="s2">"UPDATE </span><span class="se">\"</span><span class="s2">intersect</span><span class="se">\"</span><span class="s2">.</span><span class="se">\"</span><span class="s2">Weather</span><span class="se">\"</span><span class="s2">
+             SET locationid=@locationid, datafrom=@datafrom, datato=@datato, temperature=@temperature, humidity=@humidity,
+             rain=@rain, windspeed=@windspeed, winddirection=@winddirection, clouds=@clouds, pressure=@pressure
+             WHERE id=@id;
+             SELECT @id;
+             "</span><span class="p">;</span>
+    <span class="n">parameters</span> <span class="p">=</span> <span class="p">[</span>
+                    <span class="nc">P</span><span class="p">(</span><span class="s2">"@id"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">Id</span><span class="o">);</span>
+                    <span class="nc">P</span><span class="p">(</span><span class="s2">"@locationid"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">LocationId</span><span class="o">);</span>
+                    <span class="nc">P</span><span class="p">(</span><span class="s2">"@datafrom"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">DataFrom</span><span class="o">);</span>
+                    <span class="nc">P</span><span class="p">(</span><span class="s2">"@datato"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">DataTo</span><span class="o">);</span>
+                    <span class="nc">P</span><span class="p">(</span><span class="s2">"@temperature"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">Temperature</span><span class="o">);</span>
+                    <span class="nc">P</span><span class="p">(</span><span class="s2">"@humidity"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">Humidity</span><span class="o">);</span>
+                    <span class="nc">P</span><span class="p">(</span><span class="s2">"@rain"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">Rain</span><span class="o">);</span>
+                    <span class="nc">P</span><span class="p">(</span><span class="s2">"@windspeed"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">WindSpeed</span><span class="o">);</span>
+                    <span class="nc">P</span><span class="p">(</span><span class="s2">"@winddirection"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">WindDirection</span><span class="o">);</span>
+                    <span class="nc">P</span><span class="p">(</span><span class="s2">"@clouds"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">Clouds</span><span class="o">);</span>
+                    <span class="nc">P</span><span class="p">(</span><span class="s2">"@pressure"</span><span class="p">,</span> <span class="n">weather</span><span class="p">.</span><span class="nc">Pressure</span><span class="o">);</span>
+                 <span class="p">]</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>And with some little pattern matching, we get a nice save function:</p>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">save</span> <span class="p">(</span><span class="n">weather</span> <span class="p">:</span> <span class="nc">Weather</span><span class="p">)</span> <span class="p">=</span>
+    <span class="k">match</span> <span class="n">weather</span><span class="p">.</span><span class="nc">Id</span> <span class="k">with</span>
+    <span class="p">|</span> <span class="mi">0</span> <span class="p">-&gt;</span> <span class="n">insert</span> <span class="n">weather</span>
+    <span class="p">|</span> <span class="p">_</span> <span class="p">-&gt;</span> <span class="n">update</span> <span class="n">weather</span>
+</code></pre></div></div>
+
+<p>But what is with querying and some filtering? Now F# plays it’s strength.</p>
+
+<p>For that we need an little changed query wrapper:</p>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">selectQueryObject</span><span class="p">&lt;</span><span class="k">'</span><span class="nc">T</span><span class="p">&gt;</span> <span class="p">=</span>
+<span class="p">{</span>
+    <span class="n">query</span> <span class="p">:</span> <span class="kt">string</span><span class="p">;</span>
+    <span class="n">parameters</span> <span class="p">:</span> <span class="nn">Sql</span><span class="p">.</span><span class="nc">Parameter</span> <span class="kt">list</span><span class="p">;</span>
+    <span class="n">deserialisation</span> <span class="p">:</span> <span class="p">(</span><span class="nc">IDataRecord</span> <span class="p">-&gt;</span> <span class="k">'</span><span class="nc">T</span><span class="p">)</span> <span class="n">option</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The new field “deserialisation” holds an function to get an instance of the entity from a datarecord. This is the one for the weather entity.</p>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">asWeather</span> <span class="p">(</span><span class="n">r</span><span class="p">:</span> <span class="nc">IDataRecord</span><span class="p">)</span> <span class="p">=</span>
+    <span class="k">new</span> <span class="nc">Weather</span><span class="p">(</span><span class="nc">Id</span> <span class="p">=</span> <span class="p">(</span><span class="n">r</span><span class="p">?</span><span class="n">id</span><span class="o">).</span><span class="nc">Value</span><span class="p">,</span> <span class="nc">LocationId</span> <span class="p">=</span> <span class="p">(</span><span class="n">r</span><span class="p">?</span><span class="nc">LocationId</span><span class="o">).</span><span class="nc">Value</span><span class="p">,</span> <span class="nc">DataFrom</span> <span class="p">=</span> <span class="p">(</span><span class="n">r</span><span class="p">?</span><span class="nc">DataFrom</span><span class="o">).</span><span class="nc">Value</span><span class="p">,</span>
+    <span class="nc">DataTo</span> <span class="p">=</span> <span class="p">(</span><span class="n">r</span><span class="p">?</span><span class="nc">DataTo</span><span class="o">).</span><span class="nc">Value</span><span class="p">,</span> <span class="nc">Temperature</span> <span class="p">=</span> <span class="p">(</span><span class="n">r</span><span class="p">?</span><span class="nc">Temperature</span><span class="o">).</span><span class="nc">Value</span><span class="p">,</span>
+    <span class="nc">Humidity</span> <span class="p">=</span> <span class="p">(</span><span class="n">r</span><span class="p">?</span><span class="nc">Humidity</span><span class="o">).</span><span class="nc">Value</span><span class="p">,</span> <span class="nc">Rain</span> <span class="p">=</span> <span class="p">(</span><span class="n">r</span><span class="p">?</span><span class="nc">Rain</span><span class="o">).</span><span class="nc">Value</span><span class="p">,</span> <span class="nc">WindSpeed</span> <span class="p">=</span> <span class="p">(</span><span class="n">r</span><span class="p">?</span><span class="nc">WindSpeed</span><span class="o">).</span><span class="nc">Value</span><span class="p">,</span>
+    <span class="nc">WindDirection</span> <span class="p">=</span> <span class="p">(</span><span class="n">r</span><span class="p">?</span><span class="nc">WindDirection</span><span class="o">).</span><span class="nc">Value</span><span class="p">,</span> <span class="nc">Clouds</span> <span class="p">=</span> <span class="p">(</span><span class="n">r</span><span class="p">?</span><span class="nc">Clouds</span><span class="o">).</span><span class="nc">Value</span><span class="p">,</span> <span class="nc">Pressure</span> <span class="p">=</span> <span class="p">(</span><span class="n">r</span><span class="p">?</span><span class="nc">Pressure</span><span class="o">).</span><span class="nc">Value</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>How looks the querying function?</p>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">search</span> <span class="p">(</span><span class="n">fc</span> <span class="p">:</span> <span class="nc">WeatherSearchRequest</span><span class="p">)</span> <span class="p">=</span>
+    <span class="k">let</span> <span class="n">query</span> <span class="p">=</span> <span class="s2">"SELECT id, locationid, datafrom, datato, temperature, humidity, rain, windspeed, winddirection, clouds, pressure FROM </span><span class="se">\"</span><span class="s2">intersect</span><span class="se">\"</span><span class="s2">.</span><span class="se">\"</span><span class="s2">Weather</span><span class="se">\"</span><span class="s2">"</span>
+ 
+    <span class="k">let</span> <span class="n">locationIdPara</span> <span class="p">=</span> <span class="n">w</span> <span class="s2">"locationid"</span> <span class="s2">"@locationid"</span> <span class="s2">"="</span> <span class="n">fc</span><span class="p">.</span><span class="nc">LocationId</span>
+    <span class="k">let</span> <span class="n">fomPara</span> <span class="p">=</span> <span class="n">w</span> <span class="s2">"datafrom"</span> <span class="s2">"@datafrom"</span> <span class="s2">"&gt;="</span> <span class="n">fc</span><span class="p">.</span><span class="nc">From</span>
+    <span class="k">let</span> <span class="n">toPara</span> <span class="p">=</span> <span class="n">w</span> <span class="s2">"datato"</span> <span class="s2">"@datato"</span> <span class="s2">"&lt;="</span> <span class="n">fc</span><span class="p">.</span><span class="nc">To</span>
+    <span class="k">let</span> <span class="n">datetimeFromPara</span> <span class="p">=</span> <span class="n">w</span> <span class="s2">"datafrom"</span> <span class="s2">"@datafrom"</span> <span class="s2">"&gt;="</span> <span class="n">fc</span><span class="p">.</span><span class="nc">DateTime</span>
+    <span class="k">let</span> <span class="n">datetimeToPara</span> <span class="p">=</span> <span class="n">w</span> <span class="s2">"datato"</span> <span class="s2">"@datato"</span> <span class="s2">"&lt;="</span> <span class="n">fc</span><span class="p">.</span><span class="nc">DateTime</span>
+ 
+    <span class="nc">Some</span> <span class="n">asWeather</span>
+    <span class="p">|&gt;</span> <span class="n">emptyQueryPart</span>
+    <span class="p">|&gt;</span> <span class="n">combineAnd</span> <span class="n">locationIdPara</span>
+    <span class="p">|&gt;</span> <span class="n">combineAnd</span> <span class="n">fomPara</span>
+    <span class="p">|&gt;</span> <span class="n">combineAnd</span> <span class="n">toPara</span>
+    <span class="p">|&gt;</span> <span class="n">combineAnd</span> <span class="n">datetimeFromPara</span>
+    <span class="p">|&gt;</span> <span class="n">combineAnd</span> <span class="n">datetimeToPara</span>
+    <span class="p">|&gt;</span> <span class="n">combineQueryParts</span> <span class="n">query</span>
+</code></pre></div></div>
+
+<p>The WeatherSearchRequest is a POCO which holds the various filter values.</p>
+
+<p>Every possible part of the where- Statement is wrapped in an queryPart record.</p>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">queryPart</span> <span class="p">=</span>
+<span class="p">{</span>
+    <span class="n">where</span> <span class="p">:</span> <span class="kt">string</span><span class="p">;</span>
+    <span class="n">parameter</span> <span class="p">:</span> <span class="nn">Sql</span><span class="p">.</span><span class="nc">Parameter</span> <span class="n">option</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The w- function (for Where) creates such a record:</p>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="k">private</span> <span class="n">w</span><span class="p">&lt;</span><span class="k">'</span><span class="n">a</span> <span class="k">when</span> <span class="k">'</span><span class="n">a</span> <span class="p">:</span> <span class="p">(</span><span class="k">new</span> <span class="p">:</span> <span class="kt">unit</span> <span class="p">-&gt;</span> <span class="k">'</span><span class="n">a</span><span class="p">)</span> <span class="k">and</span> <span class="k">'</span><span class="n">a</span> <span class="p">:</span> <span class="k">struct</span> <span class="k">and</span> <span class="k">'</span><span class="n">a</span> <span class="p">:&gt;</span> <span class="nn">System</span><span class="p">.</span><span class="nc">ValueType</span><span class="p">&gt;</span> <span class="n">column</span> <span class="n">parametername</span> <span class="n">operator</span> <span class="p">(</span><span class="n">value</span> <span class="p">:</span> <span class="nn">System</span><span class="p">.</span><span class="nc">Nullable</span><span class="p">&lt;</span><span class="k">'</span><span class="n">a</span><span class="o">&gt;)</span> <span class="p">=</span>
+    <span class="k">match</span> <span class="n">value</span><span class="p">.</span><span class="nc">HasValue</span> <span class="k">with</span>
+    <span class="p">|</span> <span class="bp">true</span> <span class="p">-&gt;</span> <span class="p">{</span> <span class="n">where</span> <span class="p">=</span> <span class="n">sprintf</span> <span class="s2">"%s %s %s"</span> <span class="n">column</span> <span class="n">operator</span> <span class="n">parametername</span><span class="p">;</span> <span class="n">parameter</span> <span class="p">=</span> <span class="nc">Some</span> <span class="p">&lt;|</span> <span class="nc">P</span><span class="p">(</span><span class="n">parametername</span><span class="p">,</span> <span class="n">value</span><span class="p">.</span><span class="nc">Value</span><span class="o">)}</span>
+    <span class="p">|</span> <span class="bp">false</span> <span class="p">-&gt;</span> <span class="p">{</span><span class="n">where</span> <span class="p">=</span> <span class="s2">""</span><span class="p">;</span> <span class="n">parameter</span> <span class="p">=</span> <span class="nc">Option</span><span class="p">&lt;</span><span class="nn">Sql</span><span class="p">.</span><span class="nc">Parameter</span><span class="o">&gt;.</span><span class="nc">None</span><span class="p">}</span>
+</code></pre></div></div>
+
+<p>When the filter value is set, it create a filled queryPart, else we get an empty one.</p>
+
+<p>But what do we do with it now? Let’s look at the next code block.</p>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">Some</span> <span class="n">asWeather</span>
+<span class="p">|&gt;</span> <span class="n">emptyQueryPart</span>
+<span class="o">...</span>
+</code></pre></div></div>
+
+<p>This is to create a selectQueryObject with setted deserialisation function. The selectQueryObject is then piped to multiple combineAnd functions.</p>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">...</span>
+<span class="p">|&gt;</span> <span class="n">combineAnd</span> <span class="n">locationIdPara</span>
+<span class="p">|&gt;</span> <span class="n">combineAnd</span> <span class="n">fomPara</span>
+<span class="p">|&gt;</span> <span class="n">combineAnd</span> <span class="n">toPara</span>
+<span class="p">|&gt;</span> <span class="n">combineAnd</span> <span class="n">datetimeFromPara</span>
+<span class="p">|&gt;</span> <span class="n">combineAnd</span> <span class="n">datetimeToPara</span>
+<span class="o">...</span>
+
+<span class="k">let</span> <span class="k">private</span> <span class="n">combineAnd</span><span class="p">&lt;</span><span class="k">'</span><span class="nc">T</span><span class="p">&gt;</span> <span class="p">(</span><span class="n">x</span> <span class="p">:</span> <span class="n">queryPart</span><span class="p">)</span> <span class="p">(</span><span class="n">qo</span> <span class="p">:</span> <span class="n">selectQueryObject</span><span class="p">&lt;</span><span class="k">'</span><span class="nc">T</span><span class="o">&gt;)</span> <span class="p">=</span>
+    <span class="k">match</span> <span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">parameter</span><span class="p">,</span> <span class="n">qo</span><span class="p">.</span><span class="n">query</span><span class="p">)</span> <span class="k">with</span>
+    <span class="p">|</span> <span class="p">(</span><span class="nc">Some</span> <span class="n">xpart</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="p">{</span> <span class="n">query</span> <span class="p">=</span> <span class="n">x</span><span class="p">.</span><span class="n">where</span><span class="p">;</span> <span class="n">parameters</span> <span class="p">=</span> <span class="p">[</span><span class="n">x</span><span class="p">.</span><span class="n">parameter</span><span class="p">.</span><span class="nc">Value</span><span class="o">];</span> <span class="n">deserialisation</span> <span class="p">=</span> <span class="n">qo</span><span class="p">.</span><span class="n">deserialisation</span><span class="p">}</span>
+    <span class="p">|</span> <span class="p">(</span><span class="nc">Some</span> <span class="n">xpart</span><span class="p">,</span> <span class="o">_)</span> <span class="p">-&gt;</span> <span class="p">{</span><span class="n">query</span> <span class="p">=</span> <span class="n">qo</span><span class="p">.</span><span class="n">query</span> <span class="o">+</span> <span class="s2">" AND "</span> <span class="o">+</span> <span class="n">x</span><span class="p">.</span><span class="n">where</span><span class="p">;</span> <span class="n">parameters</span> <span class="p">=</span> <span class="n">x</span><span class="p">.</span><span class="n">parameter</span><span class="p">.</span><span class="nc">Value</span> <span class="p">::</span> <span class="n">qo</span><span class="p">.</span><span class="n">parameters</span><span class="p">;</span> <span class="n">deserialisation</span> <span class="p">=</span> <span class="n">qo</span><span class="p">.</span><span class="n">deserialisation</span><span class="p">}</span>
+    <span class="p">|</span> <span class="p">(</span><span class="nc">None</span><span class="p">,</span> <span class="o">_)</span> <span class="p">-&gt;</span> <span class="p">{</span> <span class="n">query</span> <span class="p">=</span> <span class="n">qo</span><span class="p">.</span><span class="n">query</span><span class="p">;</span> <span class="n">parameters</span> <span class="p">=</span> <span class="n">qo</span><span class="p">.</span><span class="n">parameters</span><span class="p">;</span> <span class="n">deserialisation</span> <span class="p">=</span> <span class="n">qo</span><span class="p">.</span><span class="n">deserialisation</span><span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>Once again, we use some pattern matching.</p>
+
+<p>The first case is hit, when we have a filled queryPart but an empty selectQueryObject. So when the first filter criteria is hit.</p>
+
+<p>The second case is hit, when we add the other filter criteria to the selectQueryObject.</p>
+
+<p>The last one is hit, when we have already some data in the selectQueryObject, but the queryPart is empty. So when we have already some filter criteria added, but the current one is not set.</p>
+
+<p>At the end, we pipe the selectQueryObject to the combineQueryParts function.</p>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">...</span>
+<span class="p">|&gt;</span> <span class="n">combineQueryParts</span> <span class="n">query</span>
+<span class="o">...</span>
+ 
+<span class="k">let</span> <span class="k">private</span> <span class="n">combineQueryParts</span><span class="p">&lt;</span><span class="k">'</span><span class="nc">T</span><span class="p">&gt;</span> <span class="p">(</span><span class="n">query</span> <span class="p">:</span><span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="n">qo</span> <span class="p">:</span><span class="n">selectQueryObject</span><span class="p">&lt;</span><span class="k">'</span><span class="nc">T</span><span class="o">&gt;)</span> <span class="p">=</span>
+    <span class="k">let</span> <span class="k">mutable</span> <span class="n">q</span> <span class="p">=</span> <span class="n">query</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">qo</span><span class="p">.</span><span class="n">query</span><span class="p">.</span><span class="nc">Length</span> <span class="p">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="k">then</span>
+        <span class="n">q</span> <span class="p">&lt;-</span> <span class="n">query</span> <span class="o">+</span> <span class="s2">" WHERE "</span> <span class="o">+</span> <span class="n">qo</span><span class="p">.</span><span class="n">query</span>
+ 
+    <span class="p">{</span> <span class="n">query</span> <span class="p">=</span> <span class="n">q</span><span class="p">;</span> <span class="n">parameters</span> <span class="p">=</span> <span class="n">qo</span><span class="p">.</span><span class="n">parameters</span><span class="p">;</span> <span class="n">deserialisation</span> <span class="p">=</span> <span class="n">qo</span><span class="p">.</span><span class="n">deserialisation</span><span class="p">;</span> <span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>This function simply combines the select- Query with the where- Statement if needed.</p>
+
+<p>At the end, we get a nice filled selectQueryObject which is then passed to a general function.</p>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">executeReader</span><span class="p">&lt;</span><span class="k">'</span><span class="nc">T</span><span class="p">&gt;</span> <span class="p">(</span><span class="n">queryObj</span> <span class="p">:</span> <span class="n">selectQueryObject</span><span class="p">&lt;</span><span class="k">'</span><span class="nc">T</span><span class="p">&gt;</span> <span class="o">)=</span>
+    <span class="n">sql</span><span class="p">.</span><span class="nc">ExecReader</span> <span class="n">queryObj</span><span class="p">.</span><span class="n">query</span> <span class="n">queryObj</span><span class="p">.</span><span class="n">parameters</span>
+    <span class="p">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">ofDataReader</span>
+    <span class="p">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">map</span> <span class="n">queryObj</span><span class="p">.</span><span class="n">deserialisation</span><span class="p">.</span><span class="nc">Value</span>
+</code></pre></div></div>
+
+<p>Nice, or?</p>
+
+<p>The complete code at once can be found here.</p>
+
+<p>So what about the testing? With the query wrapped into a record, we simply can tests the data in the record.</p>
+
+<div class="language-fsharp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">let</span> <span class="n">checkSqlParameter</span> <span class="p">(</span><span class="n">name</span> <span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="n">value</span> <span class="p">:</span> <span class="n">obj</span><span class="p">)</span> <span class="p">(</span><span class="n">parameter</span> <span class="p">:</span> <span class="nn">Sql</span><span class="p">.</span><span class="nc">Parameter</span><span class="p">)</span> <span class="p">=</span>
+    <span class="n">obj</span><span class="p">.</span><span class="nc">Equals</span><span class="p">(</span><span class="n">parameter</span><span class="p">.</span><span class="nc">ParameterName</span><span class="p">,</span><span class="n">name</span><span class="p">)</span> <span class="p">&amp;&amp;</span> <span class="n">obj</span><span class="p">.</span><span class="nc">Equals</span><span class="p">(</span><span class="n">parameter</span><span class="p">.</span><span class="nc">Value</span><span class="p">,</span><span class="n">value</span><span class="p">)</span>
+ 
+<span class="k">let</span> <span class="n">checkForSqlParameter</span> <span class="p">(</span><span class="n">name</span> <span class="p">:</span> <span class="kt">string</span><span class="p">)</span> <span class="p">(</span><span class="n">value</span> <span class="p">:</span> <span class="n">obj</span><span class="p">)</span> <span class="n">parameters</span> <span class="p">=</span>
+    <span class="n">parameters</span> <span class="p">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">exists</span> <span class="p">(</span><span class="k">fun</span> <span class="n">i</span> <span class="p">-&gt;</span> <span class="n">checkSqlParameter</span> <span class="n">name</span> <span class="n">value</span> <span class="n">i</span><span class="p">)</span> <span class="p">|&gt;</span> <span class="n">should</span> <span class="n">equal</span> <span class="bp">true</span>
+ 
+<span class="k">let</span> <span class="n">nullableFromPara</span> <span class="p">=</span> <span class="k">new</span> <span class="nc">Nullable</span><span class="p">&lt;</span><span class="nc">DateTimeOffset</span><span class="o">&gt;(</span><span class="n">fromPara</span><span class="p">)</span>
+<span class="k">let</span> <span class="n">nullableToPara</span> <span class="p">=</span> <span class="k">new</span> <span class="nc">Nullable</span><span class="p">&lt;</span><span class="nc">DateTimeOffset</span><span class="o">&gt;(</span><span class="n">toPara</span><span class="p">)</span>
+<span class="k">let</span> <span class="n">locationIdPara</span> <span class="p">=</span> <span class="k">new</span> <span class="nc">Nullable</span><span class="p">&lt;</span><span class="nc">Guid</span><span class="o">&gt;(</span><span class="nn">Guid</span><span class="p">.</span><span class="nc">NewGuid</span><span class="bp">()</span><span class="p">)</span>
+ 
+<span class="p">[&lt;</span><span class="nc">Fact</span><span class="p">&gt;]</span>
+<span class="k">let</span> <span class="n">``Check query with LocationId, From and To parameter``</span><span class="bp">()</span> <span class="p">=</span>
+    <span class="k">let</span> <span class="n">fc</span> <span class="p">=</span> <span class="k">new</span> <span class="nc">WeatherSearchRequest</span><span class="bp">()</span>
+    <span class="n">fc</span><span class="p">.</span><span class="nc">LocationId</span> <span class="p">&lt;-</span> <span class="n">locationIdPara</span>
+    <span class="n">fc</span><span class="p">.</span><span class="nc">From</span> <span class="p">&lt;-</span> <span class="n">nullableFromPara</span>
+    <span class="n">fc</span><span class="p">.</span><span class="nc">To</span> <span class="p">&lt;-</span> <span class="n">nullableToPara</span>
+ 
+    <span class="k">let</span> <span class="n">queryObj</span> <span class="p">=</span> <span class="n">weather</span><span class="p">.</span><span class="n">search</span> <span class="n">fc</span>
+    <span class="n">queryObj</span><span class="p">.</span><span class="n">parameters</span> <span class="p">|&gt;</span> <span class="nn">Seq</span><span class="p">.</span><span class="n">length</span> <span class="p">|&gt;</span> <span class="n">should</span> <span class="n">equal</span> <span class="mi">3</span>
+    <span class="n">queryObj</span><span class="p">.</span><span class="n">parameters</span> <span class="p">|&gt;</span> <span class="n">checkForSqlParameter</span> <span class="s2">"@datafrom"</span> <span class="n">fc</span><span class="p">.</span><span class="nc">From</span>
+    <span class="n">queryObj</span><span class="p">.</span><span class="n">parameters</span> <span class="p">|&gt;</span> <span class="n">checkForSqlParameter</span> <span class="s2">"@datato"</span> <span class="n">fc</span><span class="p">.</span><span class="nc">To</span>
+    <span class="n">queryObj</span><span class="p">.</span><span class="n">parameters</span> <span class="p">|&gt;</span> <span class="n">checkForSqlParameter</span> <span class="s2">"@locationid"</span> <span class="n">fc</span><span class="p">.</span><span class="nc">LocationId</span>
+ 
+    <span class="n">queryObj</span><span class="p">.</span><span class="n">query</span> <span class="p">|&gt;</span> <span class="n">should</span> <span class="n">equal</span> <span class="s2">"SELECT id, locationid, datafrom, datato, temperature, humidity, rain, windspeed, winddirection, clouds, pressure FROM </span><span class="se">\"</span><span class="s2">intersect</span><span class="se">\"</span><span class="s2">.</span><span class="se">\"</span><span class="s2">Weather</span><span class="se">\"</span><span class="s2"> WHERE locationid = @locationid AND datafrom &gt;= @datafrom AND datato &lt;= @datato"</span>
+
+</code></pre></div></div>
+
+<p>When was the last time, you could test which SQL- query gets executed against your DBS? 😉</p>
+
+    </main>
+    <footer>
+      <p>&copy; 2025 SabotageAndi Blog</p>
+    </footer>
+  </body>
+</html>
