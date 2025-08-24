@@ -1,9 +1,7 @@
 ---
 title: "System.Type as Property of Converter in UWP – unexplainable XamlParseException"
-date: 2017-07-13
-draft: false
-slug: system-type-as-property-of-converter-in-uwp
-type: "post"
+date: 2017-07-13 00:00:00 +0100
+layout: default
 ---
 
 Two weeks ago in a project we had a XamlParseException when a special page was opened. Strange thing was, that we didn’t change anything of the XAML- Code, since the last working version. There were only some small changes in the code-behind of the page.

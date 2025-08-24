@@ -1,8 +1,7 @@
 ---
 title: "Using SpecFlow+Runners Parallelization Features"
-date: 2016-04-08 
-draft: false
-type: "post"
+date: 2016-04-08 00:00:00 +0100
+layout: default
 ---
 
 To start a parallel test run, you simply need to change the testThreadCount property in your srProfile to a number higher than 1. How your tests are executed then depends on the testThreadIsolation property.

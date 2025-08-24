@@ -1,8 +1,7 @@
 ---
 title: "Uninstall .NET Core SDKs on macOS"
-date: 2017-09-10
-draft: false
-type: "post"
+date: 2017-09-10 00:00:00 +0100
+layout: default
 ---
 
 During checking for a [build error](https://github.com/cucumber/gherkin-dotnet/pull/6) on Mac OS X of the Gherkin parser, I wanted to uninstall all my installed .NET Core SDKs, to have a clean slate.

@@ -1,8 +1,7 @@
 ---
 title: "No More ORM"
-date: 2014-08-28T20:00:53+01:00
-draft: false
-type: "post"
+date: 2014-08-28 20:00:53 +0100
+layout: default
 ---
 
 After working some years with different OR- Mappers (NHibernate, Entity Framework, proprietary ones, …) to build a lot of line of business applications, I came to the conclusion to trash them.

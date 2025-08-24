@@ -1,9 +1,7 @@
 ---
 title: "Xamarin.Forms + F# + Paket"
-date: 2018-06-03
-draft: false
-type: "post"
-
+date: 2018-06-03 00:00:00 +0100
+layout: default
 ---
 
 Yesterday I started a new Xamarin.Forms project in F# on my Mac. Because the NuGet experience isn’t the best in Visual Studio for Mac, I always use Paket for managing my dependencies.

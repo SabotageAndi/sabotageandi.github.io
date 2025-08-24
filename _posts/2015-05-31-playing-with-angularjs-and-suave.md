@@ -1,8 +1,7 @@
 ---
 title: "Playing With AngularJS and Suave"
-date: 2015-05-31
-draft: false
-type: "post"
+date: 2015-05-31 00:00:00 +0100
+layout: default
 ---
 
 After I found Suave.IO (lightweight HTTP Server in F#) I wanted to try it out. As I also wanted to play with AngularJS (I know I am a little bit late, but normally I get out of the way of web development). So why not combine both and create a small webserver that hosts the web app and the webservices.

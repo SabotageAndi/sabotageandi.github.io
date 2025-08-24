@@ -1,8 +1,7 @@
 ---
 title: "Multiple projects in the same folder"
-date: 2017-10-12
-draft: false
-type: "post"
+date: 2017-10-12 00:00:00 +0100
+layout: default
 ---
 
 In SpecFlow+ we are supporting multiple different versions of SpecFlow (currently 1.9, 2.1 and 2.2) and so we have to test each version with the full set of our test suite.

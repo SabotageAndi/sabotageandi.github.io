@@ -1,8 +1,7 @@
 ---
 title: "1st year as a Microsoft MVP"
-date: 2018-01-19
-draft: false
-type: "post"
+date: 2018-01-19 00:00:00 +0100
+layout: default
 ---
 
 A year ago I got out of nowhere following eMail:

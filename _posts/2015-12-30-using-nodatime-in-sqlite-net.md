@@ -1,11 +1,9 @@
 ---
 title: "Using NodaTime in SQLite.Net"
-date: 2015-12-30
-draft: false
-type: "post"
+date: 2015-12-30 00:00:00 +0100
+layout: default
 ---
 
- 
 For a project I wanted to try out NodaTime, because of its nice handling with timezones.
 In this project I have also to save the values into a SQLite database and for that I normally use SQLite.net for that.
 Normally SQlite.net does not know how to handle the NodaTime types, but there are 2 places to add your own support for types.

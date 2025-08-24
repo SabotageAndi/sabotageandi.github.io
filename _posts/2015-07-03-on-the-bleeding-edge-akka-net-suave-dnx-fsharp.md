@@ -1,8 +1,7 @@
 ---
 title: "On the Bleeding Edge – Akka.Net + Suave"
-date: 2015-07-03
-draft: false
-type: "post"
+date: 2015-07-03 00:00:00 +0100
+layout: default
 ---
 
 So after playing with Suave.io, I wanted to add some new bleeding edge stuff to it. 😉 And run it on a beta environment, the DNX 🙂

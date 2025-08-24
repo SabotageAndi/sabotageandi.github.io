@@ -1,8 +1,7 @@
 ---
 title: "The Road to .NET Core support in SpecFlow"
-date: 2019-01-15T15:11:06+01:00
-draft: true
-type: "post"
+date: 2019-01-15 15:11:06 +0100
+layout: default
 ---
 
 This blog post is about the history how we got .NET Core support into SpecFlow and what we learned from that.

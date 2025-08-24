@@ -1,0 +1,10 @@
+title: SabotageAndi Blog
+email: your-email@example.com
+description: >-
+  Personal blog migrated from Hugo to Jekyll
+baseurl: ""
+url: "https://sabotageandi.github.io"
+theme: minima
+plugins:
+  - jekyll-feed
+  - jekyll-seo-tag

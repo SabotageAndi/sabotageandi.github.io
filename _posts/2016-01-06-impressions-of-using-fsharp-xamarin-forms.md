@@ -1,8 +1,7 @@
 ---
 title: "Impressions of using F# (with a little bit of Xamarin.Forms)"
-date: 2016-01-06 
-draft: false
-type: "post"
+date: 2016-01-06 00:00:00 +0100
+layout: default
 ---
 
 In the last days I completed the first version of FFRAB-Mobile (see here). I used F# and Xamarin.Forms to gain more experience in a bigger project than a simple example app. You can find the sources here: https://github.com/SabotageAndi/ffrab-mobile

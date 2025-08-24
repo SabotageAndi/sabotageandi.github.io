@@ -1,4 +1,7 @@
-# About
+---
+layout: default
+title: About
+---
 
 My name is Andreas Willich. I'm a software developer and hobby speaker and I am working at Tricentis in Vienna, Austria, but this blog, its content and opinions are my own.
 

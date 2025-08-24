@@ -1,10 +1,9 @@
 ---
 title: "F# Raw SQL Access"
-date: 2014-09-03T19:53:26+01:00
-draft: false
-type: "post"
+date: 2014-09-03 19:53:26 +0100
+layout: default
 ---
- 
+
 With my start in working with F#, I came to the point to access a database. When you read my last post, you know that an ORM was out of question. What me really surprised at the end, was that the code is much less than every other DB access I wrote.
 
 So how does it look?

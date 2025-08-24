@@ -1,9 +1,7 @@
 ---
 title: "SpecFlow 2.2 and SpecFlow+ 1.6 finally released"
-date: 2017-06-29
-draft: false
-slug: specflow-2-2-and-specflow-1-6-finally-released
-type: "post"
+date: 2017-06-29 00:00:00 +0100
+layout: default
 ---
 
 Finally after 13 months, SpecFlow 2.2 and SpecFlow+ 1.6 (Runner and Excel) were finally released yesterday.   

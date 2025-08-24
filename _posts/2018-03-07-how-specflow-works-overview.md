@@ -1,8 +1,7 @@
 ---
 title: "How SpecFlow works – Overview"
-date: 2018-03-07
-draft: false
-type: "post"
+date: 2018-03-07 00:00:00 +0100
+layout: default
 ---
 
 In preparation of continuing the work on .NET Core/Standard support for SpecFlow and recognising in talks at the MVP Summit, that it is not that simple to explain how SpecFlow works, I thought it would be good to start writing it done.

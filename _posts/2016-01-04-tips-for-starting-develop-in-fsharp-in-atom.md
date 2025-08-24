@@ -1,8 +1,7 @@
 ---
 title: "Tips for starting develop in F# in Atom"
-date: 2016-01-04
-draft: false
-type: "post"
+date: 2016-01-04 00:00:00 +0100
+layout: default
 ---
 
 # This blog post is outdated!
