@@ -39,7 +39,7 @@ menu:
       url: "/"
       weight: 1
     - name: "About"
-      url: "/about/"
+      url: "/about"
       weight: 2
     - name: "Blog"
       url: "/blog/"
