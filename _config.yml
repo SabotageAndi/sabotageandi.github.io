@@ -47,3 +47,7 @@ menu:
 
 # Enable robots.txt
 robots: true
+
+
+analytics:
+  provider: "custom"
