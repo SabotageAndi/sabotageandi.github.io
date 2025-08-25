@@ -1,8 +1,13 @@
 title: "Hi, I'm Andreas"
 email: andreas@willich.io
-
+description: >-
+  Personal Blog of Andreas Willich
 baseurl: ""
 url: "https://willich.io/"
+locale: "en"
+future: true
+
+
 theme: "minimal-mistakes-jekyll"
 
 plugins:
