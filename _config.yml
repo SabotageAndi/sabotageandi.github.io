@@ -1,0 +1,44 @@
+title: "Hi, I'm Andreas"
+email: andreas@willich.io
+
+baseurl: ""
+url: "https://willich.io/"
+theme: "minimal-mistakes-jekyll"
+
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+  - jekyll-include-cache
+  - jekyll-archives
+  - jekyll-paginate
+  - jekyll-seo-tag
+  - jekyll-redirect-from
+  - jekyll-collections
+# Author
+author: "Andreas Willich"
+
+# Minimal Mistakes settings
+minimal_mistakes_skin: "default"
+search: false
+
+# Taxonomies
+collections:
+  posts:
+    output: true
+    permalink: /blog/:title/
+
+# Navigation menu (for use in layouts)
+menu:
+  main:
+    - name: "Home"
+      url: "/"
+      weight: 1
+    - name: "About"
+      url: "/about/"
+      weight: 2
+    - name: "Blog"
+      url: "/blog/"
+      weight: 3
+
+# Enable robots.txt
+robots: true

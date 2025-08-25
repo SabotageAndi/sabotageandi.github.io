@@ -1,0 +1,32 @@
+---
+title: ".NET Core Global Tools with UI"
+date: 2018-03-04 00:00:00 +0100
+layout: default
+---
+
+Sometimes after the .NET team announced that they will add global tools to .NET Core, I asked myself if it would be possible to combine them with [Avalonia](http://avaloniaui.net/) to make a global tool with an UI.
+
+For those who don't know Avalonia, you should check it out. It's an UI framework that uses XAML like WPF and Xamarin Forms and is implemented for .NET Framework and .NET Core. It runs on Windows, Linux and Mac OS.
+
+Back to the global tools.
+
+TL;DR: You can use Avalonia together with global tools. Here is a Sample: <https://github.com/SabotageAndi/LicenseActivatorPrototype>
+
+But what it's needed? Not much.
+
+You have to add the PackAsTool and the ToolCommandName property.
+PackAsTool marks the project as a tool for installing. ToolCommandName specify how the tool is called after installation.
+
+This sets all, that you only have to do a dotnet pack to generate a NuGet package for the global tool.
+
+After that, you can install it with a dotnet install tool -g Your_Tool_Name. If you have packages from additional sources than NuGet.org, you can add them via command line argument or have a NuGet.config. In my prototype I am using nightlies of Avalonia and so I need to configure their feed as an additional source. Additionally I configured a local source, where the generated NuGet package gets published. It is here: <https://github.com/SabotageAndi/LicenseActivatorPrototype/blob/master/NuGet.config>
+
+I had one small problem, where I got an error during installation, that there would be a downgrade of the System.Net.Primitives packages happen and so the tool can not be installed. The fix was to reference the package in project directly.
+
+So what does this mean, that we could use Avalonia in a global tool?
+
+We are not limited to only command line global tools, but can also write rich UI applications. And we can simply deploy them with a simple command line call.
+
+I would call this cool. Let's see what we will make out of it.
+
+Thanks to Martin Ullrich (<https://dasmulli.blog/2018/01/23/exploring-global-net-core-tools/>) and Nate McMaster (<https://www.natemcmaster.com/blog/2018/02/02/dotnet-global-tool/>) for their blog posts about global tools.

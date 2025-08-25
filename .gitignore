@@ -1,1 +1,9 @@
-public/
+_site/
+.sass-cache/
+.jekyll-cache/
+.bundle/
+node_modules/
+.DS_Store
+*.swp
+*.swo
+.env
