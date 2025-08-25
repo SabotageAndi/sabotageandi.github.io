@@ -6,7 +6,7 @@ layout: default
 
 A year ago I got out of nowhere following eMail:
 
-![mvp mail screenshot](/images/2018-01-19-MVP.png)
+![mvp mail screenshot](/assets/images/2018-01-19-MVP.png)
 
 I was awarded as a Microsoft MVP in the "Visual Studio and Development Technologies" Category. How cool is that? And how did this happen?
 

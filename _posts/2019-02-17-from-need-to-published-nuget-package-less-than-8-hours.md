@@ -52,17 +52,17 @@ As of writing this article, only the UI is available to define release pipelines
 
 ### Release pipeline
 
-![release pipeline](/images/2019-02-17%20Release%20Pipeline.png)
+![release pipeline](/assets/images/2019-02-17%20Release%20Pipeline.png)
 
 ### Release pipeline detail
 
-![release pipeline detail](/images/2019-02-17%20Release%20Pipeline%20details.png)
+![release pipeline detail](/assets/images/2019-02-17%20Release%20Pipeline%20details.png)
 
 The "hardest" part was to create the service connection with NuGet.org. For that, you need an API key for your account. The steps for that are documented [here](https://docs.microsoft.com/en-us/nuget/create-packages/publish-a-package#create-api-keys).
 
 When you have it, you can create a NuGet service connection in Azure Pipelines.
 
-![nuget service connection](/images/2019-02-17%20NuGet%20Service%20Connections.png)
+![nuget service connection](/assets/images/2019-02-17%20NuGet%20Service%20Connections.png)
 
 This service reference has to be used in the NuGet task. And after specifing the correct path where the NuGet packages are (yes, again pathes are hard).
 

@@ -5,8 +5,6 @@ baseurl: ""
 url: "https://willich.io/"
 theme: "minimal-mistakes-jekyll"
 
-paginate: 10
-paginate_path: "blog"
 plugins:
   - jekyll-feed
   - jekyll-sitemap
