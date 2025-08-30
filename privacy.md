@@ -5,4 +5,5 @@ permalink: /privacy/
 ---
 
 
-This website is hosted via GitHub Pages.
+This website is hosted via GitHub Pages.  
+Analytics are done with Microsoft Application Insights. See their [privacy statement](https://go.microsoft.com/fwlink/?LinkID=824704) for more information.
